@@ -1,0 +1,9 @@
+{
+    "base":"/scratch2/sferrone/simulations/",
+    "MonteCarloObservables": "/scratch2/sferrone/simulations/MonteCarloObservables/",
+    "ForceOnOrbit": "/scratch2/sferrone/simulations/ForceOnOrbit/",
+    "Orbits": "/scratch2/sferrone/simulations/Orbits/",
+    "StreamOrbits": "/scratch2/sferrone/simulations/StreamOrbits/",
+    "Streams": "/scratch2/sferrone/simulations/Streams/",
+    "ParticleInitialConditions":"/scratch2/sferrone/simulations/ParticleInitialConditions/"
+}
