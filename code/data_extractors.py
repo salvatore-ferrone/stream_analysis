@@ -1,9 +1,6 @@
 import numpy as np
 import h5py
-import astropy.units as u
-import sys 
-codefilepath = "/obs/sferrone/gc-tidal-loss/code/"
-sys.path.append(codefilepath)
+import astropy.units as u # type: ignore
 import StreamOrbitCoords as SOC
 
 
