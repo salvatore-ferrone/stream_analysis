@@ -13,3 +13,9 @@ import os
 
 
 base = json.load(open('../paths.json'))
+
+
+
+def orbit_path(montecarlokey:str,gcname:str,potential_name:str):
+    "scratch2/sferrone/simulations/Orbits/pouliasis2017pii-GCNBody/Pal5-orbits.hdf5"
+    return base['orbit_path']

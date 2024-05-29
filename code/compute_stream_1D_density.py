@@ -3,13 +3,11 @@ import numpy as np
 import sys 
 import os
 import datetime
-from astropy import units as u
-sys.path.append('/obs/sferrone/gc-tidal-loss/code')
+from astropy import units as u # type: ignore
 import StreamOrbitCoords as SOC
-sys.path.append("/obs/sferrone/mini-reports/GapPredictor/code")
 import data_extractors as DE
-
-import multiprocessing as mp
+import data_writing as DW # type: ignore
+import filters 
 
 
 
@@ -29,54 +27,68 @@ def main(mcarlo,startindex=40):
     os.makedirs(outpath, exist_ok=True)
     outfilename=outpath+outname
     
-    thost,xhost,yhost,zhost,vxhost,vyhost,vzhost = get_host_orbit(path_orbit,mcarlokey)
-    t_stamps=get_stream_time_stamps(path_stream_orbit)
+    thost,xhost,yhost,zhost,vxhost,vyhost,vzhost = DE.get_orbit(path_orbit,mcarlokey)
+    with h5py.File(path_stream_orbit, 'r') as stream:
+        t_stamps=DE.extract_time_steps_from_stream_orbit(stream)
     hostorbit = thost,xhost,yhost,zhost,vxhost,vyhost,vzhost
     Nstamps = len(t_stamps)
     out_array = np.zeros((Nstamps,NP))
-    initialize_output_file(GCname,mcarlokey,path_orbit,path_stream_orbit,\
+    DW.initialize_stream_tau_output(GCname,mcarlokey,path_orbit,path_stream_orbit,\
         t_stamps,out_array,outpath=outpath,outname=outname)
 
     starttime=datetime.datetime.now()
 
     end_index = Nstamps
     for i in range(startindex,end_index):
-        worker(i,path_stream_orbit,hostorbit,t_stamps,nDynTimes,outfilename)
+        obtain_tau(i,path_stream_orbit,hostorbit,t_stamps,nDynTimes,outfilename)
         if i == startindex:
             print("Done with ",i)
         if i%100==0:
             print("Done with ",i)
     endtime=datetime.datetime.now()
     print("Time taken: ",endtime-starttime)
-    
-    #### IF YOU WANNA DO THIS IN PARALLEL, 
-    ####  THEN YOU NEED TO USE TEMP FILES TO FIX THE I/O
-    # get the number of processors available
-    # num_processes = 4
-    # with mp.Pool(num_processes) as pool:
-        # pool.starmap(worker, [(i, path_stream_orbit, hostorbit, t_stamps, nDynTimes, outfilename) for i in range(startindex, Nstamps)])
-    # endtime=datetime.datetime.now()
-    # print("Time taken: ",endtime-starttime)
-    
-    
 
-def worker(i,path_stream_orbit,hostorbit,t_stamps,period,outfilename):
+
+#####################################################
+####################### LOOPS #######################
+#####################################################
+def obtain_tau(i, path_stream_orbit, hostorbit, t_stamps, period):
+    """
+    Given a snapshot index, this function projects the stream onto the host orbit 
+    and calculates tau. Tau is the difference in time coordinate of a position on 
+    the orbit and the current time.
+
+    Parameters
+    ----------
+    i : int
+        The snapshot index.
+    path_stream_orbit : str
+        The path to the stream orbit file.
+    hostorbit : tuple
+        A tuple containing the host orbit data (thost, xhost, yhost, zhost, vxhost, vyhost, vzhost).
+    t_stamps : array_like
+        An array of time stamps.
+    period : float
+        The period for filtering the orbit.
+
+    Returns
+    -------
+    tau : ndarray
+        The time difference from ahead/behind for each position in the stream.
+
+    """
     # extract stream positions and orbit 
-    xp,yp,zp,vxp,vyp,vzp = extract_stream(i,path_stream_orbit)
-    thost,xhost,yhost,zhost,vxhost,vyhost,vzhost = hostorbit
+    xp, yp, zp, _, _, _ = DE.extract_stream_from_path(i, path_stream_orbit)
+    thost, xhost, yhost, zhost, vxhost, vyhost, vzhost = hostorbit
+    orbit = xhost, yhost, zhost, vxhost, vyhost, vzhost
     # filter orbit by dynamical time
-    t_index = np.argmin(np.abs(thost-t_stamps[i].value))
-    tOrb,xOrb,yOrb,zOrb,vxOrb,vyOrb,vzOrb=\
-        filter_orbit_by_period(\
-        thost,xhost,yhost,zhost,vxhost,vyhost,vzhost,\
-        t_index,period)
+    t_index = np.argmin(np.abs(thost - t_stamps[i].value))
+    tOrb, xOrb, yOrb, zOrb, _, _, _ = filters.orbit_by_fixed_time(thost, orbit, t_index, period)
     # get closest orbital index of particles to stream
-    indexes=SOC.get_closests_orbital_index(xOrb,yOrb,zOrb,xp,yp,zp)
+    indexes = SOC.get_closests_orbital_index(xOrb, yOrb, zOrb, xp, yp, zp)
     # calculate time difference from ahead/behind
-    DTS = tOrb[indexes] - t_stamps[i].value
-    # append data file
-    with h5py.File(outfilename, 'a') as myoutfile:
-        myoutfile["density_profile"][i]=DTS
+    tau = tOrb[indexes] - t_stamps[i].value
+    return tau
     
 
 ##############################################################
@@ -110,50 +122,7 @@ def fourier_strongest_period(t,xt,yt,zt):
 
 
 
-########################### TO TRASH 
 
-
-def filter_orbit_by_period(t,xt,yt,zt,vxt,vyt,vzt,current_index,filter_time):
-    down_time = t[current_index] - filter_time
-    down_dex = np.argmin(np.abs(t-down_time))
-    up_time = t[current_index] + filter_time
-    up_dex = np.argmin(np.abs(t-up_time))
-    tOrb=t[down_dex:up_dex]
-    xOrb=xt[down_dex:up_dex]
-    yOrb=yt[down_dex:up_dex]
-    zOrb=zt[down_dex:up_dex]
-    vxOrb=vxt[down_dex:up_dex]
-    vyOrb=vyt[down_dex:up_dex]
-    vzOrb=vzt[down_dex:up_dex]
-
-    return tOrb,xOrb,yOrb,zOrb,vxOrb,vyOrb,vzOrb
-
-
-def get_host_orbit(path_orbit,mcarlokey):
-    with h5py.File(path_orbit,'r') as fp:
-        thost=fp[mcarlokey]['t'][:]
-        xhost=fp[mcarlokey]['xt'][:]
-        yhost=fp[mcarlokey]['yt'][:]
-        zhost=fp[mcarlokey]['zt'][:]
-        vxhost=fp[mcarlokey]['vxt'][:]
-        vyhost=fp[mcarlokey]['vyt'][:]
-        vzhost=fp[mcarlokey]['vzt'][:]
-    return thost,xhost,yhost,zhost,vxhost,vyhost,vzhost
-
-def get_stream_time_stamps(path_stream_orbit):
-    with h5py.File(path_stream_orbit, 'r') as stream:
-        timestamps=DE.extract_time_steps_from_stream_orbit(stream)
-    return timestamps
-    
-def extract_stream(i,path_stream_orbit):
-    with h5py.File(path_stream_orbit, 'r') as stream:
-        xp=stream['timestamps'][str(i)][0,:]
-        yp=stream['timestamps'][str(i)][1,:]
-        zp=stream['timestamps'][str(i)][2,:]
-        vxp=stream['timestamps'][str(i)][3,:]
-        vyp=stream['timestamps'][str(i)][4,:]
-        vzp=stream['timestamps'][str(i)][5,:]
-    return xp,yp,zp,vxp,vyp,vzp
 
  
 

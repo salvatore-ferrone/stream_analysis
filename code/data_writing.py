@@ -10,7 +10,7 @@ email = "salvatore.ferrone@uniroma1.it"
 ##############################################################
 ##################### DATA I/O FUNCTIONS #####################
 ##############################################################
-def initialize_stream_density_output(GCname,mcarlokey,path_orbit,path_stream_orbit,\
+def initialize_stream_tau_output(GCname,mcarlokey,path_orbit,path_stream_orbit,\
     time_stamps,out_array,outpath,outname):
 
     note = "This file contains a 1D stream density profile projected onto the Orbit. The unit is in time, i.e. how far ahead of behind the particle is. "
