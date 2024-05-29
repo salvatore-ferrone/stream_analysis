@@ -108,75 +108,10 @@ def plot_1D_density_profile_frame(tau,density,threshold,left_index,right_index):
 ############################################################
 #### COMPOSITE FUNCTIONS FOR OPENING DATA AND COMPUTING #### 
 ############################################################
-def construct_2D_density_map(GCname,mcarlokey):
-    ##############################################
-    ######## LOAD IN FILES AND PARAMETERS ########
-    ##############################################
-    filename=get_input_path(GCname,mcarlokey)
-    #### Obtain The Base Parameters
-    tau_max,_,_,_,_,_=get_global_parameters()
-    tau_max=tau_max.value
-    
-    myfile=h5py.File(filename,'r')
-    ############################################
-    ############ DERIVED PARAMETERS ############
-    ############################################
-    Nstamps, NP = myfile['density_profile'].shape
-    NBINS = int(np.ceil(np.sqrt(NP)))
-    # make the bin edges
-    bin_edges = np.linspace(-tau_max,tau_max,NBINS+1)
-    time_stamps=myfile['time_stamps'][:]
-    tau=(bin_edges[1:]+bin_edges[:-1])/2 # the bin centers 
-    
-    ############################################
-    ############## BUILD HISTOGRAM #############
-    ############################################
-    density_array = build_2D_histogram(myfile, Nstamps, NBINS, bin_edges)
-    density_array/=NP # normalize the histogram
-    # obtain the grid, in integration units
-    X_tstamps,Y_tau=np.meshgrid(time_stamps,tau)  
-    myfile.close()
-    return X_tstamps,Y_tau,density_array,time_stamps,tau 
 
 
-#############################################
-############# BASE COMPUTATIONS #############  
-#############################################
-def find_stream_limits(density_array, density_min):
-    """
-    Finds the limits of a stream based on a density array and a minimum density threshold.
 
-    Parameters:
-    - density_array (ndarray): A 2D array representing the density values.
-    - density_min (float): The minimum density threshold.
 
-    Returns:
-    - index_from_left (ndarray): An array containing the indices of the first elements that surpass the density threshold when scanning from the left for each row of the density array.
-    - index_from_right (ndarray): An array containing the indices of the first elements that surpass the density threshold when scanning from the right for each row of the density array.
-    """
-    
-    Nstamps, _ =density_array.shape
-    
-    index_from_left, index_from_right = np.zeros(Nstamps), np.zeros(Nstamps)
-    for i in range(Nstamps):
-        array = density_array[i]
-        # Find the first element that surpasses THRESHOLD when scanning from the left
-        index_from_left[i] = np.argmax(array > density_min)
-        # Find the first element that surpasses THRESHOLD when scanning from the right
-        index_from_right[i] = len(array) - np.argmax(array[::-1] > density_min) - 1
-
-    index_from_left = index_from_left.astype(int)
-    index_from_right = index_from_right.astype(int)
-    return index_from_left, index_from_right
-      
-def build_2D_histogram(myfile, Nstamps, NBINS, bins):
-    density_array = np.zeros((Nstamps, NBINS))
-    for i in range(Nstamps):
-        counts, _ = np.histogram(myfile['density_profile'][i], bins=bins)
-        density_array[i,:] = counts
-    return density_array
-    
-  
 ######################################################
 ###################### DATA I/O ######################
 ######################################################

@@ -64,7 +64,7 @@ def obtain_tau(i, path_stream_orbit, hostorbit, t_stamps, period):
 def construct_2D_density_map(tau_array,time_stamps,tau_max):
     
     # Obtain The Base Parameters
-    Nstamps, NP = tau_array
+    Nstamps, NP = tau_array.shape
     NBINS = int(np.ceil(np.sqrt(NP)))
     
     # make the bin edges
@@ -86,7 +86,7 @@ def construct_2D_density_map(tau_array,time_stamps,tau_max):
 def build_2D_histogram(tau_array, Nstamps, NBINS, bins):
     density_array = np.zeros((Nstamps, NBINS))
     for i in range(Nstamps):
-        counts, _ = np.histogram(tau_array, bins=bins)
+        counts, _ = np.histogram(tau_array[i], bins=bins)
         density_array[i,:] = counts
     return density_array
     
