@@ -1,4 +1,3 @@
-import h5py
 import numpy as np 
 import sys 
 import os
@@ -7,46 +6,10 @@ from astropy import units as u # type: ignore
 import StreamOrbitCoords as SOC
 import data_extractors as DE
 import data_writing as DW # type: ignore
+import path_handler as PH
 import filters 
 
 
-
-
-def main(mcarlo,startindex=40):
-    
-    #### Base parameters
-    GCname="Pal5"
-    nDynTimes=3
-    mcarlokey="monte-carlo-"+str(mcarlo).zfill(3)
-    NP = int(1e5)
-    ### path handling
-    path_orbit="/scratch2/sferrone/simulations/Orbits/pouliasis2017pii-GCNBody/Pal5-orbits.hdf5"
-    path_stream_orbit = "/scratch2/sferrone/simulations/StreamOrbits/pouliasis2017pii-Pal5-suspects/Pal5/100000/Pal5-"+mcarlokey+"-StreamOrbit.hdf5"
-    outpath="/scratch2/sferrone/intermediate-products/stream_density_profiles/" + GCname + "/"
-    outname = GCname+"_time_profile_density_"+mcarlokey+".hdf5"
-    os.makedirs(outpath, exist_ok=True)
-    outfilename=outpath+outname
-    
-    thost,xhost,yhost,zhost,vxhost,vyhost,vzhost = DE.get_orbit(path_orbit,mcarlokey)
-    with h5py.File(path_stream_orbit, 'r') as stream:
-        t_stamps=DE.extract_time_steps_from_stream_orbit(stream)
-    hostorbit = thost,xhost,yhost,zhost,vxhost,vyhost,vzhost
-    Nstamps = len(t_stamps)
-    out_array = np.zeros((Nstamps,NP))
-    DW.initialize_stream_tau_output(GCname,mcarlokey,path_orbit,path_stream_orbit,\
-        t_stamps,out_array,outpath=outpath,outname=outname)
-
-    starttime=datetime.datetime.now()
-
-    end_index = Nstamps
-    for i in range(startindex,end_index):
-        obtain_tau(i,path_stream_orbit,hostorbit,t_stamps,nDynTimes,outfilename)
-        if i == startindex:
-            print("Done with ",i)
-        if i%100==0:
-            print("Done with ",i)
-    endtime=datetime.datetime.now()
-    print("Time taken: ",endtime-starttime)
 
 
 #####################################################
@@ -91,9 +54,43 @@ def obtain_tau(i, path_stream_orbit, hostorbit, t_stamps, period):
     return tau
     
 
+
+
 ##############################################################
 ######################### COMPUTATIONS #######################
 ##############################################################
+
+
+def construct_2D_density_map(tau_array,time_stamps,tau_max):
+    
+    # Obtain The Base Parameters
+    Nstamps, NP = tau_array
+    NBINS = int(np.ceil(np.sqrt(NP)))
+    
+    # make the bin edges
+    bin_edges = np.linspace(-tau_max,tau_max,NBINS+1)
+    tau=(bin_edges[1:]+bin_edges[:-1])/2 # the bin centers 
+    
+    # build the 2D histogram
+    density_array = build_2D_histogram(tau_array, Nstamps, NBINS, bin_edges)
+    
+    # normalize the histogram
+    density_array/=NP 
+    
+    # obtain the grid, in integration units
+    X_tstamps,Y_tau=np.meshgrid(time_stamps,tau)  
+
+    return X_tstamps,Y_tau,density_array 
+
+      
+def build_2D_histogram(tau_array, Nstamps, NBINS, bins):
+    density_array = np.zeros((Nstamps, NBINS))
+    for i in range(Nstamps):
+        counts, _ = np.histogram(tau_array, bins=bins)
+        density_array[i,:] = counts
+    return density_array
+    
+
 def fourier_strongest_period(t,xt,yt,zt):
     r = np.sqrt(xt**2 + yt**2 + zt**2)
     # Compute the time step
@@ -121,8 +118,34 @@ def fourier_strongest_period(t,xt,yt,zt):
     return period 
 
 
+def find_stream_limits(density_array, density_min):
+    """
+    Finds the limits of a stream based on a density array and a minimum density threshold.
 
+    Parameters:
+    - density_array (ndarray): A 2D array representing the density values.
+    - density_min (float): The minimum density threshold.
 
+    Returns:
+    - index_from_left (ndarray): An array containing the indices of the first elements that surpass the density threshold when scanning from the left for each row of the density array.
+    - index_from_right (ndarray): An array containing the indices of the first elements that surpass the density threshold when scanning from the right for each row of the density array.
+    """
+    
+    Nstamps, _ =density_array.shape
+    
+    index_from_left, index_from_right = np.zeros(Nstamps), np.zeros(Nstamps)
+    for i in range(Nstamps):
+        array = density_array[i]
+        # Find the first element that surpasses THRESHOLD when scanning from the left
+        index_from_left[i] = np.argmax(array > density_min)
+        # Find the first element that surpasses THRESHOLD when scanning from the right
+        index_from_right[i] = len(array) - np.argmax(array[::-1] > density_min) - 1
+
+    index_from_left = index_from_left.astype(int)
+    index_from_right = index_from_right.astype(int)
+    return index_from_left, index_from_right
+      
+      
 
  
 
