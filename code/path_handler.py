@@ -15,6 +15,10 @@ import os
 base = json.load(open('../paths.json'))
 
 
+def temporary_tau_coordiantes_folder(GCname:str, montecarlokey:str,potential_stream_orbit:str):
+    return base["temporary"] +"stream-1D-density/"+potential_stream_orbit+"/"+GCname+"/"+montecarlokey+"/"
+
+
 def tau_coordinates(GCname:str,montecarlokey:str):
     outpath="/scratch2/sferrone/intermediate-products/stream_density_profiles/" + GCname + "/"
     return outpath + GCname+"_time_profile_density_"+montecarlokey+".hdf5"

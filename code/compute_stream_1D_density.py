@@ -59,8 +59,6 @@ def obtain_tau(i, path_stream_orbit, hostorbit, t_stamps, period):
 ##############################################################
 ######################### COMPUTATIONS #######################
 ##############################################################
-
-
 def construct_2D_density_map(tau_array,time_stamps,tau_max):
     
     # Obtain The Base Parameters

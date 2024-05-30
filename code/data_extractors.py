@@ -13,7 +13,6 @@ import StreamOrbitCoords as SOC
 ##################################################
 ##################### ORBITS #####################
 ##################################################
-
 def get_orbit(path_orbit,mcarlokey):
     with h5py.File(path_orbit,'r') as fp:
         thost=fp[mcarlokey]['t'][:]
@@ -123,6 +122,7 @@ def extract_stream_from_path(index_stream_orbit,path_stream_orbit):
         vzp=stream['timestamps'][str(index_stream_orbit)][5,:]
     return xp,yp,zp,vxp,vyp,vzp
 
+
 def get_galactic_coordinates_of_stream(
     index_stream_orbit:int,\
     streamOrbit:h5py._hl.files.File,):
@@ -140,14 +140,6 @@ def get_galactic_coordinates_of_stream(
     return stream_galactic_coordinates
    
     
-#############################################
-################ FORCE FILES ################
-#############################################
-
-
-
-
-
 ############################################################
 ###################### FORCE ON ORBIT ######################
 ############################################################

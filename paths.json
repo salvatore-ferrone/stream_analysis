@@ -6,5 +6,6 @@
     "StreamOrbits": "/scratch2/sferrone/simulations/StreamOrbits/",
     "Streams": "/scratch2/sferrone/simulations/Streams/",
     "ParticleInitialConditions":"/scratch2/sferrone/simulations/ParticleInitialConditions/",
-    "intermediate-products":"/scratch2/sferrone/intermediate-products/"
+    "intermediate-products":"/scratch2/sferrone/intermediate-products/",
+    "temporary":"/poubelle/sferrone/"
 }
