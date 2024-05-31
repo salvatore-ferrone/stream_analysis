@@ -1,11 +1,80 @@
+"""
+The code is best understood in reverse order. Building blocks on the bottom!
+
+parametric_3D_parabola: is the equation for a parametric 3D parabola. It takes 9 fit parameters, 3 coefficients for each dimension, and the independent variable. It returns the x, y, and z values of the 3D parabola. 
+
+objective_parametric_3D_parabola: is the objective function for fitting a parametric 3D parabola. It takes the 9 fit parameters , the independent variable, and the dependent variables of the data. It returns the sum of squared differences between the calculated values of the parametric 3D parabola and the dependent variable values. This function is intended to be passed to scipy.optimize.minimize as the objective function.
+
+constrain_3D_parabola_initial_guess: is a function that constrains the initial guess by fitting the data to each dimension independently. It takes the independent variable and the dependent variable. It returns the constrained initial guess parameters.
+
+moving_stream_parametric_3D_parabola: 18 coefficients now. because we describe how each of the 9 coefficients change in time with a linear function! :) 
+
+
+    
+
+"""
 import numpy as np 
-import sys 
-codefilepath = "/obs/sferrone/gc-tidal-loss/forceOnOrbit/"
-sys.path.append(codefilepath)
 
 
 
+#####################################################
+################ USEFUL COMPUTATIONS ################
+#####################################################
+def velocity_moving_stream_parametric_3D_parabola(\
+    s:float,
+    t:float,
+    t_dependent_coefficients:np.ndarray,):
+    """
+    Compute the moving stream velocity using the given s, t, and t_dependent_coefficients.
+    
+    dv/dt = ∂v/∂t + ∂v/∂s * (ds/dt)
+    
+    ds/dt = 1 
+    
+    NOTE ds/dt = 1 by definition, since s is the stream coordinate measured in time. 
+        for instance, 1 unit of s is where the globular cluster will be in 1 unit of time from now. 
+            Therefore, the derivative of s with respect to time is always 1. 
+            if I choose s to be a spatial coordinate, then ds/dt would be the velocity of the globular cluster along the path.
+    
+    Parameters:
+    s : float. Intended to be the stream coordinate, distance from the COM measured in time. positive is ahead, negative is behind
+    t : float. Intended to be the time coordinate, the simulation time
+    t_dependent_coefficients : numpy.ndarray. The coefficients of the moving stream. How the shape and position of the stream changes in time. 
+            the first element in the array is the linear term, the second element is the constant term
+    
+    returns:
+    numpy.ndarray. The x, y, and z coordinates of a point along the moving stream
+    """
 
+
+    assert isinstance(t_dependent_coefficients, np.ndarray), "t_dependent_coefficients must be a numpy array"
+    assert t_dependent_coefficients.shape[0] == 9, "t_dependent_coefficients must have 9 elements"
+
+    assert t_dependent_coefficients.shape[1] == 2, "t_dependent_coefficients must be linear (2 dimensions per coefficient)"
+    
+    a0_m=t_dependent_coefficients[0,0]
+    a1_m=t_dependent_coefficients[1,0]
+    a2_m=t_dependent_coefficients[2,0]
+    b0_m=t_dependent_coefficients[3,0]
+    b1_m=t_dependent_coefficients[4,0]
+    b2_m=t_dependent_coefficients[5,0]
+    c0_m=t_dependent_coefficients[6,0]
+    c1_m=t_dependent_coefficients[7,0]
+    c2_m=t_dependent_coefficients[8,0]
+
+    dvxdt,dvxds = (a0_m+a1_m*s+a2_m*s**2) , (np.polyval(t_dependent_coefficients[1],t) + 2*s*np.polyval(t_dependent_coefficients[2],t))
+    dvydt,dvyds = (b0_m+b1_m*s+b2_m*s**2) , (np.polyval(t_dependent_coefficients[4],t) + 2*s*np.polyval(t_dependent_coefficients[5],t))
+    dvzdt,dvzds = (c0_m+c1_m*s+c2_m*s**2) , (np.polyval(t_dependent_coefficients[7],t) + 2*s*np.polyval(t_dependent_coefficients[8],t))
+    vx=dvxdt+dvxds
+    vy=dvydt+dvyds
+    vz=dvzdt+dvzds
+    
+    return np.array([vx,vy,vz])
+
+
+##################################################
+##### TIME DEPENDENT 3D PARABOLA. Change!! #######
+##################################################
 def objective_distance_perturber_and_moving_stream(
     fit_params:tuple,
     t_dependent_stream_coeffs:np.ndarray,
@@ -61,56 +130,43 @@ def objective_distance_perturber_and_moving_stream(
     return objective
 
 
-def velocity_moving_stream_parametric_3D_parabola(\
-    s:float,
-    t:float,
-    t_dependent_coefficients:np.ndarray,):
+
+def linearize_temporal_stream_coefficients_array(\
+    temporal_coefficients_array: np.ndarray, \
+    simulation_sampling_time_stamps: np.ndarray) -> np.ndarray:
     """
-    Compute the moving stream velocity using the given s, t, and t_dependent_coefficients.
-    
-    dv/dt = ∂v/∂t + ∂v/∂s * (ds/dt)
-    
-    ds/dt = 1 
-    
-    NOTE ds/dt = 1 by definition, since s is the stream coordinate measured in time. 
-        for instance, 1 unit of s is where the globular cluster will be in 1 unit of time from now. 
-            Therefore, the derivative of s with respect to time is always 1. 
-            if I choose s to be a spatial coordinate, then ds/dt would be the velocity of the globular cluster along the path.
+    Linearizes the temporal coefficients array.
+
+    This function takes a temporal coefficients array and returns its linearized version.
     
     Parameters:
-    s : float. Intended to be the stream coordinate, distance from the COM measured in time. positive is ahead, negative is behind
-    t : float. Intended to be the time coordinate, the simulation time
-    t_dependent_coefficients : numpy.ndarray. The coefficients of the moving stream. How the shape and position of the stream changes in time. 
-            the first element in the array is the linear term, the second element is the constant term
-    
-    returns:
-    numpy.ndarray. The x, y, and z coordinates of a point along the moving stream
+    - temporal_coefficients_array (np.ndarray): The input array containing temporal coefficients.
+    - simulation_sampling_time_stamps (np.ndarray): The array of time stamps corresponding to the simulation sampling.
+
+    Returns:
+    - np.ndarray: The linearized version of the temporal coefficients array.
+
+    Notes:
+    - The input array should have shape (n, m), where n is the number of samples and m is the number of coefficients.
+    - The output array will have shape (m, polynomial_degree+1), where polynomial_degree is the degree of the polynomial fit.
+
+    Coefficient Time Fit Params:
+    - coefficient_time_fit_params[0,:] = a0(t) = (m,b)
+    - coefficient_time_fit_params[1,:] = a1(t) = (m,b)
+    - coefficient_time_fit_params[2,:] = a2(t) = (m,b)
+    - coefficient_time_fit_params[3,:] = b0(t) = (m,b)
+    - coefficient_time_fit_params[4,:] = b1(t) = (m,b)
+    - coefficient_time_fit_params[5,:] = b2(t) = (m,b)
+    - coefficient_time_fit_params[6,:] = c0(t) = (m,b)
+    - coefficient_time_fit_params[7,:] = c1(t) = (m,b)
+    - coefficient_time_fit_params[8,:] = c2(t) = (m,b)
     """
+    polynomial_degree = 1
+    coefficient_time_fit_params = np.zeros((temporal_coefficients_array.shape[1], polynomial_degree + 1))
+    for i in range(temporal_coefficients_array.shape[1]):
+        coefficient_time_fit_params[i] = np.polyfit(simulation_sampling_time_stamps, temporal_coefficients_array[:, i], polynomial_degree)
+    return coefficient_time_fit_params
 
-
-    assert isinstance(t_dependent_coefficients, np.ndarray), "t_dependent_coefficients must be a numpy array"
-    assert t_dependent_coefficients.shape[0] == 9, "t_dependent_coefficients must have 9 elements"
-
-    assert t_dependent_coefficients.shape[1] == 2, "t_dependent_coefficients must be linear (2 dimensions per coefficient)"
-    
-    a0_m=t_dependent_coefficients[0,0]
-    a1_m=t_dependent_coefficients[1,0]
-    a2_m=t_dependent_coefficients[2,0]
-    b0_m=t_dependent_coefficients[3,0]
-    b1_m=t_dependent_coefficients[4,0]
-    b2_m=t_dependent_coefficients[5,0]
-    c0_m=t_dependent_coefficients[6,0]
-    c1_m=t_dependent_coefficients[7,0]
-    c2_m=t_dependent_coefficients[8,0]
-
-    dvxdt,dvxds = (a0_m+a1_m*s+a2_m*s**2) , (np.polyval(t_dependent_coefficients[1],t) + 2*s*np.polyval(t_dependent_coefficients[2],t))
-    dvydt,dvyds = (b0_m+b1_m*s+b2_m*s**2) , (np.polyval(t_dependent_coefficients[4],t) + 2*s*np.polyval(t_dependent_coefficients[5],t))
-    dvzdt,dvzds = (c0_m+c1_m*s+c2_m*s**2) , (np.polyval(t_dependent_coefficients[7],t) + 2*s*np.polyval(t_dependent_coefficients[8],t))
-    vx=dvxdt+dvxds
-    vy=dvydt+dvyds
-    vz=dvzdt+dvzds
-    
-    return np.array([vx,vy,vz])
 
 
 def moving_stream_parametric_3D_parabola(\
@@ -149,6 +205,9 @@ def moving_stream_parametric_3D_parabola(\
     return np.array([x,y,z])
     
 
+##################################################
+########## Time independent 3D parabola ##########
+##################################################
 def constrain_3D_parabola_initial_guess(\
     independent_variable:np.ndarray, \
     dependent_variable:np.ndarray):
@@ -185,7 +244,10 @@ def constrain_3D_parabola_initial_guess(\
     return initial_guess
     
 
-def objective_parametric_3D_parabola(fit_params, independent_variable, dependent_variable):
+def objective_parametric_3D_parabola(\
+    fit_params, \
+    independent_variable, \
+    dependent_variable):
     """
     Calculate the objective function value for fitting a parametric 3D parabola.
 
