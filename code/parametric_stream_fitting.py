@@ -10,7 +10,6 @@ constrain_3D_parabola_initial_guess: is a function that constrains the initial g
 moving_stream_parametric_3D_parabola: 18 coefficients now. because we describe how each of the 9 coefficients change in time with a linear function! :) 
 
 
-    
 
 """
 import numpy as np 
@@ -130,7 +129,6 @@ def objective_distance_perturber_and_moving_stream(
     return objective
 
 
-
 def linearize_temporal_stream_coefficients_array(\
     temporal_coefficients_array: np.ndarray, \
     simulation_sampling_time_stamps: np.ndarray) -> np.ndarray:
@@ -166,7 +164,6 @@ def linearize_temporal_stream_coefficients_array(\
     for i in range(temporal_coefficients_array.shape[1]):
         coefficient_time_fit_params[i] = np.polyfit(simulation_sampling_time_stamps, temporal_coefficients_array[:, i], polynomial_degree)
     return coefficient_time_fit_params
-
 
 
 def moving_stream_parametric_3D_parabola(\
@@ -210,7 +207,7 @@ def moving_stream_parametric_3D_parabola(\
 ##################################################
 def constrain_3D_parabola_initial_guess(\
     independent_variable:np.ndarray, \
-    dependent_variable:np.ndarray):
+    dependent_variables:np.ndarray):
     
     """
     Constrain the initial guess by fitting the data to each dimension independently.
@@ -220,7 +217,7 @@ def constrain_3D_parabola_initial_guess(\
     independent_variable : numpy.ndarray
         The independent variable data.
         
-    dependent_variable : numpy.ndarray
+    dependent_variables : numpy.ndarray
         The dependent variable data.
         
     Returns:
@@ -231,13 +228,13 @@ def constrain_3D_parabola_initial_guess(\
     
     assert isinstance(independent_variable, np.ndarray), "independent_variable must be a numpy array"
     assert len(independent_variable.shape) == 1, "independent_variable must be a one dimensional numpy array"
-    assert isinstance(dependent_variable, np.ndarray), "dependent_variable must be a numpy array"
-    assert len(dependent_variable.shape) == 2, "dependent_variable must be a two dimensional numpy array"
-    assert dependent_variable.shape[0] == 3, "dependent_variable must have 3 rows"
+    assert isinstance(dependent_variables, np.ndarray), "dependent_variables must be a numpy array"
+    assert len(dependent_variables.shape) == 2, "dependent_variables must be a two dimensional numpy array"
+    assert dependent_variables.shape[0] == 3, "dependent_variables must have 3 rows"
     
-    ax0,vx0,x0=np.polyfit(independent_variable,dependent_variable[0,:],2)
-    ay0,vy0,y0=np.polyfit(independent_variable,dependent_variable[1,:],2)
-    az0,vz0,z0=np.polyfit(independent_variable,dependent_variable[2,:],2)
+    ax0,vx0,x0=np.polyfit(independent_variable,dependent_variables[0,:],2)
+    ay0,vy0,y0=np.polyfit(independent_variable,dependent_variables[1,:],2)
+    az0,vz0,z0=np.polyfit(independent_variable,dependent_variables[2,:],2)
     
     initial_guess =[x0,vx0,ax0,y0,vy0,ay0,z0,vz0,az0]
     
@@ -247,7 +244,7 @@ def constrain_3D_parabola_initial_guess(\
 def objective_parametric_3D_parabola(\
     fit_params, \
     independent_variable, \
-    dependent_variable):
+    dependent_variables):
     """
     Calculate the objective function value for fitting a parametric 3D parabola.
 
@@ -257,7 +254,7 @@ def objective_parametric_3D_parabola(\
         The parameters of the parametric 3D parabola.
     independent_variable : array_like
         The independent variable values.
-    dependent_variable : array_like
+    dependent_variables : array_like
         The dependent variable values.
 
     Returns:
@@ -274,15 +271,15 @@ def objective_parametric_3D_parabola(\
     assert len(fit_params) == 9, "fit_params must have 9 elements"
     assert isinstance(independent_variable, np.ndarray), "independent_variable must be a numpy array"
     assert len(independent_variable.shape) == 1, "independent_variable must be a one dimensional numpy array"
-    assert isinstance(dependent_variable, np.ndarray), "dependent_variable must be a numpy array"
-    assert len(dependent_variable.shape) == 2, "dependent_variable must be a two dimensional numpy array"
-    assert dependent_variable.shape[0] == 3, "dependent_variable must have 3 rows"
-    assert dependent_variable.shape[1] == independent_variable.shape[0], "dependent_variable must have the same number of columns as independent_variable"
+    assert isinstance(dependent_variables, np.ndarray), "dependent_variables must be a numpy array"
+    assert len(dependent_variables.shape) == 2, "dependent_variables must be a two dimensional numpy array"
+    assert dependent_variables.shape[0] == 3, "dependent_variables must have 3 rows"
+    assert dependent_variables.shape[1] == independent_variable.shape[0], "dependent_variables must have the same number of columns as independent_variable"
     
     x, y, z = parametric_3D_parabola(fit_params, independent_variable)
-    dx = x - dependent_variable[0]
-    dy = y - dependent_variable[1]
-    dz = z - dependent_variable[2]
+    dx = x - dependent_variables[0]
+    dy = y - dependent_variables[1]
+    dz = z - dependent_variables[2]
     return np.sum(dx**2 + dy**2 + dz**2)
 
 
