@@ -13,8 +13,8 @@ and the time until the globular cluster will be at the latter position
 
 
 import numpy as np 
-import astropy.units as u
-from galpy import potential
+import astropy.units as u # type: ignore
+from galpy import potential # type: ignore
 
 
 

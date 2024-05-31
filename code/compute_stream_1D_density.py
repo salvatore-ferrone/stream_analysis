@@ -1,12 +1,8 @@
 import numpy as np 
 import sys 
-import os
-import datetime
-from astropy import units as u # type: ignore
+
 import StreamOrbitCoords as SOC
 import data_extractors as DE
-import data_writing as DW # type: ignore
-import path_handler as PH
 import filters 
 
 
