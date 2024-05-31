@@ -26,25 +26,6 @@ def orbit_by_fixed_time(t,orbit,current_index,filter_time):
 ######################## ######################## ######
 ######################## STREAM ########################
 #################### ######################## ##########
-def stream_impacted_side(
-    x_stream_tail_coordinates: np.ndarray, \
-    x_perturber_tail_coordinates: float) -> np.ndarray:
-    """
-    Filter the impacted stream side based on the coordinates of the stream tail and perturber tail.
-
-    Parameters:
-        x_stream_tail_coordinates (np.ndarray): The coordinates of the stream tail.
-        x_perturber_tail_coordinates (float): The coordinates of the perturber tail.
-
-    Returns:
-        np.ndarray: An array indicating the impacted side of the stream.
-
-    """
-    if x_perturber_tail_coordinates > 0:
-        impacted_side = x_stream_tail_coordinates > 0
-    else:
-        impacted_side = x_stream_tail_coordinates < 0
-    return impacted_side
 
 
 def stream_impose_limits_in_tail_coordinates(

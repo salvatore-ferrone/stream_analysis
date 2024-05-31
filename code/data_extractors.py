@@ -28,15 +28,15 @@ def coordinate_impact_indicies_from_force_file(
     # extract the impact time from the force file
     impact_time   =   extract_impact_time_from_force_file(force_file,perturber_name=perturberName)
     # get the time index for the base simulation
-    index_simulation_time_of_impact=int(np.argmin(np.abs(perturberOrbit[monte_carlo_key]['t'][:]-impact_time.to(unitT).value)))
+    index_simulation_time_of_impact=int(\
+        np.argmin(np.abs(perturberOrbit[monte_carlo_key]['t'][:]-impact_time)))
     # find the time index for the stream orbit. 
-    index_stream_orbit_time_of_impact=np.argmin(np.abs(stream_orbit_time_stamps-impact_time.to(unitT)))
+    index_stream_orbit_time_of_impact=np.argmin(np.abs(stream_orbit_time_stamps.value-impact_time))
     return index_simulation_time_of_impact, index_stream_orbit_time_of_impact
 
 
-def convert_instant_to_tail_coordinates(stream_galactic_coordinates: np.ndarray,
-                                       host_orbit_galactic_coordinates: np.ndarray,
-                                       perturber_galactic_coordinates: np.ndarray,
+def convert_instant_to_tail_coordinates(galactic_coordinates: tuple,
+                                       orbit_galactic_coordinates: tuple,
                                        time_of_interest: float) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     Converts the stream and perturber galactic coordinates to tail coordinates at a given impact time.
@@ -55,22 +55,19 @@ def convert_instant_to_tail_coordinates(stream_galactic_coordinates: np.ndarray,
         the time coordinate is the time ahead of the host globular cluster. 
     """
 
+    TORB = orbit_galactic_coordinates[0]
     # put stream in tail coordinates
     xpT,ypT,zpT,vxT,vyT,vzT,indexes_pT  =   SOC.transform_from_galactico_centric_to_tail_coordinates(
-                                                *stream_galactic_coordinates,
-                                                *host_orbit_galactic_coordinates,
+                                                *galactic_coordinates,
+                                                *orbit_galactic_coordinates,
                                                 t0=time_of_interest)
     # get the perturber in tail coordinates
-    x_perT,y_perT,z_perT,vx_perT,vy_perT,vz_perT,indexes_perT=SOC.transform_from_galactico_centric_to_tail_coordinates(\
-                                                                *perturber_galactic_coordinates,
-                                                                *host_orbit_galactic_coordinates,
-                                                                t0=time_of_interest)    
-    stream_tail_coordinates             =   np.array([xpT,ypT,zpT,vxT,vyT,vzT])
-    stream_time_coordinate              =   host_orbit_galactic_coordinates[0,indexes_pT] - time_of_interest
-    perturber_tail_coordinates          =   np.array([x_perT,y_perT,z_perT,vx_perT,vy_perT,vz_perT])
-    perturber_time_coordinate           =   host_orbit_galactic_coordinates[0,indexes_perT]
+    tail_coordinates             =   np.array([xpT,ypT,zpT,vxT,vyT,vzT])
+    time_coordinate              =   TORB[indexes_pT] - time_of_interest
+
+
     
-    return stream_time_coordinate,stream_tail_coordinates,perturber_time_coordinate,perturber_tail_coordinates
+    return time_coordinate,tail_coordinates
   
   
   
@@ -91,46 +88,6 @@ def get_orbit(path_orbit,mcarlokey):
 
 
 
-    
-
-def get_galactic_coordinates_of_host_orbit_and_perturber(
-    index_simulation,\
-    pal5Orbit,\
-    perturberOrbit,\
-    monte_carlo_key):
-    """
-    Get the stream line from a stream file.
-    Parameters:
-    - pathStreamFile (str): The path to the stream file.
-
-    Returns:
-    - streamLine (numpy.ndarray): The stream line.
-    """
-    # hard coded parameters
-    nDynTimes=3
-    unitT=u.kpc/(u.km/u.s)
-
-    # extract the orbit os the host 
-    tP5,xtP5,ytP5,ztP5=pal5Orbit[monte_carlo_key]['t'][:],pal5Orbit[monte_carlo_key]['xt'][:],pal5Orbit[monte_carlo_key]['yt'][:],pal5Orbit[monte_carlo_key]['zt'][:]
-    vxtP5,vytP5,vztP5= pal5Orbit[monte_carlo_key]['vxt'][:],pal5Orbit[monte_carlo_key]['vyt'][:],pal5Orbit[monte_carlo_key]['vzt'][:]
-    # grab the time of impact as reported here
-    impactTime=tP5[index_simulation]*unitT
-    # take only a snippit of the orbit
-    TORB, XORB, YORB, ZORB, VXORB, VYORB, VZORB=filter_orbit_by_dynamical_time(\
-        tP5,xtP5,ytP5,ztP5,vxtP5,vytP5,vztP5,time_of_interest=impactTime.to(unitT).value,nDynTimes=nDynTimes)
-    # extract the position of the perturber at this time stamp
-    xGC=np.array([perturberOrbit[monte_carlo_key]["xt"][index_simulation]])
-    yGC=np.array([perturberOrbit[monte_carlo_key]["yt"][index_simulation]])
-    zGC=np.array([perturberOrbit[monte_carlo_key]["zt"][index_simulation]])
-    vxGC=np.array([perturberOrbit[monte_carlo_key]["vxt"][index_simulation]])
-    vyGC=np.array([perturberOrbit[monte_carlo_key]["vyt"][index_simulation]])
-    vzGC=np.array([perturberOrbit[monte_carlo_key]["vzt"][index_simulation]])
-    
-    host_orbit_galactic_coordinates = np.array([TORB,XORB,YORB,ZORB,VXORB,VYORB,VZORB])
-    perturber_galactic_coordinates = np.array([xGC,yGC,zGC,vxGC,vyGC,vzGC])
-    
-    return host_orbit_galactic_coordinates, perturber_galactic_coordinates
-    
 
 ##################################################
 ################## STREAM ORBIT ##################
@@ -188,9 +145,7 @@ def get_galactic_coordinates_of_stream(
 ############################################################
 def extract_impact_time_from_force_file(
     force_file:h5py._hl.files.File,
-    perturber_name:str,
-    unitT=u.kpc/(u.km/u.s),
-    baseUnitT=u.Myr):
+    perturber_name:str):
     """
     Calculates the impact time from a force file.
 
@@ -204,16 +159,16 @@ def extract_impact_time_from_force_file(
     
     Xs, _, magA = extract_acceleration_arrays_from_force_file(force_file, perturber_name)
     timeDex, shiftDex = np.unravel_index(np.argmax(magA), magA.shape)
-    impactTime = Xs[timeDex, shiftDex] * baseUnitT
-    impactTime = impactTime.to(unitT)
+    impactTime = Xs[timeDex, shiftDex]
+    impactTime = impactTime
+
     # convert to unitT
     return impactTime
 
 
 def extract_acceleration_arrays_from_force_file(
     force_file:h5py._hl.files.File, 
-    perturber:str,
-    outTimeUnit:u.Unit=u.Myr):
+    perturber:str):
     """
     Get the acceleration arrays from a force file for a specific perturber. T
 
@@ -235,10 +190,10 @@ def extract_acceleration_arrays_from_force_file(
     # get index of perturber in the 3D force array
     i=np.where(perturbers==perturber)[0][0]
     # make the time axes
-    dts=force_file['tTarg'][force_file['comTimeIndexes'][0]+force_file["samplingIndexes"][:]] - force_file['tTarg'][force_file['comTimeIndexes'][0]]
-    xs=force_file["tSampling"][:]
-    ys=dts
-    Xs,Ys=np.meshgrid(xs,ys)
+    dts     =   force_file['tTarg'][force_file['comTimeIndexes'][0]+force_file["samplingIndexes"][:]] - force_file['tTarg'][force_file['comTimeIndexes'][0]]
+    xs      =   force_file["tSampling"][:]
+    ys      =   dts
+    Xs,Ys   =   np.meshgrid(xs,ys)
     # get the accelerations
     magA=np.sqrt(force_file["AXs"][:,i,:]**2 + force_file["AYs"][:,i,:]**2 + force_file["AZs"][:,i,:]**2)
     Xs,Ys=Xs.T,Ys.T
@@ -350,10 +305,57 @@ def filter_orbit_by_dynamical_time(\
     VYORB   = VYORB[cond]
     VZORB   = VZORB[cond]
     TORB    = tORB[cond]
-
+    
     return TORB, XORB, YORB, ZORB, VXORB, VYORB, VZORB
 
+    
+####################################    
+############## STREAM ##############
+####################################
+def filter_impacted_stream_side(
+    x_stream_tail_coordinates: np.ndarray, \
+    x_perturber_tail_coordinates: float) -> np.ndarray:
+    """
+    Filter the impacted stream side based on the coordinates of the stream tail and perturber tail.
 
+    Parameters:
+        x_stream_tail_coordinates (np.ndarray): The coordinates of the stream tail.
+        x_perturber_tail_coordinates (float): The coordinates of the perturber tail.
+
+    Returns:
+        np.ndarray: An array indicating the impacted side of the stream.
+
+    """
+    if x_perturber_tail_coordinates > 0:
+        impacted_side = x_stream_tail_coordinates > 0
+    else:
+        impacted_side = x_stream_tail_coordinates < 0
+    return impacted_side
+
+
+def filter_stream_in_tail_coordinates(
+    stream_tail_coordinates: np.ndarray,
+    xlim: float,
+    ylim: float,
+    zlim: float) -> np.ndarray:
+    """
+    Filters the stream tail coordinates based on the given limits.
+
+    Parameters:
+        stream_tail_coordinates (np.ndarray): The stream tail coordinates to filter.
+        xlim (float): The limit for the x-coordinate.
+        ylim (float): The limit for the y-coordinate.
+        zlim (float): The limit for the z-coordinate.
+
+    Returns:
+        np.ndarray: A boolean array indicating which coordinates pass the filter.
+
+    """
+    cond0 = np.abs(stream_tail_coordinates[0, :]) < xlim
+    cond1 = np.abs(stream_tail_coordinates[1, :]) < ylim
+    cond2 = np.abs(stream_tail_coordinates[2, :]) < zlim
+    cond = cond0 & cond1 & cond2
+    return cond
 
 ####################################
 ###### TO BE MOVED OR DELETED ######
@@ -429,7 +431,6 @@ def get_velocity_change_impact(
     finalCoords[0,:],finalCoords[1,:],finalCoords[2,:]=-yprime01,xprime01,zprime01
     finalCoords[3,:],finalCoords[4,:],finalCoords[5,:]=-vyprime01,vxprime01,vzprime01
     return initCoords,finalCoords
-
 
 
 
