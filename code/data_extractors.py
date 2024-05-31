@@ -95,7 +95,7 @@ def coordinate_impact_indicies_from_force_file(
 ##################################################
 def extract_time_steps_from_stream_orbit(
     streamOrbit:h5py._hl.files.File,
-    unitT=(u.kpc/(u.km/u.s))):
+    outunitT:u.core.CompositeUnit=u.kpc/(u.km/u.s)):
     """
     Extracts the time steps from a stream orbit file.
 
@@ -106,9 +106,10 @@ def extract_time_steps_from_stream_orbit(
     - tStamps (numpy.ndarray): An array of time steps in integration units.
     """
     tStamps=[int(x) for x in streamOrbit["timestamps"]]
+    unitT=u.Unit(streamOrbit.attrs['unitT'])
     tStamps=np.array(tStamps)
     tStamps=(np.sort(tStamps)*streamOrbit.attrs["dt"]*streamOrbit.attrs["writeStreamNSkip"] + streamOrbit.attrs["initialtime"])*u.Unit(streamOrbit.attrs['unitT'])
-    tStamps=tStamps.to(unitT)
+    tStamps=tStamps.to(outunitT)
     return tStamps
 
 

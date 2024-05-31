@@ -13,9 +13,6 @@ moving_stream_parametric_3D_parabola: 18 coefficients now. because we describe h
 
 """
 import numpy as np 
-
-
-
 #####################################################
 ################ USEFUL COMPUTATIONS ################
 #####################################################
