@@ -1,14 +1,79 @@
 import numpy as np
 import h5py
-import astropy.units as u
+import astropy.units as u # type: ignore
 import sys 
 codefilepath = "/obs/sferrone/gc-tidal-loss/code/"
 sys.path.append(codefilepath)
 import StreamOrbitCoords as SOC
+import filters
 
 
 
 
+
+###################################################
+#################### COMPOSITE ####################
+###################################################
+def coordinate_impact_indicies_from_force_file(
+    force_file:h5py._hl.files.File,
+    streamOrbit:h5py._hl.files.File,
+    perturberOrbit:h5py._hl.files.File,
+    monte_carlo_key:str,
+    perturberName:str,
+    unitT:u.core.CompositeUnit=u.kpc/(u.km/u.s)):
+
+
+    # extract the time stamps that were saved from the stream orbit
+    stream_orbit_time_stamps = extract_time_steps_from_stream_orbit(streamOrbit)
+    # extract the impact time from the force file
+    impact_time   =   extract_impact_time_from_force_file(force_file,perturber_name=perturberName)
+    # get the time index for the base simulation
+    index_simulation_time_of_impact=int(np.argmin(np.abs(perturberOrbit[monte_carlo_key]['t'][:]-impact_time.to(unitT).value)))
+    # find the time index for the stream orbit. 
+    index_stream_orbit_time_of_impact=np.argmin(np.abs(stream_orbit_time_stamps-impact_time.to(unitT)))
+    return index_simulation_time_of_impact, index_stream_orbit_time_of_impact
+
+
+def convert_instant_to_tail_coordinates(stream_galactic_coordinates: np.ndarray,
+                                       host_orbit_galactic_coordinates: np.ndarray,
+                                       perturber_galactic_coordinates: np.ndarray,
+                                       time_of_interest: float) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Converts the stream and perturber galactic coordinates to tail coordinates at a given impact time.
+
+    Parameters:
+        stream_galactic_coordinates (np.ndarray): Array of stream galactic coordinates.
+        host_orbit_galactic_coordinates (np.ndarray): Array of host orbit galactic coordinates.
+        perturber_galactic_coordinates (np.ndarray): Array of perturber galactic coordinates.
+        impact_time (float): Time of impact.
+
+    Returns:
+        tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]: A tuple containing the stream time coordinate,
+        stream tail coordinates, perturber time coordinate, and perturber tail coordinates.
+        stream_time_coordinate is the time coordinate of the stream in tail coordinates, i.e. relative to the globular cluster.
+        
+        the time coordinate is the time ahead of the host globular cluster. 
+    """
+
+    # put stream in tail coordinates
+    xpT,ypT,zpT,vxT,vyT,vzT,indexes_pT  =   SOC.transform_from_galactico_centric_to_tail_coordinates(
+                                                *stream_galactic_coordinates,
+                                                *host_orbit_galactic_coordinates,
+                                                t0=time_of_interest)
+    # get the perturber in tail coordinates
+    x_perT,y_perT,z_perT,vx_perT,vy_perT,vz_perT,indexes_perT=SOC.transform_from_galactico_centric_to_tail_coordinates(\
+                                                                *perturber_galactic_coordinates,
+                                                                *host_orbit_galactic_coordinates,
+                                                                t0=time_of_interest)    
+    stream_tail_coordinates             =   np.array([xpT,ypT,zpT,vxT,vyT,vzT])
+    stream_time_coordinate              =   host_orbit_galactic_coordinates[0,indexes_pT] - time_of_interest
+    perturber_tail_coordinates          =   np.array([x_perT,y_perT,z_perT,vx_perT,vy_perT,vz_perT])
+    perturber_time_coordinate           =   host_orbit_galactic_coordinates[0,indexes_perT]
+    
+    return stream_time_coordinate,stream_tail_coordinates,perturber_time_coordinate,perturber_tail_coordinates
+  
+  
+  
 
 ##################################################
 ##################### ORBITS #####################
@@ -25,6 +90,8 @@ def get_orbit(path_orbit,mcarlokey):
     return thost,xhost,yhost,zhost,vxhost,vyhost,vzhost
 
 
+
+    
 
 def get_galactic_coordinates_of_host_orbit_and_perturber(
     index_simulation,\
@@ -49,7 +116,7 @@ def get_galactic_coordinates_of_host_orbit_and_perturber(
     # grab the time of impact as reported here
     impactTime=tP5[index_simulation]*unitT
     # take only a snippit of the orbit
-    TORB, XORB, YORB, ZORB, VXORB, VYORB, VZORB=SOC.filter_orbit_by_dynamical_time(\
+    TORB, XORB, YORB, ZORB, VXORB, VYORB, VZORB=filter_orbit_by_dynamical_time(\
         tP5,xtP5,ytP5,ztP5,vxtP5,vytP5,vztP5,time_of_interest=impactTime.to(unitT).value,nDynTimes=nDynTimes)
     # extract the position of the perturber at this time stamp
     xGC=np.array([perturberOrbit[monte_carlo_key]["xt"][index_simulation]])
@@ -65,31 +132,6 @@ def get_galactic_coordinates_of_host_orbit_and_perturber(
     return host_orbit_galactic_coordinates, perturber_galactic_coordinates
     
 
-###################################################
-#################### COMPOSITE ####################
-###################################################
-def coordinate_impact_indicies_from_force_file(
-    force_file:h5py._hl.files.File,
-    streamOrbit:h5py._hl.files.File,
-    perturberOrbit:h5py._hl.files.File,
-    monte_carlo_key:str,
-    perturberName:str,
-    unitT:u.core.CompositeUnit=u.kpc/(u.km/u.s)):
-
-
-    # extract the time stamps that were saved from the stream orbit
-    stream_orbit_time_stamps = extract_time_steps_from_stream_orbit(streamOrbit)
-    # extract the impact time from the force file
-    impact_time   =   extract_impact_time_from_force_file(force_file,perturber_name=perturberName)
-    # get the time index for the base simulation
-    index_simulation_time_of_impact=int(np.argmin(np.abs(perturberOrbit[monte_carlo_key]['t'][:]-impact_time.to(unitT).value)))
-    # find the time index for the stream orbit. 
-    index_stream_orbit_time_of_impact=np.argmin(np.abs(stream_orbit_time_stamps-impact_time.to(unitT)))
-    return index_simulation_time_of_impact, index_stream_orbit_time_of_impact
-
-  
-  
-  
 ##################################################
 ################## STREAM ORBIT ##################
 ##################################################
@@ -203,6 +245,116 @@ def extract_acceleration_arrays_from_force_file(
     return Xs,Ys,magA
 
 
+
+
+
+
+
+
+
+
+
+########################################################
+########################################################
+
+######################## HELPERS ######################
+
+########################################################
+########################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+######################## ######################## #####
+######################## ORBIT ########################
+#################### ######################## #########
+def filter_orbit_by_fixed_time(t,orbit,current_index,filter_time):
+    xt,yt,zt,vxt,vyt,vzt=orbit
+    down_time = t[current_index] - filter_time
+    down_dex = np.argmin(np.abs(t-down_time))
+    up_time = t[current_index] + filter_time
+    up_dex = np.argmin(np.abs(t-up_time))
+    tOrb=t[down_dex:up_dex]
+    xOrb=xt[down_dex:up_dex]
+    yOrb=yt[down_dex:up_dex]
+    zOrb=zt[down_dex:up_dex]
+    vxOrb=vxt[down_dex:up_dex]
+    vyOrb=vyt[down_dex:up_dex]
+    vzOrb=vzt[down_dex:up_dex]
+
+    return tOrb,xOrb,yOrb,zOrb,vxOrb,vyOrb,vzOrb
+
+
+def filter_orbit_by_dynamical_time(\
+    tORB:np.ndarray, \
+    orbit:tuple,\
+    time_of_interest:float,\
+    n_dynamic_time:float=2) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray,
+                                                                    np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Filters the orbit coordinates based on the dynamical time about a time of interest.
+    This is useful since I am doing a naive computation of finding the nearest point of each particle to the orbit.
+
+    Args:
+        tORB (np.ndarray): Array of time values.
+        xtORB (np.ndarray): Array of x-coordinate values.
+        ytORB (np.ndarray): Array of y-coordinate values.
+        ztORB (np.ndarray): Array of z-coordinate values.
+        vxtORB (np.ndarray): Array of x-velocity values.
+        vytORB (np.ndarray): Array of y-velocity values.
+        vztORB (np.ndarray): Array of z-velocity values.
+        currenttime (float): Current time value.
+        nDynTimes (int): Number of dynamical times.
+
+    Returns:
+        Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]: A tuple containing
+        the filtered orbit coordinates: TORB, XORB, YORB, ZORB, VXORB, VYORB, VZORB.
+    """
+    XORB, YORB, ZORB, VXORB, VYORB, VZORB = orbit
+    assert ( n_dynamic_time > 0), "nDynTimes must be greater than 0"
+    assert ( n_dynamic_time < 5), "nDynTimes must be less than 5"
+    assert( time_of_interest > np.min(tORB)), "time_of_interest must be greater than the minimum time in tORB"
+    assert( time_of_interest < np.max(tORB)), "time_of_interest must be less than the maximum time in tORB"
+    
+    rORB = np.sqrt(XORB ** 2 + YORB ** 2 + ZORB ** 2)
+    vORB = np.sqrt(VXORB ** 2 + VYORB ** 2 + VZORB ** 2)
+
+    todayindex  = np.argmin(np.abs(tORB - time_of_interest))
+    ttoday      = tORB[todayindex]
+
+    Tdyn_all    = rORB / vORB
+    Tdyn        = np.mean(Tdyn_all)
+
+    cond1   = (tORB - ttoday) < (n_dynamic_time * Tdyn)
+    cond2   = (tORB - ttoday) > (-n_dynamic_time * Tdyn)
+    cond    = cond1 * cond2
+
+    XORB    = XORB[cond]
+    YORB    = YORB[cond]
+    ZORB    = ZORB[cond]
+    VXORB   = VXORB[cond]
+    VYORB   = VYORB[cond]
+    VZORB   = VZORB[cond]
+    TORB    = tORB[cond]
+
+    return TORB, XORB, YORB, ZORB, VXORB, VYORB, VZORB
+
+
+
 ####################################
 ###### TO BE MOVED OR DELETED ######
 ####################################
@@ -277,3 +429,7 @@ def get_velocity_change_impact(
     finalCoords[0,:],finalCoords[1,:],finalCoords[2,:]=-yprime01,xprime01,zprime01
     finalCoords[3,:],finalCoords[4,:],finalCoords[5,:]=-vyprime01,vxprime01,vzprime01
     return initCoords,finalCoords
+
+
+
+

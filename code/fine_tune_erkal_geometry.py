@@ -80,6 +80,7 @@ def get_full_impact_geometry_from_parametrization(
     alpha=get_imact_alpha_from_b_vector(b_vec_tail_basis)
     return impact_parameter,w_par,w_per,alpha,rs,vs,rp,b_vec_galactic,b_vec_tail_basis
    
+   
 ######################################################################
 ########### Obtaining individual Erkal geometry Parameters ###########
 ######################################################################
@@ -99,6 +100,7 @@ def get_imact_alpha_from_b_vector(b_vec_tail_basis:np.ndarray):
         Warning(war_string)
     return alpha3
 
+
 def get_impact_vector_in_tail_basis(b_vec_galactic:np.ndarray,
                      r_unit:np.ndarray,
                      v_unit:np.ndarray,
@@ -108,6 +110,7 @@ def get_impact_vector_in_tail_basis(b_vec_galactic:np.ndarray,
                       np.dot(b_vec_galactic,v_unit),
                       np.dot(b_vec_galactic,Lz_unit)])
     return b_vec_tail_basis
+
 
 def get_parallel_and_perpendicular_velocity_components(
     s:float,
@@ -143,6 +146,7 @@ def get_perturber_position(t:float,trajectory_coeffs: np.ndarray):
     rp=np.array([xp,yp,zp])
     return rp
 
+
 def get_perturber_velocity(t:float,trajectory_coeffs: np.ndarray):
     """
     Assumes that we have a second degree polynomial in time for the trajectory.
@@ -157,6 +161,7 @@ def get_perturber_velocity(t:float,trajectory_coeffs: np.ndarray):
     vzp=2*trajectory_coeffs[2,0]*t + trajectory_coeffs[2,1]
     vp=np.array([vxp,vyp,vzp])
     return vp
+
 
 def get_tail_basis_vectors(rs:np.ndarray,vs:np.ndarray):
     """
@@ -184,72 +189,3 @@ def get_tail_basis_vectors(rs:np.ndarray,vs:np.ndarray):
     Lz_unit = np.cross(r_unit, v_unit) / np.linalg.norm(np.cross(r_unit, v_unit))
     return r_unit, v_unit, Lz_unit
 
-##############################################################
-######### Data filtering and organizing functions. ###########
-##############################################################
-def filter_stream_about_suspected_impact_time(stream_tail_coordinates:np.ndarray,
-                                perturber_tail_coordinates:np.ndarray,
-                                xmin:float=0.5,
-                                xlim:float=15,
-                                ylim:float=0.5,
-                                zlim:float=0.5) -> np.ndarray:
-    """
-    Filters the stream to only include the one of the two tails. Pick the side the the GC is on. 
-        Also, filter to only include a given range of the stream based on the xlim,ylim,zlim
-        additionally, xmin above zero clips the stars that are still bound to the globular cluster
-
-    Parameters:
-    - stream_tail_coordinates (np.ndarray): The coordinates of the stream tail.
-    - perturber_tail_coordinates (np.ndarray): The coordinates of the perturber tail.
-    - xmin (float, optional): The minimum x-coordinate value. Defaults to 0.5. Intended to remove the globular cluster, only taking the stream.
-    - xlim (float, optional): The maximum x-coordinate value. Defaults to 15.
-    - ylim (float, optional): The maximum y-coordinate value. Defaults to 0.5.
-    - zlim (float, optional): The maximum z-coordinate value. Defaults to 0.5.
-
-    Returns:
-    - my_filter (np.ndarray): A boolean array indicating which elements of the stream should be included.
-
-    """
-    filter1 = DE.filter_impacted_stream_side(stream_tail_coordinates[0], perturber_tail_coordinates[0,0])
-    filter2 = DE.filter_stream_in_tail_coordinates(stream_tail_coordinates, xlim, ylim, zlim)
-    filter3 = np.abs(stream_tail_coordinates[0]) > xmin
-    my_filter = filter1 & filter2 & filter3
-    return my_filter
-
-def convert_instant_to_tail_coordinates(stream_galactic_coordinates: np.ndarray,
-                                       host_orbit_galactic_coordinates: np.ndarray,
-                                       perturber_galactic_coordinates: np.ndarray,
-                                       time_of_interest: float) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    """
-    Converts the stream and perturber galactic coordinates to tail coordinates at a given impact time.
-
-    Parameters:
-        stream_galactic_coordinates (np.ndarray): Array of stream galactic coordinates.
-        host_orbit_galactic_coordinates (np.ndarray): Array of host orbit galactic coordinates.
-        perturber_galactic_coordinates (np.ndarray): Array of perturber galactic coordinates.
-        impact_time (float): Time of impact.
-
-    Returns:
-        tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]: A tuple containing the stream time coordinate,
-        stream tail coordinates, perturber time coordinate, and perturber tail coordinates.
-        stream_time_coordinate is the time coordinate of the stream in tail coordinates, i.e. relative to the globular cluster.
-        
-        the time coordinate is the time ahead of the host globular cluster. 
-    """
-
-    # put stream in tail coordinates
-    xpT,ypT,zpT,vxT,vyT,vzT,indexes_pT  =   SOC.transform_from_galactico_centric_to_tail_coordinates(
-                                                *stream_galactic_coordinates,
-                                                *host_orbit_galactic_coordinates,
-                                                t0=time_of_interest)
-    # get the perturber in tail coordinates
-    x_perT,y_perT,z_perT,vx_perT,vy_perT,vz_perT,indexes_perT=SOC.transform_from_galactico_centric_to_tail_coordinates(\
-                                                                *perturber_galactic_coordinates,
-                                                                *host_orbit_galactic_coordinates,
-                                                                t0=time_of_interest)    
-    stream_tail_coordinates             =   np.array([xpT,ypT,zpT,vxT,vyT,vzT])
-    stream_time_coordinate              =   host_orbit_galactic_coordinates[0,indexes_pT] - time_of_interest
-    perturber_tail_coordinates          =   np.array([x_perT,y_perT,z_perT,vx_perT,vy_perT,vz_perT])
-    perturber_time_coordinate           =   host_orbit_galactic_coordinates[0,indexes_perT]
-    
-    return stream_time_coordinate,stream_tail_coordinates,perturber_time_coordinate,perturber_tail_coordinates

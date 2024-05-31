@@ -25,8 +25,9 @@ def tau_coordinates(GCname:str,montecarlokey:str,potential_stream_orbit:str):
     os.makedirs(path,exist_ok=True)
     return path+name
 
-def force_on_orbit(GCname:str,montecarlokey:str,orbit_potential_name:str):
-    path = base['ForceOnOrbit'] + orbit_potential_name +"/"+ GCname + "/"
+def force_on_orbit(GCname:str,montecarlokey:str,potential:str):
+    """ The potential is for what the orbit was integrated in, not the particles """
+    path = base['ForceOnOrbit'] + potential +"/"+ GCname + "/"
     name = GCname+"-"+montecarlokey+"-suspects-FORCEONORBIT.hdf5"
     os.makedirs(path,exist_ok=True)
     return path+name
