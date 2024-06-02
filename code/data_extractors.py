@@ -5,7 +5,7 @@ import sys
 codefilepath = "/obs/sferrone/gc-tidal-loss/code/"
 sys.path.append(codefilepath)
 import StreamOrbitCoords as SOC
-import filters
+
 
 
 
@@ -196,7 +196,7 @@ def extract_acceleration_arrays_from_force_file(
     Xs,Ys   =   np.meshgrid(xs,ys)
     # get the accelerations
     magA=np.sqrt(force_file["AXs"][:,i,:]**2 + force_file["AYs"][:,i,:]**2 + force_file["AZs"][:,i,:]**2)
-    Xs,Ys=Xs.T,Ys.T
+    Xs,Ys=Xs,Ys
     return Xs,Ys,magA
 
 

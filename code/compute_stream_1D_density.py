@@ -1,9 +1,9 @@
-import numpy as np 
-import sys 
+import numpy as np
+import sys
 
 import StreamOrbitCoords as SOC
 import data_extractors as DE
-import filters 
+import filters
 
 
 
@@ -48,8 +48,6 @@ def obtain_tau(i, path_stream_orbit, hostorbit, t_stamps, period):
     # calculate time difference from ahead/behind
     tau = tOrb[indexes] - t_stamps[i].value
     return tau
-    
-
 
 
 ##############################################################
@@ -76,14 +74,14 @@ def construct_2D_density_map(tau_array,time_stamps,tau_max):
 
     return X_tstamps,Y_tau,density_array 
 
-      
+
 def build_2D_histogram(tau_array, Nstamps, NBINS, bins):
     density_array = np.zeros((Nstamps, NBINS))
     for i in range(Nstamps):
         counts, _ = np.histogram(tau_array[i], bins=bins)
         density_array[i,:] = counts
     return density_array
-    
+
 
 def fourier_strongest_period(t,xt,yt,zt):
     r = np.sqrt(xt**2 + yt**2 + zt**2)
@@ -138,8 +136,8 @@ def get_envelop_indexes(density_array, density_min):
     index_from_left = index_from_left.astype(int)
     index_from_right = index_from_right.astype(int)
     return index_from_left, index_from_right
-      
-     
+
+
 def tau_envelopes(tau, index_from_left, index_from_right):
     """
     we want \tau(t), tau as a function of time...
@@ -147,8 +145,6 @@ def tau_envelopes(tau, index_from_left, index_from_right):
     tau_left = [tau[xx] for xx in index_from_left]
     tau_right = [tau[xx] for xx in index_from_right]
     return np.array(tau_left), np.array(tau_right)
-    
 
 
- 
 
