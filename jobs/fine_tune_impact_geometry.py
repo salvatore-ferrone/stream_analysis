@@ -347,11 +347,11 @@ def open_input_data_files(pathStreamOrbit, pathPerturOrbit, pathPal5Orbit, pathF
 ######################################################
 def get_temporal_coefficients_array_of_parametric_3D_stream(\
     mcarlo,
-    perturberName,
     streamOrbit,
     perturberOrbit,
     pal5Orbit,
-    forceFile,
+    index_simulation_time_of_impact,
+    index_stream_orbit_time_of_impact
 ):
     """
     VERY HIGH LEVEL
@@ -369,19 +369,13 @@ def get_temporal_coefficients_array_of_parametric_3D_stream(\
     ################ INPUTS #################
     ##########################################
 
-    #### TO BE CHANGED 
-    index_simulation_time_of_impact, index_stream_orbit_time_of_impact = \
-        DE.coordinate_impact_indicies_from_force_file(
-            forceFile, streamOrbit, perturberOrbit,monte_carlo_key=mcarlo,perturberName=perturberName)
-        
-    simulation_impact_time = pal5Orbit[mcarlo]['t'][index_simulation_time_of_impact]
+    # get the stream orbit time stamps, will need these again
+    stream_orbit_time_stamps=DE.extract_time_steps_from_stream_orbit(streamOrbit)
+    stream_galactic_coordinates = DE.get_galactic_coordinates_of_stream(\
+        index_stream_orbit_time_of_impact,streamOrbit)
 
-    print("index_simulation_time_of_impact",index_simulation_time_of_impact)
-    print("simulation_impact_time",simulation_impact_time)
-    print("index_stream_orbit_time_of_impact",index_stream_orbit_time_of_impact)
-    
-    stream_galactic_coordinates = DE.get_galactic_coordinates_of_stream(index_stream_orbit_time_of_impact,streamOrbit)
-    
+    simulation_impact_time = pal5Orbit[mcarlo]['t'][index_simulation_time_of_impact]
+ 
     ##### GRAB PIECES OF THE ORBIT 
     pal5_tuple = (  \
                         pal5Orbit[mcarlo]['xt'][:], pal5Orbit[mcarlo]['yt'][:], pal5Orbit[mcarlo]['zt'][:], \
@@ -399,27 +393,26 @@ def get_temporal_coefficients_array_of_parametric_3D_stream(\
         perturber_tuple,\
         simulation_impact_time,\
         n_dynamic_time=n_dynamic_time)
-    
     perturb_coordinates=(perturber_galactic_coordinates[1],perturber_galactic_coordinates[2],perturber_galactic_coordinates[3],\
                          perturber_galactic_coordinates[4],perturber_galactic_coordinates[5],perturber_galactic_coordinates[6])
     
     # convert the stream and perturber to tail coordinates # NEEDS TO BE AN ARRAY 
-    stream_time_coordinate,stream_tail_coordinates=\
-        DE.convert_instant_to_tail_coordinates(stream_galactic_coordinates,host_orbit_galactic_coordinates,simulation_impact_time)
-    _,perturber_tail_coordinates=\
-        DE.convert_instant_to_tail_coordinates(perturb_coordinates,host_orbit_galactic_coordinates,simulation_impact_time)
+    stream_time_coordinate,stream_tail_coordinates=DE.convert_instant_to_tail_coordinates(\
+        stream_galactic_coordinates,host_orbit_galactic_coordinates,simulation_impact_time)
+    _,perturber_tail_coordinates=DE.convert_instant_to_tail_coordinates(\
+        perturb_coordinates,host_orbit_galactic_coordinates,simulation_impact_time)
 
-    # get the stream orbit time stamps, will need these again
-    stream_orbit_time_stamps=DE.extract_time_steps_from_stream_orbit(streamOrbit)
     ########################################################
     ################## DERIVED PARAMETERS ##################
     ########################################################
     
     # the time range of the stream coordinate    
-    myfilter = filter_stream_about_suspected_impact_time(stream_tail_coordinates,perturber_tail_coordinates,xmin,xlim,ylim,zlim)
+    myfilter = filter_stream_about_suspected_impact_time(\
+        stream_tail_coordinates,perturber_tail_coordinates,xmin,xlim,ylim,zlim)
     tmin=stream_time_coordinate[myfilter].min() - (1/10)*np.abs(stream_time_coordinate[myfilter].min())
     tmax=stream_time_coordinate[myfilter].max() + (1/10)*np.abs(stream_time_coordinate[myfilter].max())
     stream_coordinate_range=[tmin,tmax]
+    
     initial_guess=PSF.constrain_3D_parabola_initial_guess(
                             stream_time_coordinate[myfilter],
                             stream_galactic_coordinates[0:3,myfilter])
@@ -583,6 +576,11 @@ def obtain_parametric_stream_coefficients(mcarlo,
     simulation_sampling_time_stamps : array-like
         Simulation sampling time stamps.
     """
+    index_simulation_time_of_impact, index_stream_orbit_time_of_impact = \
+        DE.coordinate_impact_indicies_from_force_file(
+            forceFile, streamOrbit, perturberOrbit,monte_carlo_key=mcarlo,perturberName=perturberName)
+
+    
     temporal_coefficients_array, stream_coordinate_range, simulation_sampling_time_stamps = \
         get_temporal_coefficients_array_of_parametric_3D_stream(
             mcarlo,

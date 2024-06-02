@@ -112,7 +112,7 @@ def fourier_strongest_period(t,xt,yt,zt):
     return period 
 
 
-def find_stream_limits(density_array, density_min):
+def get_envelop_indexes(density_array, density_min):
     """
     Finds the limits of a stream based on a density array and a minimum density threshold.
 
@@ -139,10 +139,16 @@ def find_stream_limits(density_array, density_min):
     index_from_right = index_from_right.astype(int)
     return index_from_left, index_from_right
       
-      
+     
+def tau_envelopes(tau, index_from_left, index_from_right):
+    """
+    we want \tau(t), tau as a function of time...
+    """
+    tau_left = [tau[xx] for xx in index_from_left]
+    tau_right = [tau[xx] for xx in index_from_right]
+    return np.array(tau_left), np.array(tau_right)
+    
+
 
  
 
-if __name__=="__main__":
-    mcarlo = int(sys.argv[1])
-    main(mcarlo)
