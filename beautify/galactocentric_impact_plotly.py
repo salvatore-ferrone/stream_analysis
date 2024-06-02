@@ -4,10 +4,14 @@ import h5py
 import numpy as np 
 import sys
 sys.path.append("../code/")
-import data_extractors as DE
+import data_extractors as DE # type: ignore
+import path_handler as PH
 
 def main(montecarlo,perturbername,limit=0.200):
-    filepath=get_file_path(montecarlo)
+    GCname = "Pal5"
+    potential = "pouliasis2017pii-Pal5-suspects"
+    
+    filepath=PH.impact_geometry_results(GCname=GCname,montecarlokey=montecarlo,potential=potential)
     geometryfile=h5py.File(filepath,'r')
     # hard code for the moment, update after bug fix
     perturber_radius=geometryfile[perturbername]["erkal_2015_params"]['plummer_radius'][()]
@@ -82,8 +86,8 @@ def make_sphere(radius,center,npoints=100):
     z_sphere = center[2] + radius * np.outer(np.ones(np.size(phi)), np.cos(theta))
     return (x_sphere,y_sphere,z_sphere)
 
-def get_file_path(montecarlo,basepath="../impact-geometry-results/"):
-    return basepath+"pal5-"+montecarlo+"-erkal-impact-geometry.hdf5"
+# def get_file_path(montecarlo,basepath="../impact-geometry-results/"):
+    # return basepath+"pal5-"+montecarlo+"-erkal-impact-geometry.hdf5"
 
 
 if __name__ == "__main__":
