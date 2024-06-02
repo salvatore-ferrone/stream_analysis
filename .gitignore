@@ -1,5 +1,5 @@
 notebooks/
-jobs/
 plots/
 *.pyc
 __pycache__/*
+*.slurm
