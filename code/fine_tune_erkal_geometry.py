@@ -50,8 +50,6 @@ Date: April 2024 (first functioning full version)
 import numpy as np
 ## My modules
 import parametric_stream_fitting as PSF
-import data_extractors as DE 
-import StreamOrbitCoords as SOC
 
 
 

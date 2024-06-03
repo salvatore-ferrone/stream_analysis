@@ -122,19 +122,29 @@ def full_impact_geometry_analysis_one_impact(GCname,montecarlokey,perturberName,
     streamOrbit,perturberOrbit,pal5Orbit,forceFile               =   open_input_data_files(\
         pathStreamOrbit,pathPerturOrbit,pathPal5Orbit,pathForceFile)
     
-    coefficient_time_fit_params,trajectory_coeffs,stream_coordinate_range,simulation_sampling_time_stamps=\
-        obtain_parametric_stream_coefficients(\
-                                        montecarlokey,\
-                                        perturberName,\
-                                        streamOrbit,\
-                                        perturberOrbit,\
-                                        pal5Orbit,\
-                                        forceFile,)
+    
+
+    index_simulation_time_of_impact, _ = \
+        DE.coordinate_impact_indicies_from_force_file(
+            forceFile, streamOrbit, perturberOrbit,monte_carlo_key=montecarlokey,perturberName=perturberName)
+    
+    approx_impact_time = pal5Orbit[montecarlokey]['t'][index_simulation_time_of_impact]
+
+    simulation_time_stamps, coefficient_time_fit_params,stream_time_coordinate_range=\
+        obtain_parametric_stream_coefficients(montecarlokey,
+                                          streamOrbit,
+                                          perturberOrbit,
+                                          pal5Orbit,
+                                          approx_impact_time)
+    
+    time_range = [simulation_time_stamps[0],simulation_time_stamps[-1]]
+
+    trajectory_coeffs = parameterize_oribtal_trajectory(perturberOrbit, montecarlokey, time_range)
     
     # get the best fit parameters    
     results=minimize_distance_between_stream_and_perturber(\
-        stream_coordinate_range,\
-        simulation_sampling_time_stamps,\
+        stream_time_coordinate_range,\
+        simulation_time_stamps,\
         coefficient_time_fit_params,\
         trajectory_coeffs,)
     
@@ -166,8 +176,8 @@ def full_impact_geometry_analysis_one_impact(GCname,montecarlokey,perturberName,
         "b_vec_tail_basis":b_vec_tail_basis,
         "coefficient_time_fit_params":coefficient_time_fit_params,
         "trajectory_coeffs":trajectory_coeffs,
-        "s_range":stream_coordinate_range,
-        "t_time_stamps":simulation_sampling_time_stamps,
+        "s_range":stream_time_coordinate_range,
+        "t_time_stamps":simulation_time_stamps,
     }
     streamOrbit.close()
     perturberOrbit.close()
@@ -345,6 +355,62 @@ def open_input_data_files(pathStreamOrbit, pathPerturOrbit, pathPal5Orbit, pathF
 ######################################################
 ######## COMPUTATIONS WITH OPENING DATA FILES ########
 ######################################################
+def obtain_parametric_stream_coefficients(montecarlokey,
+                                          streamOrbit,
+                                          perturberOrbit,
+                                          pal5Orbit,
+                                          approx_impact_time):
+    """
+    Obtain the parametric stream coefficients.
+
+    Parameters:
+    -----------
+    montecarlokey : str
+        index of which montecarlo iteration to use
+    perturberName : str
+        Name of the perturber.
+    streamOrbit : Orbit
+        Orbit of the stream.
+    perturberOrbit : Orbit
+        Orbit of the perturber.
+    pal5Orbit : Orbit
+        Orbit of the Pal 5 stream.
+    approx_impact_time : float
+        the approximate impact time
+
+
+    Returns:
+    --------
+    coefficient_time_fit_params : array-like
+        Coefficient time fit parameters.
+    trajectory_coeffs : array-like
+        Trajectory coefficients.
+    stream_coordinate_range : array-like
+        Stream coordinate range.
+    simulation_sampling_time_stamps : array-like
+        Simulation sampling time stamps.
+    """
+    
+    ##### STEP 1, parameterize the stream's tau coordinate
+    simulation_time_stamps,stream_time_coordinate,stream_galactic_coordinates=parameterize_stream_snapshots(\
+            montecarlokey=montecarlokey,
+            streamOrbit=streamOrbit,
+            pal5Orbit=pal5Orbit,
+            perturberOrbit=perturberOrbit,
+            approx_impact_time=approx_impact_time)
+    
+    stream_time_coordinate_range = [np.min(stream_time_coordinate),np.max(stream_time_coordinate)]
+    
+    ##### STEP 2, fit the stream to a 3D parabola for a few time stamps around the approx impact time
+    temporal_coefficients_array=get_3D_parabola_stream_snapshot_coefficients(stream_time_coordinate,stream_galactic_coordinates)
+    
+    ##### Step 3, make the coefficients of the parbola move in time
+    coefficient_time_fit_params = PSF.linearize_temporal_stream_coefficients_array(
+        temporal_coefficients_array, simulation_time_stamps)
+    
+    
+    return simulation_time_stamps, coefficient_time_fit_params,stream_time_coordinate_range
+
 
 
 def parameterize_stream_snapshots(\
@@ -353,12 +419,12 @@ def parameterize_stream_snapshots(\
     pal5Orbit,\
     perturberOrbit,
     approx_impact_time,\
-    n_adjacent_points=2):
+    n_adjacent=2):
     ############################################
     ########### SET BASE PARAMETERS ###########
     n_dynamic_time      =   2
     xmin,xlim,ylim,zlim =   0.5,20,0.5,0.5
-    n_adjacent = 2
+
 
     #########################################
     ################ INPUTS #################
@@ -398,7 +464,7 @@ def parameterize_stream_snapshots(\
                             perturber_galactic_coordinates[4],perturber_galactic_coordinates[5],perturber_galactic_coordinates[6])
 
     # convert the stream and perturber to tail coordinates # NEEDS TO BE AN ARRAY 
-    stream_time_coordinate,stream_tail_coordinates=DE.convert_instant_to_tail_coordinates(\
+    _,stream_tail_coordinates=DE.convert_instant_to_tail_coordinates(\
                 stream_galactic_coordinates,host_orbit_galactic_coordinates,approx_impact_time)
     _,perturber_tail_coordinates=DE.convert_instant_to_tail_coordinates(\
                 perturb_coordinates,host_orbit_galactic_coordinates,approx_impact_time)
@@ -425,15 +491,13 @@ def parameterize_stream_snapshots(\
         tau_coordinate[cc,:]=temp
         cc+=1
     
-    return tau_coordinate, stream_stamps
+    simulation_time_stamps = stream_orbit_time_stamps[stream_indexes_of_interest]
+    
+    return simulation_time_stamps, tau_coordinate, stream_stamps
 
 
 
-def get_temporal_coefficients_array_of_parametric_3D_stream(
-                                                            simulation_time_stamps,
-                                                            host_orbit_galactic_coordinates,
-                                                            stream_time_coordinate,
-                                                            stream_galactic_coordinates,):
+def get_3D_parabola_stream_snapshot_coefficients(stream_time_coordinate,stream_galactic_coordinates):
     """
     
     I literally hate this function, what have I created? 
@@ -448,86 +512,31 @@ def get_temporal_coefficients_array_of_parametric_3D_stream(
     ############################################
     ########### SET BASE PARAMETERS ###########
     minimization_method =   'Nelder-Mead'
-    n_dynamic_time      =   2
     
-
-
-    n_stream_samplings=len(simulation_time_stamps)
-    assert n_stream_samplings==len(stream_galactic_coordinates[0])
-    assert n_stream_samplings==len(stream_time_coordinate.shape[0])
-    ########################################################
-    ################## DERIVED PARAMETERS ##################
-    ########################################################
-    initial_guess=PSF.constrain_3D_parabola_initial_guess(
-                            stream_time_coordinate[0],
-                            stream_galactic_coordinates[0][0:3,:])
-
-
-
-    # grab the simulation time stamps
-
-
+    n_stream_samplings=stream_time_coordinate.shape[0]
+    assert n_stream_samplings==len(stream_galactic_coordinates)
 
     ###################################################################
     ############### PERFORM THE FIT AT TIME OF INTEREST ###############
     ###################################################################
-    results=optimize.minimize(  PSF.objective_parametric_3D_parabola,
-                                initial_guess,
-                                args=(stream_time_coordinate[0],
-                                    stream_galactic_coordinates[0:3,myfilter]
-                                    ),
-                                method=minimization_method,)
-    
-    ###########################################################
-    #################### INITIALIZE OUTPUT ####################
-    ###########################################################
-    temporal_coefficients_array=np.zeros((n_stream_samplings,len(results.x)))
-    temporal_coefficients_array[center_index,:]=results.x
-    
-    #############################################################
-    ############### LOOP OVER ADJACENT TIME STEPS ###############
-    #############################################################
-    ii=0
-    for new_index_of_interest_stream_orbit in stream_indexes_of_interest:
-        if new_index_of_interest_stream_orbit==index_stream_orbit_time_of_impact:
-            # don't repeat the center index
-            ii+=1
-            continue
-        else:
-            
-            
-            # extract the stream
-            stream_galactic_coordinates = DE.get_galactic_coordinates_of_stream(new_index_of_interest_stream_orbit,streamOrbit)
-            stream_subset_galactic_coordinates=stream_galactic_coordinates[:,myfilter]
-            
-            # extract orbi
-            pal5_tuple = (  \
-                                pal5Orbit[mcarlo]['xt'][:], pal5Orbit[mcarlo]['yt'][:], pal5Orbit[mcarlo]['zt'][:], \
-                                pal5Orbit[mcarlo]['vxt'][:], pal5Orbit[mcarlo]['vyt'][:], pal5Orbit[mcarlo]['vzt'][:])
-            host_orbit_galactic_coordinates = DE.filter_orbit_by_dynamical_time(\
-                pal5Orbit[mcarlo]['t'][:],\
-                pal5_tuple,\
-                time_of_interset,\
-                n_dynamic_time=n_dynamic_time)
-            
-            # get the time coordinate. Notice that the time will already be filtered
-                    
-            indexes=SOC.get_closests_orbital_index(host_orbit_galactic_coordinates[1],
-                                           host_orbit_galactic_coordinates[2],
-                                           host_orbit_galactic_coordinates[3],
-                                           stream_subset_galactic_coordinates[0],
-                                           stream_subset_galactic_coordinates[1],
-                                           stream_subset_galactic_coordinates[2])
-            stream_subset_time_coordinate=host_orbit_galactic_coordinates[0][indexes] - time_of_interset
-            # get the initial guess
-            p0=PSF.constrain_3D_parabola_initial_guess(stream_subset_time_coordinate,stream_subset_galactic_coordinates[0:3,:])
-            # perform the fit
-            results=optimize.minimize(PSF.objective_parametric_3D_parabola,p0,args=(stream_subset_time_coordinate,stream_subset_galactic_coordinates[0:3,:]),method=minimization_method,)
-            temporal_coefficients_array[ii,:]=results.x
-            ii+=1
-    
-    
-    return temporal_coefficients_array,stream_coordinate_range,simulation_sampling_time_stamps
+    for i in range(n_stream_samplings):
+        initial_guess=PSF.constrain_3D_parabola_initial_guess(
+                                stream_time_coordinate[i],
+                                stream_galactic_coordinates[i][0:3,:])
+        
+        results=optimize.minimize(  PSF.objective_parametric_3D_parabola,
+                                    initial_guess,
+                                    args=(stream_time_coordinate[i],
+                                        stream_galactic_coordinates[i][0:3,:]),
+                                    method=minimization_method,)
+        
+        if i==0:
+            temporal_coefficients_array=np.zeros((n_stream_samplings,len(results.x)))
+        
+        temporal_coefficients_array[i,:]=results.x
+
+    return temporal_coefficients_array
+
 
 
 def parameterize_oribtal_trajectory(\
@@ -577,62 +586,9 @@ def parameterize_oribtal_trajectory(\
     return trajectory_coeffs
 
 
-def obtain_parametric_stream_coefficients(mcarlo,
-                                          perturberName,
-                                          streamOrbit,
-                                          perturberOrbit,
-                                          pal5Orbit,
-                                          forceFile):
-    """
-    Obtain the parametric stream coefficients.
-
-    Parameters:
-    -----------
-    mcarlo : int
-        Number of Monte Carlo samples.
-    perturberName : str
-        Name of the perturber.
-    streamOrbit : Orbit
-        Orbit of the stream.
-    perturberOrbit : Orbit
-        Orbit of the perturber.
-    pal5Orbit : Orbit
-        Orbit of the Pal 5 stream.
-    forceFile : str
-        Path to the force file.
-
-    Returns:
-    --------
-    coefficient_time_fit_params : array-like
-        Coefficient time fit parameters.
-    trajectory_coeffs : array-like
-        Trajectory coefficients.
-    stream_coordinate_range : array-like
-        Stream coordinate range.
-    simulation_sampling_time_stamps : array-like
-        Simulation sampling time stamps.
-    """
-    index_simulation_time_of_impact, index_stream_orbit_time_of_impact = \
-        DE.coordinate_impact_indicies_from_force_file(
-            forceFile, streamOrbit, perturberOrbit,monte_carlo_key=mcarlo,perturberName=perturberName)
-
-    
-    temporal_coefficients_array, stream_coordinate_range, simulation_sampling_time_stamps = \
-        get_temporal_coefficients_array_of_parametric_3D_stream(
-                mcarlo          =mcarlo,
-                streamOrbit     =streamOrbit,
-                perturberOrbit  =perturberOrbit,
-                pal5Orbit       =pal5Orbit,
-                index_simulation_time_of_impact=index_simulation_time_of_impact,
-                index_stream_orbit_time_of_impact=index_stream_orbit_time_of_impact)
-
-    coefficient_time_fit_params = PSF.linearize_temporal_stream_coefficients_array(
-        temporal_coefficients_array, simulation_sampling_time_stamps)
-    time_range = np.array([simulation_sampling_time_stamps[0].value, simulation_sampling_time_stamps[-1].value])
-    trajectory_coeffs = parameterize_oribtal_trajectory(perturberOrbit, mcarlo, time_range)
-    return coefficient_time_fit_params, trajectory_coeffs, stream_coordinate_range, simulation_sampling_time_stamps
-
-
+###################################################
+################ PURE COMPUTATIONS ################
+###################################################    
 def filter_stream_about_suspected_impact_time(stream_tail_coordinates:np.ndarray,
                                 perturber_tail_coordinates:np.ndarray,
                                 xmin:float=0.5,
@@ -663,9 +619,6 @@ def filter_stream_about_suspected_impact_time(stream_tail_coordinates:np.ndarray
     return my_filter
 
 
-###################################################
-################ PURE COMPUTATIONS ################
-###################################################    
 def minimize_distance_between_stream_and_perturber(stream_coordinate_range,
                                                    simulation_sampling_time_stamps,
                                                    coefficient_time_fit_params,
@@ -694,7 +647,7 @@ def minimize_distance_between_stream_and_perturber(stream_coordinate_range,
 
     """
     # make initial guess for the time 
-    t0 = np.mean(simulation_sampling_time_stamps.value)
+    t0 = np.mean(simulation_sampling_time_stamps)
     s0 = np.mean(stream_coordinate_range)
     p0 = (s0, t0)
     results = optimize.minimize(
