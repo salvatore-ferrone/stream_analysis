@@ -91,7 +91,7 @@ def make_sphere(radius,center,npoints=100):
 
 
 if __name__ == "__main__":
-    montecarlo="monte-carlo-042"
+    montecarlo="monte-carlo-019"
     perturber_name="NGC2808"
     fig=main(montecarlo,perturber_name)
     fig.show()

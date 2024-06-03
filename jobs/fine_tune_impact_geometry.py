@@ -123,7 +123,7 @@ def full_impact_geometry_analysis_one_impact(GCname,montecarlokey,perturberName,
         pathStreamOrbit,pathPerturOrbit,pathPal5Orbit,pathForceFile)
     
     
-
+    ###### THIS NEEDS TO BE UPDATED TO ONLY TAKE THE ON THE STREAM,
     index_simulation_time_of_impact, _ = \
         DE.coordinate_impact_indicies_from_force_file(
             forceFile, streamOrbit, perturberOrbit,monte_carlo_key=montecarlokey,perturberName=perturberName)
@@ -392,6 +392,7 @@ def obtain_parametric_stream_coefficients(montecarlokey,
     """
     
     ##### STEP 1, parameterize the stream's tau coordinate
+
     simulation_time_stamps,stream_time_coordinate,stream_galactic_coordinates=parameterize_stream_snapshots(\
             montecarlokey=montecarlokey,
             streamOrbit=streamOrbit,
