@@ -1,11 +1,11 @@
-import plotly.graph_objects as go
+import plotly.graph_objects as go # type: ignore
 import extract_viewing_geometry as EVG
 import h5py
 import numpy as np 
 import sys
 sys.path.append("../code/")
 import data_extractors as DE # type: ignore
-import path_handler as PH
+import path_handler as PH # type: ignore
 
 def main(montecarlo,perturbername,limit=0.200):
     GCname = "Pal5"

@@ -3,10 +3,10 @@ This module will store our interactive graphs
 """
 
 import numpy as np
-import plotly.graph_objects as go
+import plotly.graph_objects as go # type: ignore
 import sys 
 sys.path.append("../code/")
-import parametric_stream_fitting as PSF
+import parametric_stream_fitting as PSF # type: ignore
 
 
 def geometry_centered_on_impact(geometry_file,perturber):

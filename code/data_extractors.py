@@ -158,6 +158,7 @@ def extract_impact_time_from_force_file(
     """
     
     Xs, _, magA = extract_acceleration_arrays_from_force_file(force_file, perturber_name)
+    magA=magA.T
     timeDex, shiftDex = np.unravel_index(np.argmax(magA), magA.shape)
     impactTime = Xs[timeDex, shiftDex]
     impactTime = impactTime

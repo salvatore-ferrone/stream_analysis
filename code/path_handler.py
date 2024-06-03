@@ -11,6 +11,12 @@ This code will be used to obtain base paths and also derived paths to output fil
 import json
 import os 
 
+# Get the directory of the current script
+script_dir = os.path.dirname(os.path.realpath(__file__))
+
+# Construct the path to paths.json relative to the script directory
+paths_file = os.path.join(script_dir, '../paths.json')
+
 base = json.load(open('../paths.json'))
 
 
