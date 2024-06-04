@@ -51,6 +51,22 @@ def obtain_tau(i, path_stream_orbit, hostorbit, t_stamps, period):
 ##############################################################
 ######################### COMPUTATIONS #######################
 ##############################################################
+def get_envelope_and_mask(t_,tau_,density_array,X,Y,C,density_min):    
+    # get the indicies of the envelopes
+    left_index,right_index  =  get_envelop_indexes(density_array,density_min)
+    tau_left, tau_right     =  tau_envelopes(tau_,left_index,right_index)
+    # do clipping 
+    flag_STD,clip_STD=5,1
+    top_envelop=sig_clip(tau_right,flag_STD,clip_STD)
+    bottom_envelop=sig_clip(tau_left,flag_STD,clip_STD)
+    
+    C_mask=make_2D_mask(X[0],Y[:,0],t_,top_envelop,bottom_envelop)
+    
+    C_masked = C.copy()
+    C_masked[C_mask]=np.nan
+    return top_envelop,bottom_envelop,C_masked
+
+
 def make_2D_mask(X,Y,envelope_time_stamps,top_envelop,bottom_envelop):
     """
     X: np.ndarray

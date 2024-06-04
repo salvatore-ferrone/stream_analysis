@@ -13,7 +13,7 @@ import path_handler as PH               # type: ignore
 import fine_tune_erkal_geometry as FTEG # type: ignore
 import parametric_stream_fitting as PSF # type: ignore
 import data_extractors as DE            # type: ignore
-import StreamOrbitCoords as SOC         # type: ignore
+import compute_stream_1D_density as CSD    # type: ignore
 
 
 def main(mcarlo_int, perturberName,
@@ -111,7 +111,7 @@ def full_impact_geometry_analysis_one_impact(GCname,montecarlokey,perturberName,
             The time stamps of the simulation sampling.
 
     """
-    pathStreamOrbit,pathPerturOrbit,pathPal5Orbit,pathForceFile =   retrieve_paths(\
+    pathStreamOrbit, pathPerturOrbit, pathPal5Orbit, pathForceFile, pathTauFile =   retrieve_paths(\
                     montecarlokey       =   montecarlokey, \
                     perturberName       =   perturberName,\
                     gc_orbit_gfield     =   potential_GCs,
@@ -119,17 +119,13 @@ def full_impact_geometry_analysis_one_impact(GCname,montecarlokey,perturberName,
                     NP                  =   NP,\
                     GCname              =   GCname)
     
-    streamOrbit,perturberOrbit,pal5Orbit,forceFile               =   open_input_data_files(\
-        pathStreamOrbit,pathPerturOrbit,pathPal5Orbit,pathForceFile)
+    streamOrbit, perturberOrbit, pal5Orbit, forceFile, tauFile=   open_input_data_files(\
+        pathStreamOrbit,pathPerturOrbit,pathPal5Orbit,pathForceFile,pathTauFile)
     
     
-    ###### THIS NEEDS TO BE UPDATED TO ONLY TAKE THE ON THE STREAM,
-    index_simulation_time_of_impact, _ = \
-        DE.coordinate_impact_indicies_from_force_file(
-            forceFile, streamOrbit, perturberOrbit,monte_carlo_key=montecarlokey,perturberName=perturberName)
-    
-    approx_impact_time = pal5Orbit[montecarlokey]['t'][index_simulation_time_of_impact]
-
+    # 1. Get approximate impact time from the force file
+    approx_impact_time,approx_tau=get_approx_impact_time_with_stream_density_filter(tauFile,forceFile,perturberName)
+    # 2. fit the stream to a 3D parabola for a few time stamps around the approx impact time
     simulation_time_stamps, coefficient_time_fit_params,stream_time_coordinate_range=\
         obtain_parametric_stream_coefficients(montecarlokey,
                                           streamOrbit,
@@ -141,23 +137,23 @@ def full_impact_geometry_analysis_one_impact(GCname,montecarlokey,perturberName,
 
     trajectory_coeffs = parameterize_oribtal_trajectory(perturberOrbit, montecarlokey, time_range)
     
-    # get the best fit parameters    
+    # 3. minimize the distance between the stream and the perturber
     results=minimize_distance_between_stream_and_perturber(\
         stream_time_coordinate_range,\
         simulation_time_stamps,\
         coefficient_time_fit_params,\
         trajectory_coeffs,)
-    
     s,t=results.x
     
+    # 4. get the full impact geometry
     impact_parameter,w_par,w_per,alpha,rs,vs,rp,b_vec_galactic,b_vec_tail_basis=\
         FTEG.get_full_impact_geometry_from_parametrization(\
             s,t,coefficient_time_fit_params,trajectory_coeffs)
-        
     mass=perturberOrbit[montecarlokey]["initialConditions"]['Mass'][0]
     rh_m=perturberOrbit[montecarlokey]["initialConditions"]['rh_m'][0]
     plummer_radius=half_mass_to_plummer_radius(rh_m)
     
+    # 5. Store the results
     geometry_erkal={
         "impact_parameter":impact_parameter,
         "w_par":w_par,
@@ -179,10 +175,13 @@ def full_impact_geometry_analysis_one_impact(GCname,montecarlokey,perturberName,
         "s_range":stream_time_coordinate_range,
         "t_time_stamps":simulation_time_stamps,
     }
+    
+    # 6. close th efiles
     streamOrbit.close()
     perturberOrbit.close()
     pal5Orbit.close()
     forceFile.close()
+    tauFile.close()
     return geometry_erkal,parameters_stream_and_perturber
 
 
@@ -249,7 +248,7 @@ def make_outfile_attributes(montecarlokey:str,
         - pathPal5Orbit (str): The path to the Pal5 orbit file.
         - pathForceFile (str): The path to the force file.
     """
-    pathStreamOrbit, pathPerturOrbit, pathPal5Orbit, pathForceFile = \
+    pathStreamOrbit, pathPerturOrbit, pathPal5Orbit, pathForceFile, pathTauFile = \
             retrieve_paths(montecarlokey=montecarlokey, 
                             perturberName=perturberName,
                             gc_orbit_gfield=gc_orbit_gfield,
@@ -265,7 +264,8 @@ def make_outfile_attributes(montecarlokey:str,
         "pathStreamOrbit": pathStreamOrbit,
         "pathPerturOrbit": pathPerturOrbit,
         "pathPal5Orbit": pathPal5Orbit,
-        "pathForceFile": pathForceFile
+        "pathForceFile": pathForceFile,
+        "pathTauFile": pathTauFile,
     }
     return attributes
 
@@ -310,11 +310,13 @@ def retrieve_paths(montecarlokey:str, perturberName:str,\
     # path to force file
     pathForceFile = PH.force_on_orbit(GCname=GCname,montecarlokey=montecarlokey,potential=gc_orbit_gfield)
 
+    # path to stream projections onto orbit
+    pathTauFile = PH.tau_coordinates(GCname,montecarlokey=montecarlokey,potential_stream_orbit=stream_orbit_gfield)
 
-    return pathStreamOrbit, pathPerturOrbit, pathPal5Orbit, pathForceFile
+    return pathStreamOrbit, pathPerturOrbit, pathPal5Orbit, pathForceFile, pathTauFile
 
 
-def open_input_data_files(pathStreamOrbit, pathPerturOrbit, pathPal5Orbit, pathForceFile):
+def open_input_data_files(pathStreamOrbit, pathPerturOrbit, pathPal5Orbit, pathForceFile, pathTauFile):
     """
     Open input data files.
 
@@ -342,14 +344,15 @@ def open_input_data_files(pathStreamOrbit, pathPerturOrbit, pathPal5Orbit, pathF
     
     Examples
     --------
-    streamOrbit,perturberOrbit,pal5Orbit,forceFile=open_input_data_files(pathStreamOrbit,pathPerturOrbit,pathPal5Orbit,pathForceFile)
+    streamOrbit, perturberOrbit, pal5Orbit, forceFile, tauFile =open_input_data_files(pathStreamOrbit,pathPerturOrbit,pathPal5Orbit,pathForceFile)
     """
     streamOrbit = h5py.File(pathStreamOrbit, 'r')
     perturberOrbit = h5py.File(pathPerturOrbit, 'r')
     pal5Orbit = h5py.File(pathPal5Orbit, 'r')
     forceFile = h5py.File(pathForceFile, 'r')
+    tauFile = h5py.File(pathTauFile, 'r')
     
-    return streamOrbit, perturberOrbit, pal5Orbit, forceFile
+    return streamOrbit, perturberOrbit, pal5Orbit, forceFile, tauFile
 
 
 ######################################################
@@ -545,10 +548,33 @@ def parameterize_oribtal_trajectory(\
     return trajectory_coeffs
 
 
+def get_approx_impact_time_with_stream_density_filter(\
+    taufile,forceFile,perturberName,density_min=4e-4):
+    """
+    Get the approximate impact time with a stream density filter.
+
+    Parameters:
+    -----------
+    None
+
+    Returns:
+    --------
+    float
+        The approximate impact time.
+    """
+    #### IMPORT THE FORCE FILE
+    X,Y,C=DE.extract_acceleration_arrays_from_force_file(forceFile, perturberName)
+    X_tstamps,Y_tau,density_array=CSD.construct_2D_density_map(\
+        taufile['tau'][:],taufile['time_stamps'][:],taufile.attrs['period'])
+    _,_,C_masked=CSD.get_envelope_and_mask(X_tstamps[0],Y_tau[:,0],density_array,X,Y,C,density_min)
+    time_dex,tau_dex=np.unravel_index(np.nanargmax(C_masked),C_masked.shape)
+    approx_impact_time = X[0][time_dex]
+    approx_impact_tau = Y[tau_dex][0]
+    return approx_impact_time,approx_impact_tau
+
 ###################################################
 ################ PURE COMPUTATIONS ################
 ###################################################    
-
 def get_3D_parabola_stream_snapshot_coefficients(stream_time_coordinate,stream_galactic_coordinates):
     """
     This function fits a 3D parabola to the stream at a given time.
