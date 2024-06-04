@@ -1,6 +1,4 @@
 import numpy as np
-import sys
-
 import StreamOrbitCoords as SOC
 import data_extractors as DE
 import filters
@@ -53,10 +51,29 @@ def obtain_tau(i, path_stream_orbit, hostorbit, t_stamps, period):
 ##############################################################
 ######################### COMPUTATIONS #######################
 ##############################################################
-def construct_2D_density_map(tau_array,time_stamps,tau_max):
+def make_2D_mask(X,Y,envelope_time_stamps,top_envelop,bottom_envelop):
+    """
+    X: np.ndarray
+        The time stamps.
+    Y: np.ndarray
+        The tau values.
+    """
+    
+    mask = np.zeros((X.shape[0],Y.shape[0]),dtype=bool)
+    for i in range(X.shape[0]):
+        mytime = X[i]
+        index = np.argmin(np.abs(envelope_time_stamps - mytime))
+        top,bottom = top_envelop[index],bottom_envelop[index]
+        above,below = Y > top, Y < bottom
+        outside = np.logical_or(above,below)
+        mask[i] = outside
+    return mask
+
+    
+def construct_2D_density_map(projected_tau,time_stamps,tau_max):
     
     # Obtain The Base Parameters
-    Nstamps, NP = tau_array.shape
+    Nstamps, NP = projected_tau.shape
     NBINS = int(np.ceil(np.sqrt(NP)))
     
     # make the bin edges
@@ -64,7 +81,7 @@ def construct_2D_density_map(tau_array,time_stamps,tau_max):
     tau=(bin_edges[1:]+bin_edges[:-1])/2 # the bin centers 
     
     # build the 2D histogram
-    density_array = build_2D_histogram(tau_array, Nstamps, NBINS, bin_edges)
+    density_array = build_2D_histogram(projected_tau, Nstamps, NBINS, bin_edges)
     
     # normalize the histogram
     density_array/=NP 
@@ -75,39 +92,12 @@ def construct_2D_density_map(tau_array,time_stamps,tau_max):
     return X_tstamps,Y_tau,density_array 
 
 
-def build_2D_histogram(tau_array, Nstamps, NBINS, bins):
+def build_2D_histogram(projected_tau, Nstamps, NBINS, bins):
     density_array = np.zeros((Nstamps, NBINS))
     for i in range(Nstamps):
-        counts, _ = np.histogram(tau_array[i], bins=bins)
+        counts, _ = np.histogram(projected_tau[i], bins=bins)
         density_array[i,:] = counts
     return density_array
-
-
-def fourier_strongest_period(t,xt,yt,zt):
-    r = np.sqrt(xt**2 + yt**2 + zt**2)
-    # Compute the time step
-    dt = np.mean(np.diff(t))
-
-    # Compute the Fourier Transform
-    R = np.fft.fft(r)
-
-    # Compute the frequencies
-    frequencies = np.fft.fftfreq(r.size, dt)
-
-    # Select the half of the arrays that corresponds to the positive frequencies
-    positive_frequencies = frequencies[:frequencies.size // 2]
-    positive_R = R[:R.size // 2]
-
-    # Compute the magnitude spectrum for the positive frequencies
-    magnitude = np.abs(positive_R)
-
-    maxfreq_dex=np.argmax(magnitude[1:]) + 1
-    # Find the frequency that corresponds to the maximum value in the magnitude spectrum
-    strongest_frequency = positive_frequencies[maxfreq_dex]
-
-
-    period = 1/strongest_frequency
-    return period 
 
 
 def get_envelop_indexes(density_array, density_min):
@@ -147,4 +137,57 @@ def tau_envelopes(tau, index_from_left, index_from_right):
     return np.array(tau_left), np.array(tau_right)
 
 
+def sig_clip(quantity, Nstdflag, Nstdclip, sides = 100, trial_max = 10000):
+    std,mean    = np.std(quantity),np.mean(quantity)
+    flag,clip   = mean+Nstdflag*std,mean+Nstdclip*std
+    abs_diff = np.abs(quantity-mean)
+    bad_dexes = np.where(abs_diff>flag)[0]
+    sig_clipped=quantity.copy()
+    cc = 0 
+    conditions = cc < trial_max and len(bad_dexes)>0
+    while conditions:
+        # replace the bad dexes with the average of the two neighbors
+        for bd in bad_dexes:
+            uplim,lowlim=bd+sides,bd-sides
+            # make sure the limits are within the array
+            if uplim>len(sig_clipped):
+                uplim=len(sig_clipped)
+            if lowlim<0:
+                lowlim=0
+            sig_clipped[bd] = np.mean(sig_clipped[bd-sides:bd+sides-1])
+            if sig_clipped[bd]<clip:
+                bad_dexes = np.delete(bad_dexes,np.where(bad_dexes==bd))
+        cc+=1
+        
+        if cc == trial_max:
+            print('Max number of iterations reached')
+        conditions = cc < trial_max and len(bad_dexes)>0
+    return sig_clipped
+
+
+def fourier_strongest_period(t,xt,yt,zt):
+    r = np.sqrt(xt**2 + yt**2 + zt**2)
+    # Compute the time step
+    dt = np.mean(np.diff(t))
+
+    # Compute the Fourier Transform
+    R = np.fft.fft(r)
+
+    # Compute the frequencies
+    frequencies = np.fft.fftfreq(r.size, dt)
+
+    # Select the half of the arrays that corresponds to the positive frequencies
+    positive_frequencies = frequencies[:frequencies.size // 2]
+    positive_R = R[:R.size // 2]
+
+    # Compute the magnitude spectrum for the positive frequencies
+    magnitude = np.abs(positive_R)
+
+    maxfreq_dex=np.argmax(magnitude[1:]) + 1
+    # Find the frequency that corresponds to the maximum value in the magnitude spectrum
+    strongest_frequency = positive_frequencies[maxfreq_dex]
+
+
+    period = 1/strongest_frequency
+    return period 
 

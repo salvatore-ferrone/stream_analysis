@@ -498,48 +498,6 @@ def parameterize_stream_snapshots(\
 
 
 
-def get_3D_parabola_stream_snapshot_coefficients(stream_time_coordinate,stream_galactic_coordinates):
-    """
-    
-    I literally hate this function, what have I created? 
-    It's doing too much. I should be passing just the necessary for this and letting other functions do the other work.
-    
-    What do I need? 
-        the stream at each time stamp
-        the host orbit 
-        the inidicies of interest
-
-    """ 
-    ############################################
-    ########### SET BASE PARAMETERS ###########
-    minimization_method =   'Nelder-Mead'
-    
-    n_stream_samplings=stream_time_coordinate.shape[0]
-    assert n_stream_samplings==len(stream_galactic_coordinates)
-
-    ###################################################################
-    ############### PERFORM THE FIT AT TIME OF INTEREST ###############
-    ###################################################################
-    for i in range(n_stream_samplings):
-        initial_guess=PSF.constrain_3D_parabola_initial_guess(
-                                stream_time_coordinate[i],
-                                stream_galactic_coordinates[i][0:3,:])
-        
-        results=optimize.minimize(  PSF.objective_parametric_3D_parabola,
-                                    initial_guess,
-                                    args=(stream_time_coordinate[i],
-                                        stream_galactic_coordinates[i][0:3,:]),
-                                    method=minimization_method,)
-        
-        if i==0:
-            temporal_coefficients_array=np.zeros((n_stream_samplings,len(results.x)))
-        
-        temporal_coefficients_array[i,:]=results.x
-
-    return temporal_coefficients_array
-
-
-
 def parameterize_oribtal_trajectory(\
     orbit_file: h5py.File, \
     mcarlo: str, \
@@ -590,6 +548,43 @@ def parameterize_oribtal_trajectory(\
 ###################################################
 ################ PURE COMPUTATIONS ################
 ###################################################    
+
+def get_3D_parabola_stream_snapshot_coefficients(stream_time_coordinate,stream_galactic_coordinates):
+    """
+    This function fits a 3D parabola to the stream at a given time.
+    
+    Parameters:
+    stream_time_coordinate (np.ndarray): The time coordinate of the stream.
+    stream_galactic_coordinates (list): each element is an np.ndarray
+    
+    """ 
+    ########### SET BASE PARAMETERS ###########
+    minimization_method =   'Nelder-Mead'
+    
+    n_stream_samplings=stream_time_coordinate.shape[0]
+    assert n_stream_samplings==len(stream_galactic_coordinates)
+
+    ############### PERFORM THE FIT AT TIME OF INTEREST ###############
+    for i in range(n_stream_samplings):
+        initial_guess=PSF.constrain_3D_parabola_initial_guess(
+                                stream_time_coordinate[i],
+                                stream_galactic_coordinates[i][0:3,:])
+        
+        results=optimize.minimize(  PSF.objective_parametric_3D_parabola,
+                                    initial_guess,
+                                    args=(stream_time_coordinate[i],
+                                        stream_galactic_coordinates[i][0:3,:]),
+                                    method=minimization_method,)
+        
+        if i==0:
+            temporal_coefficients_array=np.zeros((n_stream_samplings,len(results.x)))
+        
+        temporal_coefficients_array[i,:]=results.x
+
+    return temporal_coefficients_array
+
+
+
 def filter_stream_about_suspected_impact_time(stream_tail_coordinates:np.ndarray,
                                 perturber_tail_coordinates:np.ndarray,
                                 xmin:float=0.5,
