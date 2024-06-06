@@ -46,8 +46,6 @@ def main(mcarlo_int, perturberName,
             NP=NP)
 
     # prepare the outpuit 
-    fname = PH.impact_geometry_results(\
-        GCname=GCname,montecarlokey=montecarlokey,potential=potential_stream)
     attributes = make_outfile_attributes(\
                             montecarlokey       =   montecarlokey, 
                             perturberName       =   perturberName,
@@ -56,8 +54,13 @@ def main(mcarlo_int, perturberName,
                             NP                  =   NP,
                             GCname              =   GCname)
 
+    tempfilepath=PH.temporary_impact_geometry(GCname=GCname,montecarlokey=montecarlokey,potential=potential_stream,perturber=perturberName)
     
-    write_results_to_file(fname, attributes, perturberName, geometry_erkal, parameters_stream_and_perturber)
+    write_results_to_temp_file(tempfilepath,attributes,geometry_erkal,parameters_stream_and_perturber)
+    
+    # fname = PH.impact_geometry_results(\
+    #     GCname=GCname,montecarlokey=montecarlokey,potential=potential_stream)
+    # write_results_to_file(fname, attributes, perturberName, geometry_erkal, parameters_stream_and_perturber)
 
 
 def full_impact_geometry_analysis_one_impact(GCname,montecarlokey,perturberName,potential_GCs,potential_stream,NP):
@@ -188,6 +191,35 @@ def full_impact_geometry_analysis_one_impact(GCname,montecarlokey,perturberName,
 #########################################
 ################## I/O ##################
 #########################################
+    
+
+def write_results_to_temp_file(tempfilepath,attributes,erkal_2015_params,parametric_equation_params):
+    """
+    Write the results to a file in HDF5 format.
+
+    Parameters:
+    - output_path (str): The path where the output file will be saved.
+    - mcarlo (str): The name of the Monte Carlo simulation.
+    - perturberName (str): The name of the perturber.
+    - geometry_erkal (dict): A dictionary containing the geometry parameters for Erkal 2015.
+    - parameters_stream_and_perturber (dict): A dictionary containing the parameters for the parametric equation.
+
+    Returns:
+    None
+    """
+    with h5py.File(tempfilepath,'w') as f:
+        f.create_group('erkal_2015_params')
+        f.create_group('parametric_equation_params')
+        for key in erkal_2015_params.keys():
+            f["erkal_2015_params/"].create_dataset(key,data=erkal_2015_params[key])
+        for key in parametric_equation_params.keys():
+            f["parametric_equation_params/"].create_dataset(key,data=parametric_equation_params[key])
+        for key in attributes.keys():
+            f.attrs[key]=attributes[key]
+            
+
+                    
+            
 def write_results_to_file(fname,attributes,perturberName,geometry_erkal,parameters_stream_and_perturber):
     """
     Write the results to a file in HDF5 format.
@@ -202,7 +234,6 @@ def write_results_to_file(fname,attributes,perturberName,geometry_erkal,paramete
     Returns:
     None
     """
-    
 
     with h5py.File(fname, 'a') as f:
         if perturberName not in f.keys():
@@ -255,7 +286,7 @@ def make_outfile_attributes(montecarlokey:str,
                             stream_orbit_gfield=stream_orbit_gfield,
                             NP=NP,
                             GCname=GCname)
-    datestring = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M")
+    datestring = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     attributes = {
         "author": "Salvatore Ferrone",
         "creation-date": datestring,

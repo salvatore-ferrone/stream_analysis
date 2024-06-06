@@ -19,6 +19,11 @@ paths_file = os.path.join(script_dir, '../paths.json')
 
 base = json.load(open('../paths.json'))
 
+def temporary_impact_geometry(GCname:str,montecarlokey:str,potential:str,perturber:str):
+    path = base['temporary'] + "temporary_impact_geometry/" + potential + "/" + GCname + "/" 
+    name = perturber+"-"+montecarlokey+".hdf5"
+    os.makedirs(path,exist_ok=True)
+    return path+name
 
 def temporary_tau_coordiantes_folder(GCname:str, montecarlokey:str,potential_stream_orbit:str):
     path=base["temporary"] +"stream-1D-density/"+potential_stream_orbit+"/"+GCname+"/"+montecarlokey+"/"
