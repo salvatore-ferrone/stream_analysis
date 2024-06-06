@@ -124,16 +124,16 @@ def full_impact_geometry_analysis_one_impact(GCname,montecarlokey,perturberName,
     
     
     # 1. Get approximate impact time from the force file
-    approx_impact_time,approx_tau=get_approx_impact_time_with_stream_density_filter(tauFile,forceFile,perturberName)
+    approx_impact_time,approx_impact_tau=get_approx_impact_time_with_stream_density_filter(tauFile,forceFile,perturberName)
     # 2. fit the stream to a 3D parabola for a few time stamps around the approx impact time
     simulation_time_stamps, coefficient_time_fit_params,stream_time_coordinate_range=\
         obtain_parametric_stream_coefficients(montecarlokey,
                                           streamOrbit,
-                                          perturberOrbit,
                                           pal5Orbit,
-                                          approx_impact_time)
+                                          approx_impact_time,
+                                          approx_impact_tau)
     
-    time_range = [simulation_time_stamps[0],simulation_time_stamps[-1]]
+    time_range = [simulation_time_stamps.min(),simulation_time_stamps.max()]
 
     trajectory_coeffs = parameterize_oribtal_trajectory(perturberOrbit, montecarlokey, time_range)
     
@@ -271,8 +271,8 @@ def make_outfile_attributes(montecarlokey:str,
 
 
 def retrieve_paths(montecarlokey:str, perturberName:str,\
-                    gc_orbit_gfield:str="pouliasis2017pii-GCNBody",
-                    stream_orbit_gfield:str="pouliasis2017pii-Pal5-suspects",\
+                    gc_orbit_gfield:str,
+                    stream_orbit_gfield:str,\
                     NP:int=100000,\
                     GCname:str="Pal5"
                    ):
@@ -360,9 +360,9 @@ def open_input_data_files(pathStreamOrbit, pathPerturOrbit, pathPal5Orbit, pathF
 ######################################################
 def obtain_parametric_stream_coefficients(montecarlokey,
                                           streamOrbit,
-                                          perturberOrbit,
                                           pal5Orbit,
-                                          approx_impact_time):
+                                          approx_impact_time,
+                                          approx_impact_tau):
     """
     Obtain the parametric stream coefficients.
 
@@ -386,8 +386,6 @@ def obtain_parametric_stream_coefficients(montecarlokey,
     --------
     coefficient_time_fit_params : array-like
         Coefficient time fit parameters.
-    trajectory_coeffs : array-like
-        Trajectory coefficients.
     stream_coordinate_range : array-like
         Stream coordinate range.
     simulation_sampling_time_stamps : array-like
@@ -400,8 +398,8 @@ def obtain_parametric_stream_coefficients(montecarlokey,
             montecarlokey=montecarlokey,
             streamOrbit=streamOrbit,
             pal5Orbit=pal5Orbit,
-            perturberOrbit=perturberOrbit,
-            approx_impact_time=approx_impact_time)
+            approx_impact_time=approx_impact_time,
+            approx_impact_tau=approx_impact_tau,)
     
     stream_time_coordinate_range = [np.min(stream_time_coordinate),np.max(stream_time_coordinate)]
     
@@ -412,7 +410,6 @@ def obtain_parametric_stream_coefficients(montecarlokey,
     coefficient_time_fit_params = PSF.linearize_temporal_stream_coefficients_array(
         temporal_coefficients_array, simulation_time_stamps)
     
-    
     return simulation_time_stamps, coefficient_time_fit_params,stream_time_coordinate_range
 
 
@@ -421,8 +418,8 @@ def parameterize_stream_snapshots(\
     montecarlokey,
     streamOrbit,
     pal5Orbit,\
-    perturberOrbit,
     approx_impact_time,\
+    approx_impact_tau,
     n_adjacent=2):
     ############################################
     ########### SET BASE PARAMETERS ###########
@@ -451,31 +448,21 @@ def parameterize_stream_snapshots(\
     pal5_tuple = (  \
                         pal5Orbit[montecarlokey]['xt'][:], pal5Orbit[montecarlokey]['yt'][:], pal5Orbit[montecarlokey]['zt'][:], \
                         pal5Orbit[montecarlokey]['vxt'][:], pal5Orbit[montecarlokey]['vyt'][:], pal5Orbit[montecarlokey]['vzt'][:])
-    perturber_tuple = (  \
-                        perturberOrbit[montecarlokey]['xt'][:], perturberOrbit[montecarlokey]['yt'][:], perturberOrbit[montecarlokey]['zt'][:], \
-                        perturberOrbit[montecarlokey]['vxt'][:], perturberOrbit[montecarlokey]['vyt'][:], perturberOrbit[montecarlokey]['vzt'][:])
+
     host_orbit_galactic_coordinates = DE.filter_orbit_by_dynamical_time(\
         pal5Orbit[montecarlokey]['t'][:],\
         pal5_tuple,\
         approx_impact_time,\
         n_dynamic_time=n_dynamic_time)
-    perturber_galactic_coordinates = DE.filter_orbit_by_dynamical_time(\
-        perturberOrbit[montecarlokey]['t'][:],\
-        perturber_tuple,\
-        approx_impact_time,\
-        n_dynamic_time=n_dynamic_time)
-    perturb_coordinates=(perturber_galactic_coordinates[1],perturber_galactic_coordinates[2],perturber_galactic_coordinates[3],\
-                            perturber_galactic_coordinates[4],perturber_galactic_coordinates[5],perturber_galactic_coordinates[6])
+    
 
     # convert the stream and perturber to tail coordinates # NEEDS TO BE AN ARRAY 
     _,stream_tail_coordinates=DE.convert_instant_to_tail_coordinates(\
                 stream_galactic_coordinates,host_orbit_galactic_coordinates,approx_impact_time)
-    _,perturber_tail_coordinates=DE.convert_instant_to_tail_coordinates(\
-                perturb_coordinates,host_orbit_galactic_coordinates,approx_impact_time)
 
     # the time range of the stream coordinate    
     myfilter = filter_stream_about_suspected_impact_time(\
-        stream_tail_coordinates,perturber_tail_coordinates,xmin,xlim,ylim,zlim)
+        stream_tail_coordinates,approx_impact_tau,xmin,xlim,ylim,zlim)
     
 
     
@@ -612,7 +599,7 @@ def get_3D_parabola_stream_snapshot_coefficients(stream_time_coordinate,stream_g
 
 
 def filter_stream_about_suspected_impact_time(stream_tail_coordinates:np.ndarray,
-                                perturber_tail_coordinates:np.ndarray,
+                                tau_suspected:float,
                                 xmin:float=0.5,
                                 xlim:float=15,
                                 ylim:float=0.5,
@@ -634,7 +621,11 @@ def filter_stream_about_suspected_impact_time(stream_tail_coordinates:np.ndarray
     - my_filter (np.ndarray): A boolean array indicating which elements of the stream should be included.
 
     """
-    filter1 = DE.filter_impacted_stream_side(stream_tail_coordinates[0], perturber_tail_coordinates[0,0])
+    # filter1 = DE.filter_impacted_stream_side(stream_tail_coordinates[0], perturber_tail_coordinates[0,0])
+    if tau_suspected>0:
+        filter1 = stream_tail_coordinates[0]>0
+    else:
+        filter1 = stream_tail_coordinates[0]<0
     filter2 = DE.filter_stream_in_tail_coordinates(stream_tail_coordinates, xlim, ylim, zlim)
     filter3 = np.abs(stream_tail_coordinates[0]) > xmin
     my_filter = filter1 & filter2 & filter3
