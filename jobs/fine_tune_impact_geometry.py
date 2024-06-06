@@ -5,7 +5,7 @@ from scipy import optimize
 import numpy as np 
 import datetime
 import h5py
-import astropy.units as u               # type: ignore
+import os 
 import sys 
 codepath="/obs/sferrone/stream_analysis/code/"
 sys.path.append(codepath)
@@ -191,8 +191,44 @@ def full_impact_geometry_analysis_one_impact(GCname,montecarlokey,perturberName,
 #########################################
 ################## I/O ##################
 #########################################
+def combine_temp_files(perturberName:str,GCname:str,potential:str,):
+    bigfilename=PH.impact_geometry_results(GCname=GCname,perturber=perturberName,potential=potential,)
+    bigfile = h5py.File(bigfilename, 'w')
+    montecarlokeys = ["monte-carlo-"+str(i).zfill(3) for i in range(50)]
     
+    for montecarlokey in montecarlokeys:
+        tempfilepath=PH.temporary_impact_geometry(
+            GCname=GCname,
+            montecarlokey=montecarlokey,
+            potential=potential,
+            perturber=perturberName)
+        
+        if not os.path.exists(tempfilepath):
+            print("File DOES NOT EXIST:",tempfilepath)
+            continue
+        tempfile=h5py.File(tempfilepath, 'r')
+        
+        # Check if the group already exists
+        if montecarlokey in bigfile:
+            group = bigfile[montecarlokey]
+            print("WARNING: Group already exists. Overwriting.")
+        else:
+            group = bigfile.create_group(montecarlokey)
 
+        # Copy the impact geometry
+        for item in tempfile:
+            tempfile.copy(item, group, expand_soft=True, expand_external=True, expand_refs=True)
+            
+        # Copy the attributes
+        for attr_name, attr_value in tempfile.attrs.items():
+            group.attrs[attr_name] = attr_value    
+        
+        tempfile.close()
+
+        
+    bigfile.close()
+    
+    
 def write_results_to_temp_file(tempfilepath,attributes,erkal_2015_params,parametric_equation_params):
     """
     Write the results to a file in HDF5 format.
@@ -216,43 +252,6 @@ def write_results_to_temp_file(tempfilepath,attributes,erkal_2015_params,paramet
             f["parametric_equation_params/"].create_dataset(key,data=parametric_equation_params[key])
         for key in attributes.keys():
             f.attrs[key]=attributes[key]
-            
-
-                    
-            
-def write_results_to_file(fname,attributes,perturberName,geometry_erkal,parameters_stream_and_perturber):
-    """
-    Write the results to a file in HDF5 format.
-
-    Parameters:
-    - output_path (str): The path where the output file will be saved.
-    - mcarlo (str): The name of the Monte Carlo simulation.
-    - perturberName (str): The name of the perturber.
-    - geometry_erkal (dict): A dictionary containing the geometry parameters for Erkal 2015.
-    - parameters_stream_and_perturber (dict): A dictionary containing the parameters for the parametric equation.
-
-    Returns:
-    None
-    """
-
-    with h5py.File(fname, 'a') as f:
-        if perturberName not in f.keys():
-            f.create_group(perturberName)
-            f.create_group(perturberName + "/erkal_2015_params")
-            f.create_group(perturberName + "/parametric_equation_params")
-            
-            # Save the parameters
-            for key in geometry_erkal.keys():
-                f[perturberName + "/erkal_2015_params"].create_dataset(key, data=geometry_erkal[key])
-
-            for key in parameters_stream_and_perturber.keys():
-                f[perturberName + "/parametric_equation_params"].create_dataset(key, data=parameters_stream_and_perturber[key])
-                
-            for key in attributes.keys():
-                f.attrs[key] = attributes[key]
-            print(fname, "appended")
-        else:
-            print(perturberName, "group already exists")
 
 
 def make_outfile_attributes(montecarlokey:str, 
@@ -444,7 +443,6 @@ def obtain_parametric_stream_coefficients(montecarlokey,
     return simulation_time_stamps, coefficient_time_fit_params,stream_time_coordinate_range
 
 
-
 def parameterize_stream_snapshots(\
     montecarlokey,
     streamOrbit,
@@ -516,7 +514,6 @@ def parameterize_stream_snapshots(\
     simulation_time_stamps = stream_orbit_time_stamps[stream_indexes_of_interest]
     
     return simulation_time_stamps, tau_coordinate, stream_stamps
-
 
 
 def parameterize_oribtal_trajectory(\

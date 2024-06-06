@@ -56,8 +56,8 @@ def orbit(GCname:str,potential:str):
     os.makedirs(path,exist_ok=True)
     return path+name
 
-def impact_geometry_results(GCname:str,montecarlokey:str,potential:str):
+def impact_geometry_results(GCname:str,perturber:str,potential:str):
     path = base['impact-geometry-results'] + potential +"/"+ GCname + "/"
-    name = GCname+"-"+montecarlokey+"-erkal-impact-geometry.hdf5"
+    name = GCname+"-"+perturber+"-erkal-impact-geometry.hdf5"
     os.makedirs(path,exist_ok=True)
     return path+name

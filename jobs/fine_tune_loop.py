@@ -14,6 +14,13 @@ def fine_tune_loop(perturberName):
             potential_stream    =   potential_stream,\
             potential_GCs       =   potential_GCs,\
             NP                  =   NP)
+        
+    FTIG.combine_temp_files(
+        perturberName=perturberName,
+        GCname=GCname,
+        potential=potential_stream,
+)
+
 
 
 if __name__=="__main__":
