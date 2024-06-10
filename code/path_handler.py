@@ -67,3 +67,8 @@ def impact_geometry_results(GCname:str,perturber:str,potential:str):
     name = GCname+"-"+perturber+"-erkal-impact-geometry.hdf5"
     os.makedirs(path,exist_ok=True)
     return path+name
+
+def minidata():
+    path = base['minidata']
+    os.makedirs(path,exist_ok=True)
+    return path

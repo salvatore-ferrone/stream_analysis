@@ -14,21 +14,43 @@ import os
 import pandas as pd
 import h5py
 import numpy as np 
+import sys 
+sys.path.append("../code/")
+import path_handler as PH #type: ignore
 
-def extract_all_statistics_into_data_frame():
+def extract_all_statistics_into_data_frame(GCname,potential):
     
-    filenames=list_all_perturber_file_names()
-    paths=obtain_base_paths()
+
+    path_to_geom_files=PH.base['impact-geometry-results']+potential+"/"+GCname+"/"
+    filenames=os.listdir(path_to_geom_files)
+    
     hole_punchers=obtain_perturbers_per_monte_carlo()
-    column_names=make_erkal_column_names_for_pandas_DF()
+    column_names=make_erkal_column_names_for_pandas_DF(\
+        path_to_geom_files,filenames)
     data_frame=initialize_data_frame(column_names)
-    for filename in filenames:
-        montecarlokey="monte-carlo-"+filename.split('monte-carlo-')[1].split('-')[0]
-        geometryfile=h5py.File(paths['path_to_geometry']+filename,'r')
-        GCnames=list(geometryfile.keys())
-        for GCname in GCnames:
-            dataDict=extract_erkal_params_with_gap_flag(geometryfile,hole_punchers,montecarlokey,GCname)
-            data_frame=append_data_frame(data_frame, dataDict)
+
+    GCnames = []
+    for montecarlokey in hole_punchers.keys():
+        for GCname in hole_punchers[montecarlokey]:
+            GCnames.append(GCname)
+    uniquenames=np.unique(GCnames)    
+    
+    keep_filenames = []
+    for uniquename in uniquenames:
+        for filename in filenames:
+            if uniquename in filename:
+                keep_filenames.append(filename)
+        
+    keep_filenames    
+    for filename in keep_filenames:
+        geometryfile=h5py.File(path_to_geom_files+filename,'r')
+        montecarlokeys=list(geometryfile.keys())
+        perturber=filename.split("-")[1]
+
+        for montecarlokey in montecarlokeys:
+            dataDict    =   extract_erkal_params_with_gap_flag(\
+                geometryfile,hole_punchers,perturber,montecarlokey)
+            data_frame  =   append_data_frame(data_frame, dataDict)
     return data_frame
 
 def append_data_frame(dataFrame, dataDict):
@@ -38,28 +60,28 @@ def append_data_frame(dataFrame, dataDict):
     dataFrame=pd.concat([dataFrame,pd.DataFrame([dataDict])],ignore_index=True)
     return dataFrame
 
-def extract_erkal_params_with_gap_flag(geometryfile,hole_punchers,montecarlokey,GCname):
+def extract_erkal_params_with_gap_flag(geometryfile,hole_punchers,perturber,montecarlokey):
     """
     Given the name of a file, append the Erkal parameters to the data frame.
     """
     outdict={}
+    outdict['perturber']=perturber
     outdict['monte_carlo']=montecarlokey
-    outdict['perturber']=GCname
     outdict['gap_flag']=0
     # check if the perturber is a hole puncher
     if montecarlokey in hole_punchers.keys():
-        if GCname in hole_punchers[montecarlokey]:
+        if perturber in hole_punchers[montecarlokey]:
             outdict['gap_flag']=1
     # add the Erkal parameters to the dictionary    
-    for key in geometryfile[GCname]['erkal_2015_params'].keys():
+    for key in geometryfile[montecarlokey]['erkal_2015_params'].keys():
         if key=="w_per":
-            w_per = np.linalg.norm(geometryfile[GCname]['erkal_2015_params'][key][()])
+            w_per = np.linalg.norm(geometryfile[montecarlokey]['erkal_2015_params'][key][()])
             outdict[key]=w_per
         elif key=="w_par":
-            w_par = np.linalg.norm(geometryfile[GCname]['erkal_2015_params'][key][()])
+            w_par = np.linalg.norm(geometryfile[montecarlokey]['erkal_2015_params'][key][()])
             outdict[key]=w_par
         else:
-            outdict[key]=geometryfile[GCname]['erkal_2015_params'][key][()]
+            outdict[key]=geometryfile[montecarlokey]['erkal_2015_params'][key][()]
     return outdict
 
 def initialize_data_frame(column_names):
@@ -70,15 +92,15 @@ def initialize_data_frame(column_names):
     return dataframe
 
 # get column names for the data_frame
-def make_erkal_column_names_for_pandas_DF():
+def make_erkal_column_names_for_pandas_DF(path_to_geom_files,gap_geometry_filenames):
     """
     to compile the results of the gap statistics
     """
-    paths=obtain_base_paths()
-    gap_geometry_filenames=list_all_perturber_file_names()
-    myfile=h5py.File(paths['path_to_geometry']+gap_geometry_filenames[0], 'r')
-    GCnames=list(myfile.keys())
-    erkal_keys=list(myfile[GCnames[0]]['erkal_2015_params'].keys())
+    
+    
+    myfile=h5py.File(path_to_geom_files+gap_geometry_filenames[0], 'r')
+    montecarlokeys=list(myfile.keys())
+    erkal_keys=list(myfile[montecarlokeys[0]]['erkal_2015_params'].keys())
     column_names=[]
     column_names.append("monte_carlo")
     column_names.append("perturber")
@@ -88,41 +110,18 @@ def make_erkal_column_names_for_pandas_DF():
         column_names.append(key)
     return column_names
 
-# a function that lists all perturber results
-def list_all_perturber_file_names():
-    paths=obtain_base_paths()
-    path_to_geometry=paths["path_to_geometry"]
-    # list the valid extension 
-    valid_extension = ".hdf5"
-    # list all the files in the directory
-    all_files = os.listdir(path_to_geometry)
-    # take only those that are valid
-    valid_files = [f for f in all_files if f.endswith(valid_extension)]
-    return valid_files
+
 
 # a function that opens the json file with gap results
 def obtain_perturbers_per_monte_carlo():
     """
     Returns a dictionary with the perturbers responsible for each observed gap in the simulation.
     """
-    paths = obtain_base_paths()
-    with open(paths['json_guilty_perturbers']) as f:
+    fname=PH.base['minidata']+"monte_carlo_perturbers.json"
+    with open(fname) as f:
         hole_punchers = json.load(f)
     return hole_punchers
 
-# a function that returns the paths 
-def obtain_base_paths():
-    """
-    Returns the base paths for the json files that contain the gap statistics.
-    """
-    
-    paths={}
-    base_GapPredictorPath="/obs/sferrone/mini-reports/GapPredictor/"
-    json_guilty_perturbers = base_GapPredictorPath + "input_data/monte_carlo_perturbers.json"
-    path_to_geometry = base_GapPredictorPath + "impact-geometry-results/"
-    
-    paths["json_guilty_perturbers"]=json_guilty_perturbers
-    paths["path_to_geometry"]=path_to_geometry
-    return paths
+
 
 

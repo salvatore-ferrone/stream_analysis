@@ -9,5 +9,6 @@
     "intermediate-products":"/scratch2/sferrone/intermediate-products/",
     "temporary":"/poubelle/sferrone/",
     "impact-geometry-results":"/scratch2/sferrone/intermediate-products/impact-geometry-results/",
-    "manyplots":"/scratch2/sferrone/manyplots/"
+    "manyplots":"/scratch2/sferrone/manyplots/",
+    "minidata":"/obs/sferrone/stream_analysis/minidata/"
 }

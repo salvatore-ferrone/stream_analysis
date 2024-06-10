@@ -1,0 +1,19 @@
+{
+    "monte-carlo-000": ["NGC2808", "NGC5634"],
+    "monte-carlo-009": ["NGC104","NGC2808","NGC7078"],
+    "monte-carlo-014": ["NGC2808"],
+    "monte-carlo-019": ["NGC2808","NGC5824"],
+    "monte-carlo-020": ["NGC2808"],
+    "monte-carlo-022": ["NGC2808","NGC6341"],
+    "monte-carlo-024": ["NGC2808","NGC6656"],
+    "monte-carlo-025": ["NGC2808","NGC5272"],
+    "monte-carlo-027": ["NGC104","NGC2808","NGC6341"],  
+    "monte-carlo-032": ["NGC2808"],
+    "monte-carlo-033": ["NGC2808","NGC5272"],
+    "monte-carlo-035": ["NGC2808","NGC7089"],
+    "monte-carlo-037": ["NGC2808"],
+    "monte-carlo-042": ["NGC2808","NGC7089"], 
+    "monte-carlo-044": ["NGC2808","NGC6356"],
+    "monte-carlo-048": ["NGC104","NGC2808","NGC7089"],
+    "monte-carlo-049": ["NGC2808"]
+    }
