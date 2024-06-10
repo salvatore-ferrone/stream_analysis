@@ -329,7 +329,6 @@ def retrieve_paths(montecarlokey:str, perturberName:str,\
 
     # get streamOrbit
     pathStreamOrbit = PH.stream_orbit(GCname=GCname,montecarlokey=montecarlokey,potential=stream_orbit_gfield,NP=NP)
-    #"/scratch2/sferrone/simulations/StreamOrbits/"+stream_orbit_gfield+"/Pal5/100000/Pal5-" + mcarlo + "-StreamOrbit.hdf5"
 
     # get path to perturber orbit
     pathPerturOrbit = PH.orbit(GCname=perturberName,potential=gc_orbit_gfield)

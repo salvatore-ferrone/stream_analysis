@@ -43,6 +43,12 @@ def force_on_orbit(GCname:str,montecarlokey:str,potential:str):
     os.makedirs(path,exist_ok=True)
     return path+name
 
+def stream(GCname:str,montecarlokey:str,potential:str,NP:int):
+    path = base['Streams'] + potential +"/"+ GCname + "/" + str(NP) + "/"
+    name = GCname+"-stream-"+montecarlokey+".hdf5"
+    os.makedirs(path,exist_ok=True)
+    return path+name
+
 def stream_orbit(GCname:str,montecarlokey:str,potential:str,NP:int):
     # "/scratch2/sferrone/simulations/StreamOrbits/pouliasis2017pii-Pal5-suspects/Pal5/100000"
     path = base['StreamOrbits'] +potential +"/"+ GCname + "/"+ str(NP) + "/"
