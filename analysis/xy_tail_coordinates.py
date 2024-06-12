@@ -11,7 +11,7 @@ import data_extractors as DE #type: ignore
 
 
 
-def main(GCname="Pal5",montecarlokey="monte-carlo-000",potential="pouliasis2017pii-GCNBody",NP=int(1e5)):
+def main(GCname="Pal5",montecarlokey="monte-carlo-000",potential_stream="pouliasis2017pii-NGC104",potential_orbit="pouliasis2017pii-GCNBody",NP=int(1e5)):
     
     ### plot parameters
     xmax,ymax = 12,0.5
@@ -19,13 +19,13 @@ def main(GCname="Pal5",montecarlokey="monte-carlo-000",potential="pouliasis2017p
                    "s":1.5, 
                    "cmap":'rainbow', 
                    "norm":colors.LogNorm(vmin=1e-5, vmax=3e-4)}
-    title="{:s} {:s} {:s}".format(GCname, potential, montecarlokey)
-    outfilename = set_outfile_names(GCname,montecarlokey,potential,NP)
+    title="{:s} {:s} {:s}".format(GCname, potential_stream, montecarlokey)
+    outfilename = set_outfile_names(GCname,montecarlokey,potential_stream,NP)
     
     ### load in the data
-    streamfilename=PH.stream(GCname,montecarlokey,potential,NP)
+    streamfilename=PH.stream(GCname,montecarlokey,potential_stream,NP)
     xs,ys,zs,vxs,vys,vzs=load_stream(streamfilename,montecarlokey,NP)
-    TORB, XORB, YORB, ZORB, VXORB, VYORB, VZORB=load_orbit(GCname,montecarlokey,potential)
+    TORB, XORB, YORB, ZORB, VXORB, VYORB, VZORB=load_orbit(GCname,montecarlokey,potential_orbit)
     
     ### projcet into tail coordinates
     xprimeP,yprimeP,_,_,_,_,_=SOC.transform_from_galactico_centric_to_tail_coordinates(xs,ys,zs,vxs,vys,vzs,TORB,XORB,YORB,ZORB,VXORB,VYORB,VZORB,t0=0)
@@ -38,9 +38,9 @@ def main(GCname="Pal5",montecarlokey="monte-carlo-000",potential="pouliasis2017p
     ### do and save the plot 
     scat_params = {"alpha":0.9, "s":1.5, "cmap":'rainbow', "norm":colors.LogNorm(vmin=1e-5, vmax=3e-4)}
     fig,axis,_,_=plotters.plot2dHist(X,Y,H,scat_params=scat_params)
-    title="{:s} {:s} {:s}".format(GCname, potential, montecarlokey)
     axis[0].set_title(title)    
     fig.tight_layout()
+    print("saving",outfilename)
     fig.savefig(outfilename,dpi=300)
     
     
@@ -58,17 +58,17 @@ def load_orbit(GCname,montecarlokey,potential,n_dynamic_time = 2,time_of_interes
 
 def load_stream(streamfilename,montecarlokey:str,NP:int):
     with h5py.File(streamfilename,'r') as stream:
-        x=stream['isotropic-plummer'][str(NP)][montecarlokey]['x'][:]
-        y=stream['isotropic-plummer'][str(NP)][montecarlokey]['y'][:]
-        z=stream['isotropic-plummer'][str(NP)][montecarlokey]['z'][:]
-        vx=stream['isotropic-plummer'][str(NP)][montecarlokey]['vx'][:]
-        vy=stream['isotropic-plummer'][str(NP)][montecarlokey]['vy'][:]
-        vz=stream['isotropic-plummer'][str(NP)][montecarlokey]['vz'][:]
+        x  = stream['isotropic-plummer'][str(NP)][montecarlokey]['x'][:]
+        y  = stream['isotropic-plummer'][str(NP)][montecarlokey]['y'][:]
+        z  = stream['isotropic-plummer'][str(NP)][montecarlokey]['z'][:]
+        vx = stream['isotropic-plummer'][str(NP)][montecarlokey]['vx'][:]
+        vy = stream['isotropic-plummer'][str(NP)][montecarlokey]['vy'][:]
+        vz = stream['isotropic-plummer'][str(NP)][montecarlokey]['vz'][:]
     return x,y,z,vx,vy,vz
 
 
 if __name__=="__main__":
     i=sys.argv[1]
     montecarlokey="monte-carlo-"+str(i).zfill(3)
-    potential="pouliasis2017pii"
-    main(montecarlokey=montecarlokey,potential=potential)
+    potential_stream="pouliasis2017pii-GCNBody"
+    main(montecarlokey=montecarlokey,potential_stream=potential_stream)

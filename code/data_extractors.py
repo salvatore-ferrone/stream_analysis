@@ -89,6 +89,20 @@ def get_orbit(path_orbit,mcarlokey):
 
 
 
+############################################
+################## STREAM ##################
+############################################
+def get_stream(path_stream,mcarlokey,NP=int(1e5),internal_dynamics="isotropic-plummer"):
+    with h5py.File(path_stream,'r') as fp:
+        xstream=fp[internal_dynamics][str(NP)][mcarlokey]['x'][:]
+        ystream=fp[internal_dynamics][str(NP)][mcarlokey]['y'][:]
+        zstream=fp[internal_dynamics][str(NP)][mcarlokey]['z'][:]
+        vxstream=fp[internal_dynamics][str(NP)][mcarlokey]['vx'][:]
+        vystream=fp[internal_dynamics][str(NP)][mcarlokey]['vy'][:]
+        vzstream=fp[internal_dynamics][str(NP)][mcarlokey]['vz'][:]
+        tesc=fp[internal_dynamics][str(NP)][mcarlokey]['tesc'][:]
+    return (xstream,ystream,zstream,vxstream,vystream,vzstream,),tesc
+
 ##################################################
 ################## STREAM ORBIT ##################
 ##################################################
