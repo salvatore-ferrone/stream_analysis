@@ -20,7 +20,8 @@ def main(mcarlo_int, perturberName,
         GCname="Pal5",\
         potential_stream="pouliasis2017pii-Pal5-suspects",\
         potential_GCs="pouliasis2017pii-GCNBody",\
-        NP=int(1e5)):
+        NP=int(1e5),
+        density_min=7e-4,minimization_method='L-BFGS-B'):
     """
     DOES THE ANALYSIS FOR A SINGLE IMPACT AND WRITES THE RESULTS TO A FILE
 
@@ -43,7 +44,7 @@ def main(mcarlo_int, perturberName,
             perturberName=perturberName,\
             potential_GCs=potential_GCs,\
             potential_stream=potential_stream,\
-            NP=NP)
+            NP=NP,density_min=density_min,minimization_method=minimization_method)
 
     # prepare the outpuit 
     attributes = make_outfile_attributes(\
@@ -63,7 +64,7 @@ def main(mcarlo_int, perturberName,
     # write_results_to_file(fname, attributes, perturberName, geometry_erkal, parameters_stream_and_perturber)
 
 
-def full_impact_geometry_analysis_one_impact(GCname,montecarlokey,perturberName,potential_GCs,potential_stream,NP):
+def full_impact_geometry_analysis_one_impact(GCname,montecarlokey,perturberName,potential_GCs,potential_stream,NP,density_min=7e-4,minimization_method='L-BFGS-B'):
     """
     Perform a full impact geometry analysis for a single impact.
 
@@ -125,9 +126,8 @@ def full_impact_geometry_analysis_one_impact(GCname,montecarlokey,perturberName,
     streamOrbit, perturberOrbit, pal5Orbit, forceFile, tauFile=   open_input_data_files(\
         pathStreamOrbit,pathPerturOrbit,pathPal5Orbit,pathForceFile,pathTauFile)
     
-    
     # 1. Get approximate impact time from the force file
-    approx_impact_time,approx_impact_tau=get_approx_impact_time_with_stream_density_filter(tauFile,forceFile,perturberName)
+    approx_impact_time,approx_impact_tau=get_approx_impact_time_with_stream_density_filter(tauFile,forceFile,perturberName,density_min=density_min)
     # 2. fit the stream to a 3D parabola for a few time stamps around the approx impact time
     simulation_time_stamps, coefficient_time_fit_params,stream_time_coordinate_range=\
         obtain_parametric_stream_coefficients(montecarlokey,
@@ -145,7 +145,7 @@ def full_impact_geometry_analysis_one_impact(GCname,montecarlokey,perturberName,
         stream_time_coordinate_range,\
         simulation_time_stamps,\
         coefficient_time_fit_params,\
-        trajectory_coeffs,)
+        trajectory_coeffs,minimization_method=minimization_method)
     s,t=results.x
     
     # 4. get the full impact geometry
@@ -509,7 +509,6 @@ def parameterize_stream_snapshots(\
             mydata,host_orbit_galactic_coordinates,current_time)
         tau_coordinate[cc,:]=temp
         cc+=1
-    
     simulation_time_stamps = stream_orbit_time_stamps[stream_indexes_of_interest]
     
     return simulation_time_stamps, tau_coordinate, stream_stamps
@@ -686,15 +685,26 @@ def minimize_distance_between_stream_and_perturber(stream_coordinate_range,
         The optimization result.
 
     """
+    t_range = [simulation_sampling_time_stamps.min(),simulation_sampling_time_stamps.max()]
     # make initial guess for the time 
     t0 = np.mean(simulation_sampling_time_stamps)
     s0 = np.mean(stream_coordinate_range)
     p0 = (s0, t0)
-    results = optimize.minimize(
-        PSF.objective_distance_perturber_and_moving_stream,
-        p0,
-        args=(coefficient_time_fit_params, trajectory_coeffs),
-        method=minimization_method)
+    if minimization_method=="L-BFGS-B":
+        bounds = [(stream_coordinate_range[0], stream_coordinate_range[1]), (t_range[0], t_range[1])]
+        results = optimize.minimize(
+            PSF.objective_distance_perturber_and_moving_stream,
+            p0,
+            args=(coefficient_time_fit_params, trajectory_coeffs),
+            method=minimization_method,
+            bounds=bounds)
+    else:
+        results = optimize.minimize(
+            PSF.objective_distance_perturber_and_moving_stream,
+            p0,
+            args=(coefficient_time_fit_params, trajectory_coeffs),
+            method=minimization_method)
+        
     return results
 
  

@@ -8,7 +8,7 @@ def fine_tune_loop(perturberName):
     NP              =   int(1e5)
     
     
-    for mcarlo_int in range(50):
+    for mcarlo_int in range(36,50):
         FTIG.main(mcarlo_int, perturberName,
             GCname              =   GCname,\
             potential_stream    =   potential_stream,\

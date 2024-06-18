@@ -11,7 +11,7 @@ import data_extractors as DE #type: ignore
 
 
 
-def main(GCname="Pal5",montecarlokey="monte-carlo-000",potential_stream="pouliasis2017pii-NGC104",potential_orbit="pouliasis2017pii-GCNBody",NP=int(1e5)):
+def main(GCname="Pal5",montecarlokey="monte-carlo-000",potential_stream="pouliasis2017pii-Pal5-suspects",potential_orbit="pouliasis2017pii-GCNBody",NP=int(1e5)):
     
     ### plot parameters
     xmax,ymax = 12,0.5
@@ -70,5 +70,5 @@ def load_stream(streamfilename,montecarlokey:str,NP:int):
 if __name__=="__main__":
     i=sys.argv[1]
     montecarlokey="monte-carlo-"+str(i).zfill(3)
-    potential_stream="pouliasis2017pii-GCNBody"
+    potential_stream="pouliasis2017pii-Pal5-all-perturber-suspects"
     main(montecarlokey=montecarlokey,potential_stream=potential_stream)
