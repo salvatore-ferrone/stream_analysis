@@ -112,7 +112,7 @@ def load_stream(filepath,config):
 
 if __name__=="__main__":
     config = {
-    "montecarlokey": "monte-carlo-000",
+    "montecarlokey": "monte-carlo-007",
     "GCname": "NGC3201",
     "MWpotential": "pouliasis2017pii",
     "NP": int(1e5),
