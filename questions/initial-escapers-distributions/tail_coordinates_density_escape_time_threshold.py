@@ -5,9 +5,9 @@ from matplotlib import colors
 import matplotlib.gridspec as gridspec
 from matplotlib.lines import Line2D
 
+import os 
 import sys 
 sys.path.append("../../code/")
-import StreamOrbitCoords as SOC
 import data_extractors as DE
 sys.path.append("../../analysis/")
 import plotters
@@ -20,7 +20,7 @@ def main(config):
     stream_path     = "/scratch2/sferrone/simulations/Streams/"+config["MWpotential"]+"/"+config["GCname"]+"/"+str(config["NP"])+"/"
     stream_filename = config["GCname"] + "-streams-" + config['montecarlokey'] + ".hdf5"
     orbit_path      = "/scratch2/sferrone/simulations/Orbits/"+config["MWpotential"]+"/"+config["GCname"]+"-orbits.hdf5"    
-    
+    xmax,ymax       = config["xmax"],config["ymax"]
     ### RC PARAMS!
     bigFont = 18
     smallfont=14
@@ -51,7 +51,6 @@ def main(config):
     
     ## PREPARE THE PLOT 
     # Set parameters for the density plot
-    xmax,ymax=10,0.5
     xedges,yedges=plotters.histogramEdges(NP//1,xmax,ymax)
     norm_density = colors.LogNorm(vmin=1e-5, vmax=4e-4)
     cmap_density = plt.cm.rainbow
@@ -62,6 +61,7 @@ def main(config):
     counts,edges = np.histogram(tesc_escape_only,bins=nbins)
     centers = (edges[:-1] + edges[1:]) / 2    
     ourdir = config["outdir"]+config['MWpotential']+"/"+config['GCname']+"/"+config['montecarlokey']+"/"
+    os.makedirs(ourdir,exist_ok=True)
     for i in range(config['factor_min'],config['factor_max'],config["nskip"]):
         threshold=ETT.threshold_factor(tesc, i)
         cond = tesc <= threshold
@@ -76,14 +76,17 @@ def main(config):
         title = "{:s} {:s} {:s} {:d}".format(config['GCname'],config["MWpotential"],config['montecarlokey'],config['NP'])
         outname = "TC-density-{:s}-{:.4f}".format(config["GCname"],threshold)
         fig, ax0, ax1, ax2, ax3, caxis = set_up_gridspec()
-        fig, ax0, ax1, ax2, ax3, caxis = fill_in_figure(fig, ax0, ax1, ax2, ax3, caxis, threshold, XX, YY, cond, tesc_escape_only, counts, edges, centers, hist2D_old, hist2D_new, cmap_density, norm_density, bigFont)
+        fig, ax0, ax1, ax2, ax3, caxis = fill_in_figure(fig, ax0, ax1, ax2, ax3, caxis, \
+            threshold, XX, YY, cond, tesc_escape_only, counts, edges, centers, \
+            hist2D_old, hist2D_new, cmap_density, norm_density, \
+            [-xmax,xmax],[-ymax,ymax],bigFont)
         fig.suptitle(title)
         fig.tight_layout()
-        fig.savefig(config["outdir"]+outname+".png")
-        print("Saved: ",config["outdir"]+outname+".png")
+        fig.savefig(ourdir+outname+".png")
+        print("Saved: ",ourdir+outname+".png")
         plt.close(fig)
         
-    
+
 
 def set_up_gridspec():
     fig = plt.figure(figsize=(15, 10))
@@ -99,7 +102,10 @@ def set_up_gridspec():
 
 
 
-def fill_in_figure(fig, ax0, ax1, ax2, ax3, caxis, threshold, XX, YY, cond, tesc_escape_only, counts, edges, centers, hist2D_old, hist2D_new, cmap_density, norm_density, cbar_label_fontsize):
+def fill_in_figure(fig, ax0, ax1, ax2, ax3, caxis, \
+    threshold, XX, YY, cond, tesc_escape_only, counts, edges, centers,\
+    hist2D_old, hist2D_new, cmap_density, norm_density,
+    xlim,ylim,cbar_label_fontsize):
     ax0.scatter(XX[cond],YY[cond], c="r", s=1, alpha=0.5,);
     ax0.scatter(XX[~cond],YY[~cond], c="w", s=1,alpha=0.5);
     # Create custom markers
@@ -129,8 +135,8 @@ def fill_in_figure(fig, ax0, ax1, ax2, ax3, caxis, threshold, XX, YY, cond, tesc
 
 
     for ax in [ax0,ax2,ax3]:
-        ax.set_xlim(-10,10);
-        ax.set_ylim(-0.5,0.5);
+        ax.set_xlim(*xlim);
+        ax.set_ylim(*ylim);
     ax0.set_ylabel("y' [kpc]");
     ax2.set_ylabel("y' [kpc]");
     ax3.set_ylabel("y' [kpc]");
@@ -151,13 +157,18 @@ def fill_in_figure(fig, ax0, ax1, ax2, ax3, caxis, threshold, XX, YY, cond, tesc
 
 if __name__=="__main__":
     config = {
-        "montecarlokey": "monte-carlo-027",
+        "montecarlokey": "monte-carlo-000",
         "GCname": "Pal5",
         "MWpotential": "pouliasis2017pii-GCNBody",
         "NP": int(1e5),
         "outdir":"/scratch2/sferrone/plots/stream_analysis/questions/initial-escapers-distributions/",
         "factor_min": 1,
         "factor_max":30000,
-        "nskip": 1000
+        "nskip": 1000,
+        "xmax": 10,
+        "ymax": 0.5
     }
+    
     main(config)
+    
+    

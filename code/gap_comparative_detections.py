@@ -1,3 +1,9 @@
+"""
+THIS CODE DETECTS GAPS by comparing a model that could produce gaps against a control model.
+
+"""
+
+
 import numpy as np 
 import h5py 
 from scipy.stats import zscore
@@ -11,7 +17,13 @@ import data_extractors as DE # type: ignore
 
 
 
-def main(config):
+def compute_tau_density_profile(config):
+    """
+    This function takes two different simulations and compares their density profiles.
+    The are projected onto their respective orbits. Then, they are binned onto a common histogram.
+    
+    """
+    
     GCname              =   config["GCname"]
     montecarlokey       =   config["montecarlokey"]  
     control_potential   =   config["control_potential"]
@@ -19,20 +31,19 @@ def main(config):
     NP                  =   config["NP"]
     time_of_interest    =   config["time_of_interest"]
     xmin,xmax           =   config["xlims"]
-    sigmathreshold      =   config["sigmathreshold"]
-    method              =   config["method"]
+
     
     # make youre checks before computing
-    _valid_methods = ["Difference","Normalized Difference"]
-    assert method in _valid_methods, f"Method must be one of {_valid_methods}"
+    # _valid_methods = ["Difference","Normalized Difference"]
+    # assert method in _valid_methods, f"Method must be one of {_valid_methods}"
     # look at the output file see if it exists
 
-    fullname = make_out_filename(config)
-    if os.path.exists(fullname):
-        print(fullname, " already exists, skipping")
-        return
-    else:
-        print("Computing for ",fullname)
+    # fullname = make_out_filename(config)
+    # if os.path.exists(fullname):
+    #     print(fullname, " already exists, skipping")
+    #     return
+    # else:
+    #     print("Computing for ",fullname)
     
     # load stream
     control_stream,_    =   DE.get_stream(PH.stream(GCname,montecarlokey,control_potential,NP),montecarlokey)
@@ -50,23 +61,36 @@ def main(config):
     nbins               =   int(np.ceil(np.sqrt(NP)))
     edges               =   np.linspace(xmin,xmax,nbins)
     centers,counts_control,counts_compare = build_density_profile(edges,s_control,s_compare)
-    # find the zscores
-    centers,counts_control,counts_compare,z_scores  =  compute_z_scores(edges,s_control,s_compare,method)
-    indicies            =   np.where(z_scores<-sigmathreshold)[0]
-    result              =   find_contiguous_sublists(indicies)
-    # you already know what this does
-    save_results(fullname,config,centers,counts_control,counts_compare,z_scores,result)
+    return centers,counts_control,counts_compare
+
     
     
+    
+
+###############################################################################################
+######################################## I/O FUNCTIONS ########################################
+###############################################################################################
+def packorbits(GCname,potentialname,montecarlokey):
+    orbit=DE.get_orbit(PH.orbit(GCname,potentialname),montecarlokey)
+    t=orbit[0]
+    orbit=orbit[1:]
+    TORB, XORB, YORB, ZORB, VXORB, VYORB, VZORB = DE.filter_orbit_by_dynamical_time(t,orbit,0,2.5)
+    orbit=np.array([TORB,XORB,YORB,ZORB,VXORB,VYORB,VZORB])    
+    return orbit
+
+
+
 def make_out_filename(config):
-    mid_path = "gap_detections/" + config["compare_potential"] + "-against-" + config["control_potential"] + "/" + config["GCname"] + "/" + config["method"] + "/"
+    mid_path = "gap_detections/" + config["compare_potential"] + "-against-" + config["control_potential"] + "/" + config["GCname"] + "/"
     os.makedirs(config["base_output"]+mid_path,exist_ok=True)
-    fileoutname = config["GCname"] + "-" + config["montecarlokey"] + "-zscore-{:d}".format(1000*config["sigmathreshold"]) + ".h5" 
+    fileoutname = config["GCname"] + "-" + config["montecarlokey"] + "-density_profiles.h5" 
     fullname = config["base_output"]+mid_path+fileoutname
     return fullname
 
-    
-def save_results(fullname,config,centers,counts_control,counts_compare,z_scores,result):
+
+  
+def save_density_profles(fullname,config,centers,counts_control,counts_compare):
+    """ SAVE THE DENSITY PROFILES TO A FILE"""
     with h5py.File(fullname,"w") as myoutfile:
         ## make the file attributes
         for key in config.keys():
@@ -78,13 +102,43 @@ def save_results(fullname,config,centers,counts_control,counts_compare,z_scores,
         myoutfile["centers"] = centers
         myoutfile["compare"] = counts_compare
         myoutfile["control"] = counts_control
-        myoutfile["z_scores"] = z_scores
-        myoutfile["N_Gaps"] = len(result)
-        for i in range(len(result)):
-            myoutfile["Gap_{:d}".format(i)] = result[i]    
+        # myoutfile["z_scores"] = z_scores
+        # myoutfile["N_Gaps"] = len(result)
+        # for i in range(len(result)):
+            # myoutfile["Gap_{:d}".format(i)] = result[i]
     print("Results saved to: ",fullname)
     
 
+
+
+
+###############################################################################################
+####################################### DENSITY PROFILE #######################################
+###############################################################################################
+def build_density_profile(edges,s_control,s_compare):
+    """
+    Purpose:
+    --------
+    Given the edges, the control and compare streams, and the method, this function
+    will find the places where compare is less than control. 
+    
+    "difference" only subtracts
+    "normalized difference" subtracts and divides by the sum of the two arrays
+    """
+    # make the edges
+    centers =   (edges[1:]+edges[:-1])/2
+    # make the histograms 
+    counts_control = np.histogram(s_control,bins=edges)[0]
+    counts_compare = np.histogram(s_compare,bins=edges)[0]
+    
+    return centers,counts_control,counts_compare
+
+
+
+
+#######################################################################################
+####################################### GAP  :o #######################################
+#######################################################################################
 def find_contiguous_sublists(indices):
     """
     A gap is going to be a continguous set of under-densites, not just one
@@ -123,31 +177,7 @@ def compute_z_scores(method,counts_control,counts_compare):
     return z_scores
       
     
-def build_density_profile(edges,s_control,s_compare):
-    """
-    Purpose:
-    --------
-    Given the edges, the control and compare streams, and the method, this function
-    will find the places where compare is less than control. 
-    
-    "difference" only subtracts
-    "normalized difference" subtracts and divides by the sum of the two arrays
-    """
-    # make the edges
-    centers =   (edges[1:]+edges[:-1])/2
-    # make the histograms 
-    counts_control = np.histogram(s_control,bins=edges)[0]
-    counts_compare = np.histogram(s_compare,bins=edges)[0]
-    
-    return centers,counts_control,counts_compare
-    
-def packorbits(GCname,potentialname,montecarlokey):
-    orbit=DE.get_orbit(PH.orbit(GCname,potentialname),montecarlokey)
-    t=orbit[0]
-    orbit=orbit[1:]
-    TORB, XORB, YORB, ZORB, VXORB, VYORB, VZORB = DE.filter_orbit_by_dynamical_time(t,orbit,0,2.5)
-    orbit=np.array([TORB,XORB,YORB,ZORB,VXORB,VYORB,VZORB])    
-    return orbit
+
 
 if __name__=="__main__":
     config = {
@@ -165,6 +195,6 @@ if __name__=="__main__":
         "x-unit": "s kpc / km",
         "base_output": "/scratch2/sferrone/stream_analysis/"}
     
-    for i in range(50):
-        config["montecarlokey"] = "monte-carlo-" + str(i).zfill(3)
-        main(config)
+    # for i in range(50):
+        # config["montecarlokey"] = "monte-carlo-" + str(i).zfill(3)
+        # main(config)

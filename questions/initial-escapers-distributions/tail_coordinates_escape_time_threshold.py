@@ -122,7 +122,7 @@ def set_up_gridspec():
 
 if __name__=="__main__":
     config = {
-        "montecarlokey": "monte-carlo-009",
+        "montecarlokey": "monte-carlo-000",
         "GCname": "Pal5",
         "MWpotential": "pouliasis2017pii-GCNBody",
         "NP": int(1e5),
