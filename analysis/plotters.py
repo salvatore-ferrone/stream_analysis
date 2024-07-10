@@ -36,6 +36,7 @@ def histogramEdges(NP,xmax,ymax):
     yedges=np.linspace(-ymax,ymax,nYbins)
     return xedges,yedges  
 
+
 def getHistogram2d(x,y,xedges,yedges):
     '''
     given the x and y coordinates, return the histogram

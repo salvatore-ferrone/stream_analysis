@@ -21,7 +21,7 @@ def main(config):
     norm = colors.Normalize(vmin=tesc.min(), vmax=0)
     cmap = plt.cm.rainbow
     
-    outdir=config["outdir"]+config['GCname']+"/"+config['montecarlokey']+"/"
+    outdir=config["outdir"]+config['MWpotential']+"/"+config['GCname']+"/"+config['montecarlokey']+"/"
     os.makedirs(outdir,exist_ok=True)
     ## PICK OUR CURRENT THRESHOLD 
     for i in range(config['factor_min'],config['factor_max'],config["nskip"]):
@@ -112,9 +112,9 @@ def load_stream(filepath,config):
 
 if __name__=="__main__":
     config = {
-    "montecarlokey": "monte-carlo-007",
-    "GCname": "NGC3201",
-    "MWpotential": "pouliasis2017pii",
+    "montecarlokey": "monte-carlo-009",
+    "GCname": "Pal5",
+    "MWpotential": "pouliasis2017pii-GCNBody",
     "NP": int(1e5),
     "outdir":"/scratch2/sferrone/plots/stream_analysis/questions/initial-escapers-distributions/",
     "factor_min": 1,
