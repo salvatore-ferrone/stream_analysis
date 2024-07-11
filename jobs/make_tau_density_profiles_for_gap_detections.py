@@ -16,7 +16,7 @@ if __name__=="__main__":
         "time_of_interest": 0,
         "xlims": [-0.1,0.1],
         "sigmathreshold": 2,
-        "method": "Normalized Difference",
+        "method": "Difference",
         "x-coordinate": "tau",
         "x-unit": "s kpc / km",
         "base_output": "/scratch2/sferrone/stream_analysis/"}
