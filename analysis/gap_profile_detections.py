@@ -24,15 +24,18 @@ def main(config):
     
     centers,compare,control,control_potential,compare_potential=extract_density_profiles(fullname)
 
-    outdir  =   config['base_plots'] + GCname + "/"
-    os.makedirs(outdir,exist_ok=True)
 
 
     if method=="Difference":
         myZscores=linear_difference_z_scores(compare,control)
+    elif method=="Normalized_Difference":
+        myZscores=normalized_linear_difference_z_scores(compare,control)
     else:
         print("Method not implemented")
+        raise NotImplementedError
     
+    outdir  =   config['base_plots'] + GCname + "/" + method + "/"
+    os.makedirs(outdir,exist_ok=True)
 
     # store the gap candidates in a dictionary
     valid_under_densty_indicies =   significant_underdensities(myZscores,sig_min,centers,centeres_min_filter=centeres_min_filter)
@@ -47,13 +50,15 @@ def main(config):
     for i in range(threshold_steps.shape[0]):
         threshold       =   threshold_steps[i]
         fname   =   montecarlokey + "-" + method + "-" + control_potential + "-" + compare_potential + "-sigma-{:d}.png".format(int(1000*threshold))
-        figtitle = "{:s} Significant underdensities at {:d} milisigma".format(montecarlokey,int(1000*threshold_steps[i]))
+        figtitle = "{:s} {:s} Significant underdensities at {:d} milisigma".format(method, montecarlokey,int(1000*threshold_steps[i]))
         fig,axis     =   profile_plots(centers,control,compare,my_gaps,control_potential,compare_potential,threshold)
         fig.suptitle(figtitle)
         fig.tight_layout()
         fig.savefig(outdir+fname)
         plt.close(fig)
         print("Done with ", outdir+fname)
+
+
 
 
 
@@ -69,6 +74,8 @@ def profile_plots(centers,control,compare,my_gaps,control_potential,compare_pote
     for keys in my_gaps.keys():
         above_thres=np.where(my_gaps[keys]['zscores'] < -threshold)[0]
         valid_indexes = np.array(my_gaps[keys]['indicies'])[above_thres]
+        if len(valid_indexes)==0:
+            continue
         axis.scatter(centers[valid_indexes],compare[valid_indexes],color=my_gaps[keys]['color'],label=keys,zorder=10)
     axis.legend()
     axis.set(**AXIS)
@@ -77,6 +84,7 @@ def profile_plots(centers,control,compare,my_gaps,control_potential,compare_pote
 
 
 def significant_underdensities(zscores,threshold,centers,centeres_min_filter=0.01):
+    """ Reject candidates outside of the center of mass of the cluster"""
     under_densities = np.where(zscores < -threshold)[0]
     valid_under_densty_indicies = []
     for i in range(len(under_densities)):
@@ -84,6 +92,13 @@ def significant_underdensities(zscores,threshold,centers,centeres_min_filter=0.0
             valid_under_densty_indicies.append(under_densities[i])
     return valid_under_densty_indicies
 
+
+def normalized_linear_difference_z_scores(compare,control):
+    differences = compare - control
+    thesum = (compare+control)/2
+    normalized_differences = differences / thesum
+    myZscores = zscore(normalized_differences)
+    return myZscores
 
 
 def linear_difference_z_scores(compare,control):
@@ -115,7 +130,7 @@ if __name__=="__main__":
     "time_of_interest": 0,
     "xlims": [-0.1,0.1],
     "sigmathreshold": 2,
-    "method": "Difference",
+    "method": "Normalized_Difference",
     "x-coordinate": "tau",
     "x-unit": "s kpc / km",
     "base_plots": "/scratch2/sferrone/plots/stream_analysis/analysis/gap_profile_detections/",

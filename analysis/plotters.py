@@ -37,6 +37,7 @@ def histogramEdges(NP,xmax,ymax):
     return xedges,yedges  
 
 
+
 def getHistogram2d(x,y,xedges,yedges):
     '''
     given the x and y coordinates, return the histogram
@@ -52,6 +53,7 @@ def getHistogram2d(x,y,xedges,yedges):
     X,Y,H=X[zsort],Y[zsort],H[zsort]
 
     return X,Y,H
+
 
 
 def plot2dHist(X,Y,H,
