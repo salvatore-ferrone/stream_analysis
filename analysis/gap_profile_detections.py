@@ -25,7 +25,6 @@ def main(config):
     centers,compare,control,control_potential,compare_potential=extract_density_profiles(fullname)
 
 
-
     if method=="Difference":
         myZscores=linear_difference_z_scores(compare,control)
     elif method=="Normalized_Difference":
@@ -108,6 +107,7 @@ def log_difference_z_scores(centers,compare,control,noise_threshold):
     myZscores = zscore(differences)
     myZscores[~significant_variations]=0
     return myZscores,centers_,compare_,control_,err_,differences
+
 
 def normalized_linear_difference_z_scores(compare,control):
     differences = compare - control

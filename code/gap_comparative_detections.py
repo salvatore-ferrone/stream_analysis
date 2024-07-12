@@ -33,19 +33,7 @@ def compute_tau_density_profile(config):
     xmin,xmax           =   config["xlims"]
 
     
-    # make youre checks before computing
-    # _valid_methods = ["Difference","Normalized Difference"]
-    # assert method in _valid_methods, f"Method must be one of {_valid_methods}"
-    # look at the output file see if it exists
 
-    # fullname = make_out_filename(config)
-    # if os.path.exists(fullname):
-    #     print(fullname, " already exists, skipping")
-    #     return
-    # else:
-    #     print("Computing for ",fullname)
-    
-    # load stream
     control_stream,_    =   DE.get_stream(PH.stream(GCname,montecarlokey,control_potential,NP),montecarlokey)
     compare_stream,_    =   DE.get_stream(PH.stream(GCname,montecarlokey,compare_potential,NP),montecarlokey)
     
@@ -81,10 +69,10 @@ def packorbits(GCname,potentialname,montecarlokey):
 
 
 def make_out_filename(config):
-    mid_path = "gap_detections/" + config["compare_potential"] + "-against-" + config["control_potential"] + "/" + config["GCname"] + "/"
-    os.makedirs(config["base_output"]+mid_path,exist_ok=True)
+    mid_path = "gap_profile_detections/" + config["compare_potential"] + "-against-" + config["control_potential"] + "/" + config["GCname"] + "/density_profiles/" 
     fileoutname = config["GCname"] + "-" + config["montecarlokey"] + "-density_profiles.h5" 
-    fullname = config["base_output"]+mid_path+fileoutname
+    os.makedirs(config["data_output_path"]+mid_path,exist_ok=True)
+    fullname = config["data_output_path"]+mid_path+fileoutname
     return fullname
 
 
@@ -193,8 +181,4 @@ if __name__=="__main__":
         "method": "Normalized Difference",
         "x-coordinate": "tau",
         "x-unit": "s kpc / km",
-        "base_output": "/scratch2/sferrone/stream_analysis/"}
-    
-    # for i in range(50):
-        # config["montecarlokey"] = "monte-carlo-" + str(i).zfill(3)
-        # main(config)
+        "data_output_path": "/scratch2/sferrone/stream_analysis/"}

@@ -19,7 +19,7 @@ if __name__=="__main__":
         "method": "Difference",
         "x-coordinate": "tau",
         "x-unit": "s kpc / km",
-        "base_output": "/scratch2/sferrone/stream_analysis/"}
+        "data_output_path": "/scratch2/sferrone/stream_analysis/"}
     
     for i in range(50):
         config["montecarlokey"] = "monte-carlo-" + str(i).zfill(3)
