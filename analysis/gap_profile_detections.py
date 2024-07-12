@@ -30,6 +30,9 @@ def main(config):
         myZscores=linear_difference_z_scores(compare,control)
     elif method=="Normalized_Difference":
         myZscores=normalized_linear_difference_z_scores(compare,control)
+    elif method=="Log_Difference":
+        noise_threshold = config['noise_threshold']
+        myZscores,centers,compare,control,err,differences=log_difference_z_scores(centers,compare,control,noise_threshold)
     else:
         print("Method not implemented")
         raise NotImplementedError
@@ -93,6 +96,19 @@ def significant_underdensities(zscores,threshold,centers,centeres_min_filter=0.0
     return valid_under_densty_indicies
 
 
+def log_difference_z_scores(centers,compare,control,noise_threshold):
+    """ Compute the log difference between compare and control and return the zscored values"""
+    cond1,cond2=control>0,compare>0
+    cond = cond1 & cond2
+    centers_,compare_,control_=centers[cond],compare[cond],control[cond]
+    ### compute the noise only based on the control 
+    err_ = (1/np.log(10))*(1/np.sqrt(control_))
+    differences = np.log10(compare_) - np.log10(control_)
+    significant_variations = 10**differences > noise_threshold*err_
+    myZscores = zscore(differences)
+    myZscores[~significant_variations]=0
+    return myZscores,centers_,compare_,control_,err_,differences
+
 def normalized_linear_difference_z_scores(compare,control):
     differences = compare - control
     thesum = (compare+control)/2
@@ -130,7 +146,8 @@ if __name__=="__main__":
     "time_of_interest": 0,
     "xlims": [-0.1,0.1],
     "sigmathreshold": 2,
-    "method": "Normalized_Difference",
+    "method": "Log_Difference",
+    "noise_threshold": 10,
     "x-coordinate": "tau",
     "x-unit": "s kpc / km",
     "base_plots": "/scratch2/sferrone/plots/stream_analysis/analysis/gap_profile_detections/",
