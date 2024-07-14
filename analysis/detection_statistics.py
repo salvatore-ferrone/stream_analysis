@@ -13,12 +13,10 @@ def main(config):
     
     mystyle = "dark_background"
     plt.style.use(mystyle)
-    fullname                    =   GCD.make_out_filename(config)
     GCname                      =   config['GCname']
     method                      =   config['method']
     montecarlokey               =   config['montecarlokey']
     baseoutpath                 =   config['base_plots'] + "/gap_profile_detections/"+ GCname + "/gap_detection_summary/"
-    centeres_min_filter         =   config["centeres_min_filter"]
     sig_min,sig_max,sig_step    =   config['sig_min'],config['sig_max'],config['sig_step']
     threshold_steps             =   np.arange(sig_min,sig_max+sig_step,sig_step)
     N_montecarlo                =   50
