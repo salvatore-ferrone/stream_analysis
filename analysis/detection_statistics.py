@@ -1,3 +1,18 @@
+"""
+This code is used to generate a summary plot of the number of gaps detected in each simulation.
+
+The gap detectiosn are made my projecting the particles onto the orbit to view a 1D density profile
+
+The 1D density profiles of a control and compare potential are used. Places where the control potential is less dense than the compare potential are considered underdensities.
+These are densities are followed starting from sigmin (intended to be 1 sigma) until sigmax (intended to be 4 sigma).
+
+In the end, we plot how many gaps are detected in each of the 50 monte carlo simulations at each threshold.
+
+
+
+"""
+
+
 import numpy as np 
 import matplotlib.pyplot as plt
 import os 
@@ -136,8 +151,7 @@ if __name__=="__main__":
         "sig_max": 4,
         "sig_step": 0.5,
         "method": "Log_Difference",
-        "noise_threshold": 10,
-        "x-coordinate": "tau",
+        "noise_threshold": 500,
         "centeres_min_filter":0.01,
         "x-unit": "s kpc / km",
         "base_plots": "/scratch2/sferrone/plots/stream_analysis/analysis/",

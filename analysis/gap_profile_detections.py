@@ -103,10 +103,9 @@ def log_difference_z_scores(centers,compare,control,noise_threshold):
     ### compute the noise only based on the control 
     err_ = (1/np.log(10))*(1/np.sqrt(control_))
     differences = np.log10(compare_) - np.log10(control_)
-    significant_variations = 10**differences > noise_threshold*err_
-    myZscores = zscore(differences)
-    myZscores[~significant_variations]=0
-    return myZscores,centers_,compare_,control_,err_,differences
+    cond_filter = control_ > noise_threshold*err_
+    myZscores = zscore(differences[cond_filter])
+    return myZscores,centers_[cond_filter],compare_[cond_filter],control_[cond_filter],err_,differences[cond_filter]
 
 
 def normalized_linear_difference_z_scores(compare,control):
