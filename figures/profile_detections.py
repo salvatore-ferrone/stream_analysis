@@ -39,6 +39,7 @@ def gspec_double_xy_profile():
     cbar_ax = fig.add_subplot(gs[0:2,1])
     return fig,ax0,ax1,ax2,cbar_ax
 
+
 def doplot(handles,data,properties):
     # unpack each 
     data_append2Dmaps                   = data['append2Dmaps']
