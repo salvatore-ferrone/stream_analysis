@@ -1,0 +1,82 @@
+Traceback (most recent call last):
+  File "/home/sferrone/stream_analysis/jobs/compute_tail_coordinates/tauDensityMaps.py", line 27, in <module>
+    import stream_analysis as sa
+  File "/home/sferrone/stream_analysis/stream_analysis/__init__.py", line 6, in <module>
+    from . import identify_suspects
+  File "/home/sferrone/stream_analysis/stream_analysis/identify_suspects.py", line 20, in <module>
+    import pandas as pd
+ModuleNotFoundError: No module named 'pandas'
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-000-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-001-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-002-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-003-tauDensityMap.h5
+Time taken:  0:14:08.104066
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-004-tauDensityMap.h5
+Time taken:  0:14:03.271010
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-005-tauDensityMap.h5
+Time taken:  0:14:02.268856
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-006-tauDensityMap.h5
+Time taken:  0:13:56.940426
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-007-tauDensityMap.h5
+Time taken:  0:14:03.185283
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-008-tauDensityMap.h5
+Time taken:  0:14:41.499950
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-009-tauDensityMap.h5
+Time taken:  0:14:25.005211
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-010-tauDensityMap.h5
+Time taken:  0:14:09.500977
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-011-tauDensityMap.h5
+Time taken:  0:14:42.590770
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-012-tauDensityMap.h5
+Time taken:  0:14:16.411372
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-013-tauDensityMap.h5
+Time taken:  0:14:01.418443
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-014-tauDensityMap.h5
+Time taken:  0:14:16.863769
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-015-tauDensityMap.h5
+Time taken:  0:14:43.416262
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-016-tauDensityMap.h5
+Time taken:  0:14:31.881305
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-017-tauDensityMap.h5
+Time taken:  0:14:37.602162
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-018-tauDensityMap.h5
+Time taken:  0:14:27.442310
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-019-tauDensityMap.h5
+Time taken:  0:13:41.305299
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-020-tauDensityMap.h5
+Time taken:  0:14:30.525749
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-021-tauDensityMap.h5
+Time taken:  0:14:27.571750
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-022-tauDensityMap.h5
+Time taken:  0:14:09.640350
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-023-tauDensityMap.h5
+Time taken:  0:14:10.877542
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-024-tauDensityMap.h5
+Time taken:  0:14:09.081340
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-025-tauDensityMap.h5
+Time taken:  0:14:00.674372
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-026-tauDensityMap.h5
+Time taken:  0:14:20.245367
+Data saved to:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-027-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-028-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-029-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-030-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-031-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-032-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-033-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-034-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-035-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-036-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-037-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-038-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-039-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-040-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-041-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-042-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-043-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-044-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-045-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-046-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-047-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-048-tauDensityMap.h5
+Data already exists at:  /home/sferrone/tychoOUTPUTS/tauDensityMaps/pouliasis2017pii-GCNBody/Pal5/100000/isotropic-plummer/Pal5-monte-carlo-049-tauDensityMap.h5
