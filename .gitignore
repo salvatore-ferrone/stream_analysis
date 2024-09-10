@@ -5,3 +5,37 @@ __pycache__/*
 *.slurm
 errs/
 outs/
+
+
+# LaTeX intermediate and output files
+*.aux
+*.bbl
+*.blg
+*.brf
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.fls
+*.fdb_latexmk
+
+# SyncTeX files
+*.synctex.gz
+*.synctex(busy)
+
+# PDF files
+*.pdf
+
+# Temporary files
+*.tmp
+*.bak
+*.backup
+*.dvi
+*.ps
+
+# Editor backup files
+*~
+*.swp
+*.swo
