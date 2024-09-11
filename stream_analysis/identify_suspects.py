@@ -58,10 +58,10 @@ def main(dataparams,hyperparams):
 
 
     fig,axis1,axis2,caxisFOOB,caxisTau = sa.identify_suspects.getfigure()
-    foobNORM,tauNORM,AXIS1,AXIS2 = sa.identify_suspects.properties(time_foob,tau_left,tau_right,NP,montecarlokey)
+    foobNORM,tauNORM,AXIS1,AXIS2,TEXT = sa.identify_suspects.properties(time_foob,tau_left,tau_right,NP,montecarlokey)
     FIGSTUFF=[fig,axis1,axis2,caxisFOOB,caxisTau]
     DATASTUFF=time_foob,tau_foob,convolved_mask,suspects,coordinates,tau_counts,tau_centers,time_stamps,tau_left,tau_right
-    PROPERTIESSTUFF=foobNORM,tauNORM,AXIS1,AXIS2
+    PROPERTIESSTUFF=foobNORM,tauNORM,AXIS1,AXIS2,TEXT
     sa.identify_suspects.doplot(FIGSTUFF,DATASTUFF,PROPERTIESSTUFF)
     fig.savefig(fname,dpi=300) 
     print("Saved to ",fname)
@@ -98,11 +98,13 @@ def properties(time_foob,tau_left,tau_right,NP,montecarlokey):
     ylimits     =   np.max([np.abs(tau_left),np.abs(tau_right)])
     AXIS1       =   {"xlim":[time_foob[0],0],"ylim":[-ylimits,ylimits],"ylabel":"$\\tau$ [s kpc / km]","xlabel":"","title":montecarlokey}
     AXIS2       =   {"xlim":[time_foob[0],0],"ylim":[-ylimits,ylimits],"ylabel":"$\\tau$ [s kpc / km]","xlabel":"$t$ [s kpc / km]",}
-    return foobpcolor,taupcolor,AXIS1,AXIS2
+    TEXT        =   {"color":'red',"ha":'left',"va":'top'}
+    
+    return foobpcolor,taupcolor,AXIS1,AXIS2,TEXT
 
-def doplot(FIGSTUFF,DATASTUFF,PROPERTIESSTUFF):
+def doplot(FIGSTUFF,DATASTUFF,PROPERTIESSTUFF,x_text_shift=-0.1,y_text_shift=0.005):
     fig,axis1,axis2,caxisFOOB,caxisTau=FIGSTUFF
-    foobpcolor,taupcolor,AXIS1,AXIS2=PROPERTIESSTUFF
+    foobpcolor,taupcolor,AXIS1,AXIS2,TEXT=PROPERTIESSTUFF
     time_foob,tau_foob,convolved_mask,suspects,coordinates,tau_counts,tau_centers,time_stamps,tau_left,tau_right=DATASTUFF
     
     
@@ -111,7 +113,7 @@ def doplot(FIGSTUFF,DATASTUFF,PROPERTIESSTUFF):
     for i in range(5):
         x,y=coordinates[i]
         axis1.scatter(time_foob[x], tau_foob[y], marker="o", s=75,edgecolor="red",facecolors='none')
-        axis1.text(x=time_foob[x]+0.05,y=tau_foob[y],s=str(i)+" "+suspects[i],color='red')
+        axis1.text(x=time_foob[x]+x_text_shift,y=tau_foob[y]+y_text_shift,s=str(i)+" "+suspects[i],**TEXT)
     
     im2=axis2.pcolorfast(time_stamps,tau_centers,tau_counts.T,**taupcolor)
     cbartau=fig.colorbar(im2,cax=caxisTau,label="Counts")
