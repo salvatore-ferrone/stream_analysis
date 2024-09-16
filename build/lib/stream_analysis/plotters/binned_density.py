@@ -6,15 +6,20 @@ import numpy as np
 
 
 
-def get_edges(NP,xmax,ymax):
+def get_edges(NP,xlims,ylims):
     '''
     given the number of particles, return the number of bins
     '''
+    ylen = ylims[1]-ylims[0]
+    xlen = xlims[1]-xlims[0]
+    print('xlen',xlen)
+    print('ylen',ylen)
+    
     nBins=int(np.ceil(np.sqrt(NP)))
-    nYbins=int(np.ceil(nBins/np.sqrt(xmax/ymax)))
-    nXbins=int(np.ceil(nBins*(xmax/ymax)))
-    xedges=np.linspace(-xmax,xmax,nXbins)
-    yedges=np.linspace(-ymax,ymax,nYbins)
+    nYbins=int(np.ceil(nBins*np.sqrt(ylen/xlen)))
+    nXbins=int(np.ceil(nBins)*np.sqrt(xlen/ylen))
+    xedges=np.linspace(xlims[0],xlims[1],nXbins)
+    yedges=np.linspace(ylims[0],ylims[1],nYbins)
     return xedges,yedges
 
 def get_2D_density(X,Y,xedges,yedges):
