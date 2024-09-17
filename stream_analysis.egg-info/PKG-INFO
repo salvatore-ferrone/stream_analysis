@@ -1,8 +1,0 @@
-Metadata-Version: 2.1
-Name: stream-analysis
-Version: 0.1
-Summary: intended to perform analysis
-Author: Salvatore Ferrone
-Author-email: salvatore.ferrone@uniroma1.it
-Keywords: python
-Requires-Dist: numpy
