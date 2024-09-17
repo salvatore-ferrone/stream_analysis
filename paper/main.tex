@@ -114,28 +114,24 @@
 
     Briefly, the x'coordinate represents the position of a particle along the orbit relative to the globular cluster—whether it is ahead or behind the cluster. The y' coordinate measures the particle's distance within the orbital plane, where positive values indicate that the particle is farther from the Galactic center and negative values indicate that it is closer.
 
-    \subsubsection*{Density maps and profiles}
-      For each of the 50 simulations, we compare the final snapshots between the \texttt{vanilla} and full simulations in the tail coordinate system. We inspect these differences by creating 2D density maps of the streams. Subsequently, we wish to employ a quantitative method to make detections discover when the \textit{full} simulations are significantly less dense than the \textit{vanilla} simulations. To do so, we marginalize over the y'-coordinate to produce 1D density profiles along the x'-axis. These comparisons are illustrated in the results section (see Fig.~\ref{fig:profiles}).
+    \subsubsection*{Density Maps and Profiles}
+    For each of the 50 simulations, we compare the final snapshots between the \texttt{vanilla} and \textit{full} simulations using the tail coordinate system. We inspect these differences by generating 2D density maps of the streams. Additionally, we marginalize over the $y'$-coordinate to produce 1D density profiles along the $x'$-axis. These comparisons are shown in the results section (see Fig.~\ref{fig:profiles}).
 
-      To construct the 1D density profiles, we first bin the data using the $\sqrt{N}$-rule for determining the number of bins, where N is the number of data points which is 10$^5$. After histogramming the 1D profiles, we apply a boxcar smoothing technique, where each central value is replaced by the median of the surrounding XX adjacent data points, corresponding to a smoothing length of approximately XX parsecs. This procedure reduces high-frequency noise and smooths the profiles, as shown in Fig.~\ref{fig:profiles}, where the center of mass has been effectively removed.
+    To construct the 1D density profiles, we first bin the data using the $\sqrt{N}$ rule, where $N$ is the number of data points ($N = 10^5$). After binning the 1D profiles, we apply a boxcar smoothing technique. Each central value is replaced by the median of the surrounding XX adjacent data points, corresponding to a smoothing length of approximately XX parsecs. This procedure reduces high-frequency noise and smooths the profiles, effectively removing the center of mass (see Fig.~\ref{fig:profiles}).
 
-
-      With the smoothed 1D density profiles in hand, we consider the \textit{vanilla} simulations to be truth, and search for locations that are significantly less dense than \textit{vanilla} in a way that is greater than stochastic chance. To do so, we first only consider bins that are significant, to do this we impose a signal to noise ratio threshold, $\mathcal{SNR}$, of $\mathcal{SNR} = 5$. We assert that the singal is the log of the counts per bin of the vanilla 1D density profile, and we propogate the errors accordingly assert that the error in the counts is poisson distribution. As such, we are able to find a counts threshold, and discard any bins with out at least this number of counts. This $N$ is given by the transandental equation:
-      \begin{equation}
-        \mathcal{SNR} = \ln(10) \log_{10}\left(N_v\right)\sqrt{N_v}. 
-        \end{equation}
-      By setting a threshold of $\mathcal{S/R} = 5$, we solve for the equation by using \texttt{scipy.optimize.fsolve} and find that N must be greater than 7. 
-
-      After discarding the insignificant bins, we compute the log ratio of the counts between the vanilla and full simulations: 
-      \begin{equation} 
+    With the smoothed 1D density profiles in hand, we treat the \textit{vanilla} simulations as the reference model and search for regions in the \textit{full} simulations that are significantly underdense compared to \textit{vanilla}, surpassing stochastic fluctuations. To accomplish this, we impose a signal-to-noise ratio threshold, $\mathcal{SNR}$. The signal is defined as the log of the counts per bin from the \textit{vanilla} 1D density profile, and errors are propagated assuming a Poisson distribution. We then compute a threshold for the number of counts in the \textit{vanilla} simulation, $N_v$, using the transcendental equation:
+    \begin{equation}
+        \mathcal{SNR} = \ln(10) \log_{10}\left(N_v\right) \sqrt{N_v}.
+    \end{equation}
+    By setting $\mathcal{SNR} = 5$, we solve for $N$ using \texttt{scipy.optimize.fsolve}, finding that $N$ must be greater than 7. After discarding insignificant bins (i.e., those with counts below the threshold), we compute the log ratio of the counts between the \textit{vanilla} and full simulations:
+    \begin{equation}
         \mathcal{R}_i = \log_{10}\left(\frac{N_{f,i}}{N_{v,i}}\right),
-        \end{equation}
-      where $\mathcal{R}$ is the log ratio, $N_f$ are the number of counts from the full simulation, and $i$ is the index for a given bin. Subsequently, we inspect the resultant distribution of $\mathcal{R}_i$. This distribution would be gaussian if the differences between the density profiles are due to the sum of stochastic processes similar in magnitude, as in the central limit theorem. Therefore, we flag all locations that are underdense by two standard deviations. 
+    \end{equation}
+    where $\mathcal{R}_i$ is the log ratio, $N_{f,i}$ are the counts from the full simulation, and $N_{v,i}$ are the counts from the \textit{vanilla} simulation for each bin $i$. We then analyze the distribution of $\mathcal{R}_i$. If the differences between the density profiles are primarily due to stochastic processes of similar magnitude, this distribution should resemble a Gaussian as expected from the central limit theorem. Thus, we flag all regions where the density is underdense by more than two standard deviations, which should highlight regions whose underdensity is unlikely to be the result of the sum of stochastic processess but rather the passage of another globular cluster. 
 
+    This method, however, has its limitations, especially when detecting smaller gaps. As outlined by Erkal et al. (2015), a gap's size may not indicate a weak impact, but rather a more recent one. Additionally, since our streams have finite width, some gaps might be oblique to the stream axis. In such cases, marginalizing over $y'$ can dilute the gap's signal, making it harder to detect. This limitation is particularly evident in gaps caused by NGC2808, as discussed in the results. Therefore, this quantitative analysis serves as an \textit{aid} to visual inspection rather than a complete substitute for it.
 
-      This method, however, is not without limitations, particularly when detecting smaller gaps. As discussed in Erkal et al. (2015), a gap's size is not necessarily indicative of a weak impact but could result from a more recent interaction. Additionally, because our streams have finite width, some gaps may be oriented obliquely relative to the stream axis. In these cases, marginalizing over y' can dilute the gap's signal, making it difficult to detect. As will be discussed in the results, this is the case for most of the gaps caused by NGC2808. Thus, studying the differences between the two 1D density profiles is an \textit{aid} to assist in visual inspect. 
-
-
+    
     \subsubsection*{From Suspect to Culprit} \label{SuspectToCulprit}
 
       A key question we seek to answer is: from the gaps present at the end of the simulation, who caused them? To address this, we examine the evolution of stream density over time. Instead of using the x'coordinate, we introduce $\tau$, which represents time rather than distance. Specifically, $\tau$ indicates how long it will take for a cluster to reach, or how long ago it passed, a given point on its orbit. This is advantageous because the growth of the stream is approximately linear in $\tau$ whereas in physical space, streams on eccentric orbits expand and contract depending on the orbital phase.
