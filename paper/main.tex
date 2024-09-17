@@ -1,4 +1,4 @@
-\documentclass[draft]{aa}
+\documentclass{aa}
 
 
 
@@ -115,21 +115,21 @@
     Briefly, the x'coordinate represents the position of a particle along the orbit relative to the globular cluster—whether it is ahead or behind the cluster. The y' coordinate measures the particle's distance within the orbital plane, where positive values indicate that the particle is farther from the Galactic center and negative values indicate that it is closer.
 
     \subsubsection*{Density Maps and Profiles}
-    For each of the 50 simulations, we compare the final snapshots between the \texttt{vanilla} and \textit{full} simulations using the tail coordinate system. We inspect these differences by generating 2D density maps of the streams. Additionally, we marginalize over the $y'$-coordinate to produce 1D density profiles along the $x'$-axis. These comparisons are shown in the results section (see Fig.~\ref{fig:profiles}).
+      For each of the 50 simulations, we compare the final snapshots between the \texttt{vanilla} and \textit{full} simulations using the tail coordinate system. We inspect these differences by generating 2D density maps of the streams. Additionally, we marginalize over the $y'$-coordinate to produce 1D density profiles along the $x'$-axis. These comparisons are shown in the results section (see Fig.~\ref{fig:profiles}).
 
-    To construct the 1D density profiles, we first bin the data using the $\sqrt{N}$ rule, where $N$ is the number of data points ($N = 10^5$). After binning the 1D profiles, we apply a boxcar smoothing technique. Each central value is replaced by the median of the surrounding XX adjacent data points, corresponding to a smoothing length of approximately XX parsecs. This procedure reduces high-frequency noise and smooths the profiles, effectively removing the center of mass (see Fig.~\ref{fig:profiles}).
+      To construct the 1D density profiles, we first bin the data using the $\sqrt{N}$ rule, where $N$ is the number of data points ($N = 10^5$). After binning the 1D profiles, we apply a boxcar smoothing technique. Each central value is replaced by the median of the surrounding XX adjacent data points, corresponding to a smoothing length of approximately XX parsecs. This procedure reduces high-frequency noise and smooths the profiles, effectively removing the center of mass (see Fig.~\ref{fig:profiles}).
 
-    With the smoothed 1D density profiles in hand, we treat the \textit{vanilla} simulations as the reference model and search for regions in the \textit{full} simulations that are significantly underdense compared to \textit{vanilla}, surpassing stochastic fluctuations. To accomplish this, we impose a signal-to-noise ratio threshold, $\mathcal{SNR}$. The signal is defined as the log of the counts per bin from the \textit{vanilla} 1D density profile, and errors are propagated assuming a Poisson distribution. We then compute a threshold for the number of counts in the \textit{vanilla} simulation, $N_v$, using the transcendental equation:
-    \begin{equation}
-        \mathcal{SNR} = \ln(10) \log_{10}\left(N_v\right) \sqrt{N_v}.
-    \end{equation}
-    By setting $\mathcal{SNR} = 5$, we solve for $N$ using \texttt{scipy.optimize.fsolve}, finding that $N$ must be greater than 7. After discarding insignificant bins (i.e., those with counts below the threshold), we compute the log ratio of the counts between the \textit{vanilla} and full simulations:
-    \begin{equation}
-        \mathcal{R}_i = \log_{10}\left(\frac{N_{f,i}}{N_{v,i}}\right),
-    \end{equation}
-    where $\mathcal{R}_i$ is the log ratio, $N_{f,i}$ are the counts from the full simulation, and $N_{v,i}$ are the counts from the \textit{vanilla} simulation for each bin $i$. We then analyze the distribution of $\mathcal{R}_i$. If the differences between the density profiles are primarily due to stochastic processes of similar magnitude, this distribution should resemble a Gaussian as expected from the central limit theorem. Thus, we flag all regions where the density is underdense by more than two standard deviations, which should highlight regions whose underdensity is unlikely to be the result of the sum of stochastic processess but rather the passage of another globular cluster. 
+      With the smoothed 1D density profiles in hand, we treat the \textit{vanilla} simulations as the reference model and search for regions in the \textit{full} simulations that are significantly underdense compared to \textit{vanilla}, surpassing stochastic fluctuations. To accomplish this, we impose a signal-to-noise ratio threshold, $\mathcal{SNR}$. The signal is defined as the log of the counts per bin from the \textit{vanilla} 1D density profile, and errors are propagated assuming a Poisson distribution. We then compute a threshold for the number of counts in the \textit{vanilla} simulation, $N_v$, using the transcendental equation:
+      \begin{equation}
+          \mathcal{SNR} = \ln(10) \log_{10}\left(N_v\right) \sqrt{N_v}.
+        \end{equation}
+      By setting $\mathcal{SNR} = 5$, we solve for $N$ using \texttt{scipy.optimize.fsolve}, finding that $N$ must be greater than 7. After discarding insignificant bins (i.e., those with counts below the threshold), we compute the log ratio of the counts between the \textit{vanilla} and full simulations:
+      \begin{equation}
+          \mathcal{R}_i = \log_{10}\left(\frac{N_{f,i}}{N_{v,i}}\right),
+        \end{equation}
+      where $\mathcal{R}_i$ is the log ratio, $N_{f,i}$ are the counts from the full simulation, and $N_{v,i}$ are the counts from the \textit{vanilla} simulation for each bin $i$. We then analyze the distribution of $\mathcal{R}_i$. If the differences between the density profiles are primarily due to stochastic processes of similar magnitude, this distribution should resemble a Gaussian as expected from the central limit theorem. Thus, we flag all regions where the density is underdense by more than two standard deviations, which should highlight regions whose underdensity is unlikely to be the result of the sum of stochastic processess but rather the passage of another globular cluster. 
 
-    This method, however, has its limitations, especially when detecting smaller gaps. As outlined by Erkal et al. (2015), a gap's size may not indicate a weak impact, but rather a more recent one. Additionally, since our streams have finite width, some gaps might be oblique to the stream axis. In such cases, marginalizing over $y'$ can dilute the gap's signal, making it harder to detect. This limitation is particularly evident in gaps caused by NGC2808, as discussed in the results. Therefore, this quantitative analysis serves as an \textit{aid} to visual inspection rather than a complete substitute for it.
+      This method, however, has its limitations, especially when detecting smaller gaps. As outlined by Erkal et al. (2015), a gap's size may not indicate a weak impact, but rather a more recent one. Additionally, since our streams have finite width, some gaps might be oblique to the stream axis. In such cases, marginalizing over $y'$ can dilute the gap's signal, making it harder to detect. This limitation is particularly evident in gaps caused by NGC2808, as discussed in the results. Therefore, this quantitative analysis serves as an \textit{aid} to visual inspection rather than a complete substitute for it.
 
     
     \subsubsection*{From Suspect to Culprit} \label{SuspectToCulprit}
@@ -139,14 +139,14 @@
 
       \citet{sanders2016dynamics} extended the analysis of Erkal et al. (2015), demonstrating that action-angle variables provide a useful coordinate system for analyzing stream evolution, as actions are conserved and the angles associated with the stream's growth evolve linearly over time. Although we became aware of this work only after completing our analysis, we note that $\tau$ is a suitable approximation and behaves similarly to the angle variable corresponding to the azimuthal action: $\tau \approx \theta_{\phi,i} - \theta_{\phi,\text{GC}}$
 
-      The core of our analysis is presented in Fig.~XXX. The bottom panel shows the evolution of the stream density over time. To avoid extreme low-density regions at the stream's edges, we applied a density threshold to focus on the more significant areas of the stream. Next, we modeled Palomar 5's orbit as a proxy for its stream and sampled points along the orbit to measure the gravitational force exerted by other globular clusters. This force data is displayed in the top panel of Fig.~XXX, showing how the total gravitational acceleration on Palomar 5's stream evolves over its length throughout the simulation.
+      The core of our analysis is presented in Fig.~\ref{fig:force-on-orbit}. The bottom panel shows the evolution of the stream density over time. To avoid extreme low-density regions at the stream's edges, we applied a density threshold to focus on the more significant areas of the stream. Next, we modeled Palomar 5's orbit as a proxy for its stream and sampled points along the orbit to measure the gravitational force exerted by other globular clusters. This force data is displayed in the top panel of Fig.~\ref{fig:force-on-orbit}, showing how the total gravitational acceleration on Palomar 5's stream evolves over its length throughout the simulation.
 
       We then used \texttt{scipy}'s \texttt{ndimage} package to identify the top five local maxima in the data space of gravitational acceleration $\vec{g}$ as a function of time $t$ and the stream coordinate $\tau$. Once these local maxima were identified, we iterated over the contributions of individual globular clusters to determine which cluster contributed the most to each peak in $\vec{g}$. Each significant peak was labeled with the corresponding globular cluster.
 
 
       Afterward, we cross-referenced these peaks with the previously identified gaps in the stream. For large gaps resulting from strong interactions, we observed that after an impact, a low-density wake is left behind in the ($t,\tau$) plane.
 
-      The results of this analysis were compiled into a table. If a gap was attributed to a particular globular cluster, it was labeled as \texttt{TRUE}; otherwise, it was marked as \texttt{FALSE}. For a handful of simulations, to double check that the verdict made correctly when passing from suspect to culprit, we re-compute the simulations yet individually adding one globular cluster at a time. As a result, we are able to confirm that singular gaps arrise from the suspected clusters.  
+      The results of this analysis were compiled into a table. If a gap was attributed to a particular globular cluster, it was labeled as \texttt{TRUE}; otherwise, it was marked as \texttt{FALSE}. For a handful of simulations, to double check that the verdict made correctly when passing from suspect to culprit, we re-compute the simulations yet individually adding one globular cluster at a time. As a result, we are able to confirm that singular gaps arrise from the suspected clusters, an example of which is shown in Fig.~\ref{fig:decomposition}.
 
 
   \subsection{Reconstruction of the impact geometry}
@@ -175,7 +175,7 @@
           z(\tau) &= c_0 + c_1 \tau + c_2 \tau^2 + c_3 \tau^3
         \end{aligned}
       \right.
-  \end{equation}  
+      \end{equation}  
     where $x$, $y$, and $z$ represent the parametric line describing the stream in galactocentric coordinates, $\tau$ is the stream coordinate in time as described in the previous section, and is used as the independent variable in this analysis. The coefficients $a_i$, $b_i$, and $c_i$ are the polynomial coefficients. We found that a second-order polynomial was insufficient to capture the curvature along the full length of the stream, with divergence from the star particle positions occurring at the extremes. A third-order polynomial was sufficient and desirable, as it is the lowest order that adequately captures the path of the stream over the entire length under consideration.
 
     In this analysis, only one side of the stream is considered. For instance, if the impact candidate was in the leading tail, only the star particles with $\tau > 0$ are used to constrain the stream. The polynomial coefficients were determined using the Nelder-Mead algorithm from \texttt{scipy}'s optimization package.
@@ -249,7 +249,7 @@
     \centering
     \includegraphics[width=\linewidth]{force_on_orbit-monte-carlo-009.png}
     \caption[]{This figure demonstrates how we determined which globular clusters were responsible for the gaps. The bottom plot showcases the evolution of the stream density in simulation time. The y-axis is $\tau$, which is a coordinate in units of time that indicates how far ahead or behind it is from a globular cluster. The x-axis is the simulation time, $t$, where 0~s km~kpc$^{-1}$ indicates present time. The density was used to determine a sutible length of the stream as a function of time. This length was then used to extract a piece of Palomar 5's orbit about a given position of Pal 5 in time. This orbital segment is used to approximate the stream. Then, the gravitational force from all other clusers was computed on the orbit. Moments of high acceleration indicate the passage of another cluster. The top 5 strongest passages are labeled with red circles as well as the name of the clusters. }
-    \label{fig:profiles}
+    \label{fig:force-on-orbit}
     \end{figure*}  
 
 
@@ -258,7 +258,7 @@
     \centering
     \includegraphics[width=\linewidth]{decomposition-monte-carlo-009-with-3-gaps.png}
     \caption[]{This figure decomposes the gaps found in the full simulation to the responsible perturbers. The pertuber candidates were found in Fig.~\ref{fig:profiles}, and extra simulations were run in which we singularly add the suspects to verify that it was indeed them who created the gaps. The titles explain which simulation is which, and there's also a descrepandy map. (I think I'm going to get rid of the DIFF map)}
-    \label{fig:profiles}
+    \label{fig:decomposition}
     \end{figure*}  
 
 
