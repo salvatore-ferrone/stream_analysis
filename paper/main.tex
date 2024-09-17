@@ -1,4 +1,4 @@
-\documentclass{aa}
+\documentclass[draft]{aa}
 
 
 
@@ -117,28 +117,23 @@
     \subsubsection*{Density maps and profiles}
       For each of the 50 simulations, we compare the final snapshots between the \texttt{vanilla} and full simulations in the tail coordinate system. We inspect these differences by creating 2D density maps of the streams. Subsequently, we wish to employ a quantitative method to make detections discover when the \textit{full} simulations are significantly less dense than the \textit{vanilla} simulations. To do so, we marginalize over the y'-coordinate to produce 1D density profiles along the x'-axis. These comparisons are illustrated in the results section (see Fig.~\ref{fig:profiles}).
 
-      To construct the 1D density profiles, we first bin the data using the $\sqrt{N}$-rule for determining the number of bins, where N is the number of data points which is 10$^5$. After histogramming the 1D profiles, we apply a boxcar smoothing technique, where each central value is replaced by the median of the surrounding XX adjacent data points, corresponding to a smoothing length of approximately 300 parsecs. This procedure reduces high-frequency noise and smooths the profiles, as shown in Fig.~\ref{fig:profiles}, where the center of mass has been effectively removed.
+      To construct the 1D density profiles, we first bin the data using the $\sqrt{N}$-rule for determining the number of bins, where N is the number of data points which is 10$^5$. After histogramming the 1D profiles, we apply a boxcar smoothing technique, where each central value is replaced by the median of the surrounding XX adjacent data points, corresponding to a smoothing length of approximately XX parsecs. This procedure reduces high-frequency noise and smooths the profiles, as shown in Fig.~\ref{fig:profiles}, where the center of mass has been effectively removed.
 
 
-      With the smoothed 1D density profiles in hand, we consider the \textit{vanilla} simulations to be truth, and search for locations that are significantly less dense than \textit{vanilla} in a way that is greater than stochastic chance. To do so, we first compute the log ratio of the two profiles:
+      With the smoothed 1D density profiles in hand, we consider the \textit{vanilla} simulations to be truth, and search for locations that are significantly less dense than \textit{vanilla} in a way that is greater than stochastic chance. To do so, we first only consider bins that are significant, to do this we impose a signal to noise ratio threshold, $\mathcal{SNR}$, of $\mathcal{SNR} = 5$. We assert that the singal is the log of the counts per bin of the vanilla 1D density profile, and we propogate the errors accordingly assert that the error in the counts is poisson distribution. As such, we are able to find a counts threshold, and discard any bins with out at least this number of counts. This $N$ is given by the transandental equation:
       \begin{equation}
-        \mathcal{R} = \log\left(\frac{\rho_f}{\rho_v}\right),
+        \mathcal{SNR} = \ln(10) \log_{10}\left(N_v\right)\sqrt{N_v}. 
         \end{equation}
-      where $\rho$ is the 1D density, $v$ corresponding to the vanilla simulation, and $f$ corresponding to the full simulation, and $R$ is the log ratio of the two. Using the log ratio is important, because the distribution is symmetric and zero centered. For example if we only used the ratio, then the codomain would be $\frac{\rho_f}{\rho_v} \in [1,+\inf]$ for $\rho_f > \rho_v$, and $\frac{\rho_f}{\rho_v} \in [0,1]$ for $\rho_f < \rho_v$. 
+      By setting a threshold of $\mathcal{S/R} = 5$, we solve for the equation by using \texttt{scipy.optimize.fsolve} and find that N must be greater than 7. 
 
-      Yet, we only wish to consider bins with a significant amount of counts. We find this threshold by asserting that the signal to noise ratio must be greater than 50. The signal is based on the \textit{vanilla} profile, and the noise is the error propogation given poisson uncertainties for the number of counts a given bin: 
-      \begin{equation}
-        \mathcal{S}/\mathcal{N} =50= \frac{\log{N}}{\frac{1}{\ln(10)} \sqrt{N}}
+      After discarding the insignificant bins, we compute the log ratio of the counts between the vanilla and full simulations: 
+      \begin{equation} 
+        \mathcal{R}_i = \log_{10}\left(\frac{N_{f,i}}{N_{v,i}}\right),
         \end{equation}
+      where $\mathcal{R}$ is the log ratio, $N_f$ are the number of counts from the full simulation, and $i$ is the index for a given bin. Subsequently, we inspect the resultant distribution of $\mathcal{R}_i$. This distribution would be gaussian if the differences between the density profiles are due to the sum of stochastic processes similar in magnitude, as in the central limit theorem. Therefore, we flag all locations that are underdense by two standard deviations. 
 
 
-
-      
-
-      
-      we compute the difference between the logarithms of the binned counts for each profile and search for points that fall more than two standard deviations below the mean. However, we only consider regions that surpass a predefined significance threshold, where the significance is determined by the uncertainties in the binned counts governed by Poisson statistics multiplied by a factor of 50. This noise floor was chosen to eliminate the low-density regions near Palomar 5, where gaps are more likely caused by epicyclic oscillations rather than impacts from globular clusters. The identified gap candidates are marked and labeled on the plots.
-
-      This method, however, is not without limitations, particularly when detecting smaller gaps. As discussed in Erkal et al. (2015), a gap's size is not necessarily indicative of a weak impact but could result from a more recent interaction. Additionally, because our streams have finite width, some gaps may be oriented obliquely relative to the stream axis. In these cases, marginalizing over y' can dilute the gap's signal, making it difficult to detect. An example of this is the small gap around 5 kpc, which, as we will demonstrate later, is caused by the interaction with NGC 2808 and appears in most simulations. 
+      This method, however, is not without limitations, particularly when detecting smaller gaps. As discussed in Erkal et al. (2015), a gap's size is not necessarily indicative of a weak impact but could result from a more recent interaction. Additionally, because our streams have finite width, some gaps may be oriented obliquely relative to the stream axis. In these cases, marginalizing over y' can dilute the gap's signal, making it difficult to detect. As will be discussed in the results, this is the case for most of the gaps caused by NGC2808. Thus, studying the differences between the two 1D density profiles is an \textit{aid} to assist in visual inspect. 
 
 
     \subsubsection*{From Suspect to Culprit} \label{SuspectToCulprit}
@@ -174,11 +169,17 @@
     To achieve this, we begin by identifying the approximate moments of impact from the most significant clusters, as determined in the previous analysis in Sec.~\ref{SuspectToCulprit}. Then, we refine these estimates. While the orbit serves as a good first-order proxy for the stream, it is insufficient, as the typical offset between the stream and its orbit can be on the order of 200-400 pc—significantly larger than the impact parameters we are investigating.
 
     In this refinement process, we aim to pinpoint both the exact location of the impact along the stream and the precise moment it occurred. To do so, we fit a third-order parametric polynomial to the stream, using the saved snapshots from our simulations.
-    \begin{align}
-      x(\tau) &= a_0 + a_1 \tau + a_2 \tau^2 + a_3 \tau^3, \\ 
-      y(\tau) &= b_0 + b_1 \tau + b_2 \tau^2 + b_3 \tau^3, \\
-      z(\tau) &= c_0 + c_1 \tau + c_2 \tau^2 + c_3 \tau^3,
-      \end{align}
+
+    \begin{equation}
+      \vec{s}(\tau) = 
+      \left\{
+        \begin{aligned}
+          x(\tau) &= a_0 + a_1 \tau + a_2 \tau^2 + a_3 \tau^3 \\ 
+          y(\tau) &= b_0 + b_1 \tau + b_2 \tau^2 + b_3 \tau^3 \\
+          z(\tau) &= c_0 + c_1 \tau + c_2 \tau^2 + c_3 \tau^3
+        \end{aligned}
+      \right.
+  \end{equation}  
     where $x$, $y$, and $z$ represent the parametric line describing the stream in galactocentric coordinates, $\tau$ is the stream coordinate in time as described in the previous section, and is used as the independent variable in this analysis. The coefficients $a_i$, $b_i$, and $c_i$ are the polynomial coefficients. We found that a second-order polynomial was insufficient to capture the curvature along the full length of the stream, with divergence from the star particle positions occurring at the extremes. A third-order polynomial was sufficient and desirable, as it is the lowest order that adequately captures the path of the stream over the entire length under consideration.
 
     In this analysis, only one side of the stream is considered. For instance, if the impact candidate was in the leading tail, only the star particles with $\tau > 0$ are used to constrain the stream. The polynomial coefficients were determined using the Nelder-Mead algorithm from \texttt{scipy}'s optimization package.
@@ -187,11 +188,16 @@
 
     As a result, each polynomial coefficient can now be expressed as a function of time. Consequently, we can parameterize the stream as a function of both simulation time and position along the stream:
 
-    \begin{align}
-      x(t,\tau) &= a_0(t) + a_1(t)\tau + a_2(t) \tau^2 + a_3(t)\tau^3, \\ 
-      y(t,\tau) &= b_0(t) + b_1(t)\tau + b_2(t) \tau^2 + b_3(t)\tau^3, \\
-      z(t,\tau) &= c_0(t) + c_1(t)\tau + c_2(t) \tau^2 + c_3(t)\tau^3.
-      \end{align}
+    \begin{equation}
+      \vec{s}(t,\tau) = 
+      \left\{
+      \begin{aligned}
+        x(t,\tau) &= a_0(t) + a_1(t)\tau + a_2(t) \tau^2 + a_3(t)\tau^3 \\ 
+        y(t,\tau) &= b_0(t) + b_1(t)\tau + b_2(t) \tau^2 + b_3(t)\tau^3 \\
+        z(t,\tau) &= c_0(t) + c_1(t)\tau + c_2(t) \tau^2 + c_3(t)\tau^3.
+        \end{aligned}
+      \right.
+    \end{equation}
     The values of the coefficients as a function of time are obtained through linear interpolation, ensuring that the coefficients at the snapshot times match the values constrained by the simulation data.
 
     Next, we fit the trajectory of the perturber with a second-order polynomial. With equations for both the stream and the perturber as functions of time, we identify the time and location of impact by minimizing a cost function, defined as the distance between the stream and the perturber:
@@ -202,11 +208,15 @@
 
     Once this minimization is performed, determining the relative velocity becomes straightforward. Since the minimization provides the impact parameter, time of impact, and corresponding value of $\tau$, we can compute the derivatives of the parametric equations at $t_{\text{min}}$ and $\tau_{\text{min}}$. The parallel and perpendicular components of the perturber's velocity relative to the stream are given by:
 
-    \begin{align}
-      \Delta \vec{v} &=\vec{v_p} - \vec{v_s} \\
-      w_\parallel &= \left(\Delta \vec{v}\right)\cdot \hat{v_s}\\  
-      w_\perp &=  \sqrt{\Delta v ^2 - w_\parallel ^ 2}
-      \end{align}
+
+
+    \begin{equation}
+        \begin{aligned}
+          \Delta \vec{v} &=\vec{v_p} - \vec{v_s} \\
+          w_\parallel &= \left(\Delta \vec{v}\right)\cdot \hat{v_s}\\  
+          w_\perp &=  \sqrt{\Delta v ^2 - w_\parallel ^ 2}
+          \end{aligned}
+        \end{equation}
 
 
     where $\vec{v}_p$ and $\vec{v}_s$ are the velocities of the perturber and the stream, respectively. For each of the 50 simulations, this information was compute for the strongs 5 flybys of a perturber with the stream. Thus, we compute a sample of 250 impacts, and flag those that give way to gaps. 
