@@ -66,10 +66,15 @@
   
   Over the years, people began to think of the role that subhalos can have on effecting stellar streams. \citet{rodrigo_ibata_uncovering_2002} suggested that the presence of said dark matter subhaloes dark matter subhalos can influence the stellar streams by diffussing their distribution of orbital elements. \citet{r_g_carlberg_pal_2012} extended this idea by noting that subhaloes could have flybys and that leave gaps in stellar streams and subsquently explored the statistical distribution the number of gaps gaps given a probabilistic model of the rate of encounters given based on the expected distribution of dark matter subhalos. \citet{bonaca_spur_2018} took a more direct observational approach, identifying an underdensity in the GD-1 stream that could not be explained by known objects like globular clusters and was inconsistent with the mass-size relationship predicted by the Lambda-CDM model.
 
-  In this study, we aim to investigate the potential influence of globular clusters on stellar streams, specifically examining whether galactic globular clusters can produce gaps similar to those expected from dark matter subhalos. If globular clusters do create significant gaps, this must be considered when using stellar streams to infer the local presence of dark matter. Our focus is on the Palomar 5 stream, which has been well-studied and has observable gaps, a high membership count, and favorable visibility due to its position above the galactic disk. In the following sections, we describe the modeling of this stream, the gravitational interactions with the galaxy and other globular clusters, and the statistical analysis of the perturbations affecting the stream.
+  In this study, we aim to investigate the potential influence of globular clusters on stellar streams, specifically examining whether galactic globular clusters can produce gaps similar to those expected from dark matter subhalos. If globular clusters do create significant gaps, this must be considered when using stellar streams to infer the local presence of dark matter. Our focus is on the Palomar 5 stream, which has been well-studied and has observable gaps, a high membership count, and favorable visibility due to its position above the galactic disk. We show a result from one our simulations in \ref{fig:stream_on_sky}. In the following sections, we describe the modeling of this stream, the gravitational interactions with the galaxy and other globular clusters, and the statistical analysis of the perturbations affecting the stream.
 
 
-
+  \begin{figure*}
+    \centering
+    \includegraphics[width=\linewidth]{stream_on_sky_Pal5_monte-carlo-009_pouliasis2017pii-GCNBody.png}
+    \caption[]{A model of the Palomar 5 stream in an axis-symmetric galactic potential plus all other globular clusters. The top plot is a scatter plot of star-particles that escaped the cluster due to tidal forces, the bottom plot shows the marginalized 1D density profile in longitude. Two large gaps are present and are due to the passage of two globular clusters. }
+    \label{fig:stream_on_sky}
+    \end{figure*}
 
 
 
@@ -87,19 +92,19 @@
   \subsection{Numerical Methodology}
     Our numerical methodology follows the approach outlined in Ferrone et al. (2023), which we briefly summarize here for completeness. We begin by extracting the phase space properties (positions, velocities) as well as the masses and half-mass radii of 165 globular clusters from the dataset provided by Baumgardt and Vasiliev et al. The dataset includes the clusters' masses, radial velocities, distances, proper motions in RA and DEC, and their associated covariance terms.
 
-    To generate initial conditions, we treat the five-dimensional phase space variables (position and velocity components) for each globular cluster as Gaussian distributions. Using the \texttt{np.random.gauss} function, we generate 50 samples per cluster, producing 50 sets of initial conditions for the entire globular cluster system. These samples are stored in data files for later use.
+    To generate initial conditions, we treat the four phase space variables with uncertainties (distance, line-of-sight velocities, and proper motions) and mass for each globular cluster as five-dimensional Gaussian distributions. Using the \texttt{np.random.gauss} function, we generate 50 samples per cluster, producing 50 sets of initial conditions for the entire globular cluster system. These samples are stored in data files for later use.
 
     Next, we convert the initial conditions into a galactocentric reference frame. The local standard of rest was computed using XXX, with the Sun's peculiar velocity set to XXX, and the Sun's distance from the Galactic center taken as XXX. These transformations were performed using the \texttt{astropy} package.
 
-    For the galactic potential, we employed the static model proposed by Pouliasis et al. (2017), which consists of a superposition of a thin disk, thick disk, and a dark matter halo. This model is assumed to be time-independent over the course of our simulations.
+    For the galactic potential, we employed the second static model proposed by Pouliasis et al. (2017), which consists of a superposition of a thin disk, thick disk, and a dark matter halo. This model is assumed to be time-independent over the course of our simulations.
 
     The primary methodological departure from Ferrone et al. (2023) is that now we include globular cluster interactions. Instead of treating the clusters as point masses that only experience the gravitational potential of the galaxy, we now compute N-body interactions between the clusters during the backward integration over 5 billion years. The equation of motion for the globular clusters is thus: 
     \begin{equation}
       \ddot{\vec{r}}_i = -\nabla \Phi(R_i,z_i) + \left.\sum_{j\neq i} \frac{Gm_j}{\left(|\vec{r}_j - \vec{r}_i|^2 + b_j^2\right)^{3/2}}\right. \left(\vec{r}_j - \vec{r}_i\right).
-      \end{equation}
-    Although these interactions were included, we observed no significant exchanges of orbital energy or momentum between clusters. The resulting orbits were saved to data files for subsequent analysis. 
+      \end{equation}\label{eq:GCNBody}
+    Although these interactions were included, we observed no significant exchanges of orbital energy or momentum between clusters. The resulting orbits were saved to data files for subsequent analysis. We integrate clusters into the past by 5 Gyr.
 
-    At the computed positions 5 Gyr ago, each globular cluster was replaced by a system of 100,000 particles, sampled from a Plummer distribution to represent the stellar content of the cluster. We then integrated the evolution of these particles forward in time to the present day. During this forward integration, each star particle feels the gravitational influence of the galaxy and all globular clusters, but not other star particles. We do not perform direct N-body simulations between star particles; instead, at each time step, we compute the positions of all globular clusters and apply their forces to the star particles. The equation of motion is thus: 
+    At the computed positions 5 Gyr ago, each globular cluster was gifted a system of 100,000 particles, sampled from a Plummer distribution to represent the stellar content of the cluster. We then integrated the evolution of these particles forward in time to the present day. During this forward integration, each star particle feels the gravitational influence of the galaxy and all globular clusters, but not other star particles. We do not perform direct N-body simulations between star particles as in eq.~\ref{eq:GCNBody}; instead, at each time step, we compute the positions of all globular clusters and apply their forces to the star particles. The equation of motion is thus: 
     \begin{equation}
       \ddot{\vec{r}}_p = -\nabla \Phi(R_p,z_p) + \left.\sum_{j} \frac{Gm_j}{\left(|\vec{r}_j(t) - \vec{r}_p|^2 + b_j^2\right)^{3/2}}\right. \left(\vec{r}_j(t)- \vec{r}_p\right)
       \end{equation}
@@ -240,11 +245,7 @@
   \textbf{\textit{Action item:}} I need to make sure I check out real good the papers that investigate the gaps from Palomar 5. I wanna compare this to the known length of Palomar 5, how does this reduce the results, and are there observed gaps in Palomar 5 that are consistent with these simulations? 
 
 
-  \begin{figure*}
-    \centering
-    \includegraphics[width=\linewidth]{stream_on_sky_Pal5_monte-carlo-009_pouliasis2017pii-GCNBody.png}
-    \caption[]{A model of the Palomar 5 stream in an axis-symmetric galactic potential plus all other globular clusters. The top plot is a scatter plot of star-particles that escaped the cluster due to tidal forces, the bottom plot shows the marginalized 1D density profile in longitude. Two large gaps are present and are due to the passage of two globular clusters. }
-    \end{figure*}
+
 
 
   \begin{figure*}
