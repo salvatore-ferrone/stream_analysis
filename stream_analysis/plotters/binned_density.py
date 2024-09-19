@@ -11,7 +11,7 @@ def get_edges(NP,xlims,ylims):
     given the number of particles, return the number of bins
     '''
     ylen = ylims[1]-ylims[0]
-    xlen = xlims[1]-xlims[0]
+    xlen = xlims[1]-xlims[0]    
     nBins=int(np.ceil(np.sqrt(NP)))
     nYbins=int(np.ceil(nBins*np.sqrt(ylen/xlen)))
     nXbins=int(np.ceil(nBins)*np.sqrt(xlen/ylen))

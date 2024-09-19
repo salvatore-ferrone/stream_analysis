@@ -1,45 +1,38 @@
-notebooks/
-plots/
-*.pyc
-__pycache__/*
-*.slurm
-errs/
-outs/
-
-# Ignore pip package build artifacts
+# Ignore build artifacts
 build/
 dist/
 *.egg-info/
 
-# LaTeX intermediate and output files
-*.aux
-*.bbl
-*.blg
-*.brf
-*.log
-*.nav
-*.out
-*.snm
-*.toc
-*.vrb
-*.fls
-*.fdb_latexmk
+# Ignore compiled Python files
+__pycache__/
+*.py[cod]
 
-# SyncTeX files
-*.synctex.gz
-*.synctex(busy)
+# Ignore Jupyter notebooks and plots
+notebooks/
+plots/
 
-# PDF files
-*.pdf
+# Ignore figures
+figures/__pycache__/
+figures/*.pyc
 
-# Temporary files
+# Ignore job-related cache and compiled files
+jobs/**/__pycache__/
+jobs/**/*.pyc
+
+# Ignore makeplots-related cache and compiled files
+makeplots/**/__pycache__/
+makeplots/**/*.pyc
+
+# Ignore paper-related files
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.pdf
+
+# Ignore temporary files
 *.tmp
-*.bak
-*.backup
-*.dvi
-*.ps
-
-# Editor backup files
-*~
 *.swp
 *.swo
+*~

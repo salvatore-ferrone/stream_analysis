@@ -6,13 +6,19 @@ A module for comparing the density profiles of the control group to the group wi
 """
 import stream_analysis as sa 
 import numpy as np 
-
+from scipy.optimize import fsolve
 ####### COMPUTATIONS
-def log_difference_detection(profiles,noise_factor,sigma):
+def log_difference_detection(profiles,signal_to_noise_ratio,sigma):
     """Return the noise filtered profiles, noise level and the detection candidates.
     """
     CENTERS,CONTROL,COMPARE         =   profiles
-    noiselevel                      =   sa.density_profile_gap_detections.noise_level(CONTROL,noise_factor)
+    # noiselevel                      =   sa.density_profile_gap_detections.noise_log_counts(CONTROL)
+    
+    N_threshold     =   int(np.ceil(fsolve(sa.density_profile_gap_detections.counts_threshold_given_signal_to_noise_ratio,10,args=(signal_to_noise_ratio))))
+    print(f"Threshold for counts is {N_threshold}")
+    noiselevel      =    N_threshold*np.ones_like(CONTROL)
+    
+    # lets do a new noise threshold
     LOGDIFF                         =   np.log10(COMPARE/CONTROL)
     noise_filt                      =   CONTROL > noiselevel
     centers,control,compare,logdiff =   sa.density_profile_gap_detections.apply_filter(noise_filt,[CENTERS,CONTROL,COMPARE,LOGDIFF])
@@ -85,8 +91,14 @@ def apply_filter(myfilter,mylist):
     assert(type(myfilter) == np.ndarray)
     return [array[myfilter] for array in mylist]
 
-def noise_level(counts_control,threshold):
-    return threshold * (1/np.log(10))  * np.sqrt(1/counts_control)
+def counts_threshold_given_signal_to_noise_ratio(N,SNR):
+    """ Given a signal as log10(N), and the error as poisson distribution, return the threshold for the counts.
+    i.e. if we have less than this counts, then our SNR is less than the desired SNR, and maybe we won't consider this data."""
+    return SNR - np.log10(N)*np.sqrt(N)*np.log(10)
+
+def noise_log_counts(counts):
+    """Return the noise level of the log counts."""
+    return 1/(np.log(10)*np.sqrt(counts))
 
 def median_box_car(xx,boxsize):
     assert(type(xx) == np.ndarray)
