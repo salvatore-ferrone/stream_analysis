@@ -6,6 +6,10 @@ __pycache__/*
 errs/
 outs/
 
+# Ignore pip package build artifacts
+build/
+dist/
+*.egg-info/
 
 # LaTeX intermediate and output files
 *.aux
