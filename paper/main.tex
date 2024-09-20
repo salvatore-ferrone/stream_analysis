@@ -1,4 +1,4 @@
-\documentclass{aa}
+\documentclass[draft]{aa}
 
 
 
@@ -116,7 +116,7 @@
 
 
 
-  \subsection{Gap detection}
+  \subsection{Gap detection} \label{sec:gap_detection}
 
     At the end of the simulations, some gaps in the stellar stream are so prominent that they can be identified visually without any sophisticated quantitative analysis. However, upon closer inspection, more subtle gaps emerge, highlighting the need for quantitative methods to systematically detect and assess these features.
 
@@ -131,6 +131,13 @@
 
     \subsubsection*{Density Maps and Profiles}
       For each of the 50 simulations, we compare the final snapshots between the \texttt{vanilla} and \textit{full} simulations using the tail coordinate system. We inspect these differences by generating 2D density maps of the streams. Additionally, we marginalize over the $y'$-coordinate to produce 1D density profiles along the $x'$-axis. These comparisons are shown in the results section (see Fig.~\ref{fig:profiles}).
+
+      \begin{figure*}
+        \centering
+        \includegraphics[width=\linewidth, trim=20 0 15 0]{monte-carlo-009-pouliasis2017pii-GCNBody-2000-milisigma-5-noisefactor-20-boxcarindexlength-shifted-0.png}
+        \caption{A comparison between the density maps and profiles of the \textit{full} and \textit{vanilla} simulations is presented. The locations where the full simulation is less dense than the vanilla simulation by 2-$\sigma$ is highlighted by blue vertical bars. Bins below the noise threshold are not considered when measuring the differences between the two 1D profiles. The 1D profiles have been smoothed with a median box-car filter.}
+        \label{fig:profiles}
+        \end{figure*}
 
       To construct the 1D density profiles, we first bin the data using the $\sqrt{N}$ rule, where $N$ is the number of data points ($N = 10^5$). After binning the 1D profiles, we apply a boxcar smoothing technique. Each central value is replaced by the median of the surrounding XX adjacent data points, corresponding to a smoothing length of approximately XX parsecs. This procedure reduces high-frequency noise and smooths the profiles, effectively removing the center of mass (see Fig.~\ref{fig:profiles}).
 
@@ -170,7 +177,7 @@
     To understand how the impacted particle is perturbed, one needs to compute its change in momentum, which is determined by integrating the force acting on the particle over the duration of the interaction. A useful approximation for this change in momentum is the force at the closest approach multiplied by an estimate of the interaction time:
     \begin{equation} 
       \Delta p \approx \text{Force} \times \text{interaction time} = \frac{GMm}{b^2} \times \frac{b}{v} = \frac{GM}{bv}, 
-      \end{equation}
+      \end{equation} \label{eq:change_in_momentum}
     where $M$ is the mass of the perturber, $m$ is the mass of the particle, $b$ is the impact parameter, $v$ is the relative velocity of the perturber with respect to the particle, and $G$ is the gravitational constant.
 
     From this analysis, we can conclude that a more massive perturber, passing closer to the particle, and moving more slowly, will have a greater impact. It's important to note that the momentum change is inversely proportional to the velocity of the perturber, which contrasts with the intuition from elastic collisions, such as those between billiard balls, where higher velocities result in greater impacts.
@@ -228,6 +235,10 @@
 
 \section{Results}
 
+  One of the 50 simulations is shown in Fig.~\ref{fig:stream_on_sky}--which we selected for its clear and prominent gaps which is visibile when considering the scatter plot of the stars on the sky and becomes even more apparent when marginalizing over latitutde to see it's 1D density over longitude. 
+
+  We then transformed the stream to tail coordinates for the both the \textit{vanilla} and \textit{full} simulations in Fig.~\ref{fig:profiles}. As described in section~\ref{sec:gap_detection}, we locate regions on the stream where the full simulations are significantly less dense than the vanilla simulations. Notice the \textit{Tiny Gap} labeled in the middle plot. This signal is not present in the 1D profile since it is too small in size and at an oblique angle, thus is lost when marginalizing. This process was followed for all 50 simulations to identify possible gaps. We find that small gaps are identifiable by eye rather well, where the 1D profiles aid in finding subtle yet extended underdensities. All simulations and labeled gaps are presented in the Appendix~\ref{appendix:gallery_of_gaps}. The profile method was useful in identifying the gaps in sampling 002, 006, 008, 029, 030. 
+  
   I'm gonna go remake the figures before I adapt the text. However, before that, I will say the general outline of the flow of the article. I will show a general result here, which is what we would expect to see on the sky, which is comparable with reality. It's a great first figure becuase it shows the essence of the paper. Then, I pretty much follow the methodology and keep the story the same with just monte-carlo-009. The story is we need to understand how many gaps are present in a given simulation, then we need to identidy who the perturbers are. So step 1 (fig 2) shows our aided eye-test. Fig~3 shows how I tried to find each perturber, and Fig~4 shows a sanity check to reassure me that the suspects are indeed guilty. However, I will say that we picked monte-carlo-009 because it has two obvious gaps and two subtle ones, which aid in communicating our point. A full display of the gaps in our simulations is shown in the appendix (i'll make pair-plots with vanilla and full simulations above and below one another with the gaps labeled. :D ) 
 
   After we discuss the magic to make detections, I THEN will discuss some general properties, i.e. is there something special about these perturbers compared to other clusters? The main results is that \textit{you need to enter Pal5's orbital space}, which is not a shocker. If you can hit me, you can't perturb me. NEXT, I want to compare the population of perturbers to all globular clusters based on their internal parameters, so here we do show a tendency. Next, I wanna show how often gaps appear, and thus how many time a given GC pertubered Pal5, and when the gaps occur. I think a conclusion with the histograms in time is 
@@ -241,12 +252,7 @@
 
 
 
-  \begin{figure*}
-    \centering
-    \includegraphics[width=\linewidth, trim=20 0 15 0]{monte-carlo-009-pouliasis2017pii-GCNBody-2000-milisigma-5-noisefactor-20-boxcarindexlength-shifted-0.png}
-    \caption[]{A comparison between the vanilla and full simulations. This showcases our gap detection method, in which the 2D maps in \textit{tail coordinates} are inspected, and their 1D marginalized density distributions are compared quantitatively. The $x'$ coordinate indicates distance from the center of mass of Pal5 along it's orbit. The two profiles are subtraced in locations where the signal is above the noise threshold, and locations that are more that are underdense by 2-$\sigma$ are highlighted with vertical blue lines, and labeled \textit{gap candidate}. This also showcases the limitation in this 1D profile method since a very skinny and oblique gap is present, whose signal is washed out from marginalizing.}
-    \label{fig:profiles}
-    \end{figure*}  
+  
 
 
   \begin{figure*}
@@ -321,7 +327,7 @@
     \end{figure*}
 
 
-  \section{Gallery of Gaps}
+  \section{Gallery of Gaps} \label{appendix:gallery_of_gaps}
 
     \begin{figure*}
       \centering
