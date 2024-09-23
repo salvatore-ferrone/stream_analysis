@@ -249,12 +249,49 @@
 
 \section{Results}
 
-  One of the 50 simulations is shown in Fig.~\ref{fig:stream_on_sky}--which we selected for its clear and prominent gaps which is visibile when considering the scatter plot of the stars on the sky and becomes even more apparent when marginalizing over latitutde to see it's 1D density over longitude. 
+  One of the 50 simulations is shown in Fig.~\ref{fig:stream_on_sky}--which we selected for its clear and prominent gaps which are visibile in the scatter plot of the stars on the sky and becomes even more apparent when marginalizing over latitutde to see it's 1D density over longitude. 
 
-  We then transformed the stream to tail coordinates for the both the \texttt{vanilla} and \texttt{full} simulations in Fig.~\ref{fig:profiles}. As described in section~\ref{sec:gap_detection}, we locate regions on the stream where the full simulations are significantly less dense than the vanilla simulations. Notice the \textit{Tiny Gap} labeled in the middle plot. This signal is not present in the 1D profile since it is too small in size and at an oblique angle, thus is lost when marginalizing. This process was followed for all 50 simulations to identify possible gaps. We find that small gaps are identifiable by eye rather well, where the 1D profiles aid in finding subtle yet extended underdensities. All simulations and labeled gaps are presented in the Appendix~\ref{appendix:gallery_of_gaps}. The profile method was useful in identifying the gaps in sampling 002, 006, 008, 029, 030. 
+  We then transformed the stream to tail coordinates for the both the \texttt{vanilla} and \texttt{full} simulations in Fig.~\ref{fig:profiles}. As described in section~\ref{sec:gap_detection}, we locate regions on the stream where the full simulations are significantly less dense than the vanilla simulations. Notice the \textit{Tiny Gap} labeled in the middle plot. This signal is not present in the 1D profile since it is too small in size and at an oblique angle, thus is lost when marginalizing. This process was followed for all 50 simulations to identify possible gaps. We find that small gaps are identifiable by eye rather well, where the 1D profiles aid in finding subtle yet extended underdensities. All simulations and labeled gaps are presented in the Appendix~\ref{appendix:gallery_of_gaps}. The profile method was useful in identifying the subtle underdense gaps of Samplings: 000, 002, 006, 008, 029, 030. 
   
-  I'm gonna go remake the figures before I adapt the text. However, before that, I will say the general outline of the flow of the article. I will show a general result here, which is what we would expect to see on the sky, which is comparable with reality. It's a great first figure becuase it shows the essence of the paper. Then, I pretty much follow the methodology and keep the story the same with just monte-carlo-009. The story is we need to understand how many gaps are present in a given simulation, then we need to identidy who the perturbers are. So step 1 (fig 2) shows our aided eye-test. Fig~3 shows how I tried to find each perturber, and Fig~4 shows a sanity check to reassure me that the suspects are indeed guilty. However, I will say that we picked monte-carlo-009 because it has two obvious gaps and two subtle ones, which aid in communicating our point. A full display of the gaps in our simulations is shown in the appendix (i'll make pair-plots with vanilla and full simulations above and below one another with the gaps labeled. :D ) 
+  Besides gaps, a handful of simulations show the entire stream laterally shifted in tail coordinates. The most extreme case was observed in Sampling 006 and is presented in the appendix XXX. This of course hampered our 1D profile difference analysis whose based the assumption that any difference in density would be due to the passage of other globular clusters and thus under densities. To combat this, we performed a cosmetique data reduction where I moved the \texttt{Full} 1D profile to best overlap with \texttt{Vanilla} by computing the correlation integral. Since this is not the focus of this study, we did not investigate further. We conjecture that the translation may arrise from a resonance phenomenon, most likely coming from Omega Centauri. Perhaps, in some orbital configurations Palomar 5 and Omega Centauri pass each other in regular intervals that can accelerate the globular cluster differently from the stream. 
 
+  The clusters that impacted Palomar 5 in our simulations are presented in Fig.~\ref{fig:histogram_impact_time}, along with when they impacted the stream. An imediate result is 
+
+      - It takes a while for the stream to grow to hit a significant length
+      - A lot of them are from NGC2808. This is is because it is very recent. 
+      - Of the recent hits, the gaps like NGC2808 have widths as small as 100 parsecs.
+      - of the morphology, there are some gaps that have "bites" removed from them. Like that of NGC6333 in Sampling 033. 
+      - I think it is important to keep in mind that many of said gaps would not be detectable with current 
+
+  \begin{figure*}
+    \centering
+    \includegraphics[width=\linewidth]{histogram_impact_time.png}
+    \caption{When the impacts occured}
+    \label{fig:histogram_impact_time}
+    \end{figure*}    
+
+
+    in terms of statistics: 
+    - We observe that only clusters above 1e5 cause gaps
+    
+    - to no surprise, you have to come within Palomar 5's orbital space 
+    
+    - trying to separate to the components of the velocity, Mass, impact parameter is not fruitful. It's better just to look at the change in momentum as given in the EQ.
+    
+    - Notice that the distributions between the gap and no gap are significantly different, yet also have significant overlap. Perhaps these 3 parameters don't tell the whole story but also there's the factor identifies in Sanders, that I don't understand yet, that shows that a gap will not be identifiable. 
+  
+  \begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{E_Lz_perturbers.png}
+    \includegraphics[width=1\linewidth]{mass_size_plane.png}
+    \includegraphics[width=1\linewidth]{impact_geometry_statistics_deltaP.png}
+    \caption{One plot shows the distribution in energy and angular momentum, the next are the inernal proeprties of the clusters, and the last show when the clusters commit their crime, and how many times it happens accross the 50 simulations. }
+    \label{fig:mass_size_plane}
+    \end{figure}
+
+
+  
+  
   After we discuss the magic to make detections, I THEN will discuss some general properties, i.e. is there something special about these perturbers compared to other clusters? The main results is that \textit{you need to enter Pal5's orbital space}, which is not a shocker. If you can hit me, you can't perturb me. NEXT, I want to compare the population of perturbers to all globular clusters based on their internal parameters, so here we do show a tendency. Next, I wanna show how often gaps appear, and thus how many time a given GC pertubered Pal5, and when the gaps occur. I think a conclusion with the histograms in time is 
 
   Lastly, I will try to show something about the impact geometry. I will state that we want to compare the ones that create gaps to those that did not. We wanted to apply what we learned from Carlberg, Erkal and Sanders. The moral of the story will be that, no combination of parameters explaining the geometry cleared demarcated the presence of a gap or not. This can be inline with Sander's expanion of the analysis initiated by Carlberg and extended by Erkal. Namly, a uniformly dense stream on a circular orbit is just not good enough. I think Sanders also said that the streams needs to be sufficiently diffuse, which could make sense given the epicycles. 
@@ -264,41 +301,16 @@
 
 
 
-
-
-  
-
-
-
-
-
- 
-
-
-  
-
-
-
-
-  \begin{figure}
-    \centering
-    \includegraphics[width=1\linewidth]{E_Lz_perturbers.png}
-    \includegraphics[width=1\linewidth]{mass_size_plane.png}
-    \includegraphics[width=1\linewidth]{impact_geometry_statistics_deltaP.png}
-    \caption{One plot shows the distribution in energy and angular momentum, the next are the inernal proeprties of the clusters, and the last show when the clusters commit their crime, and how many times it happens accross the 50 simulations. }
-    \label{fig:mass_size_plane}
-    \end{figure}
-  \begin{figure*}
-    \centering
-    \includegraphics[width=\linewidth]{histogram_impact_time.png}
-    \caption{When the impacts occured}
-    \label{fig:histogram_impact_time}
-    \end{figure*}
-  
-
-
   \section{Discussion}
-    $10^5-10^6$. Sotto alone averbbero questo effetto? 
+    How many of these could be observable? What's the main result? in 5 billion years of evolution, perhaps you'd only expect to 1.4 gaps, reaching up to maximum three? However, its possible that we dont see gaps at all for sure. 
+
+    What about drawing attention to future studies? 
+
+    Doing a complete census of all globular clusters? 
+
+    Doing a complete census of dark matter subhaloes? 
+
+    How many gaps do you expect to see in Palomar 5? Bonaca said there are about 2 of them. 
 
 
 
