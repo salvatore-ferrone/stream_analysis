@@ -71,7 +71,7 @@
   \begin{figure*}
     \centering
     \includegraphics[width=\linewidth]{stream_on_sky_Pal5_monte-carlo-009_pouliasis2017pii-GCNBody.png}
-    \caption[]{A model of the Palomar 5 stream in an axis-symmetric galactic potential plus all other globular clusters. The top plot is a scatter plot of star-particles that escaped the cluster due to tidal forces, the bottom plot shows the marginalized 1D density profile in longitude. Two large gaps are present and are due to the passage of two globular clusters. }
+    \caption{An instsance of the Palomar 5 stream created modeling the cluster as a plummer sphere within an axis-symmetric galactic potential plus 164 other galactic globular clusters. The top plot is a scatter plot of star-particles that escaped the cluster due to tidal forces, the bottom plot shows the marginalized 1D density profile in longitude. Two large gaps are present and are due to the passage of two globular clusters.}
     \label{fig:stream_on_sky}
     \end{figure*}
 
@@ -89,28 +89,28 @@
 
 
   \subsection{Numerical Methodology}
-    Our numerical methodology follows the approach outlined in Ferrone et al. (2023), which we briefly summarize here for completeness. We begin by extracting the phase space properties (positions, velocities) as well as the masses and half-mass radii of 165 globular clusters from the dataset provided by Baumgardt and Vasiliev et al. The dataset includes the clusters' masses, radial velocities, distances, proper motions in RA and DEC, and their associated covariance terms.
+    Our numerical methodology follows the approach outlined in Ferrone et al. (2023), which we briefly summarize here for completeness. We begin by extracting the phase space properties (positions, velocities) as well as the masses and half-mass radii of 165 globular clusters from the galactic globular cluster catalog by Baumgardt and Vasiliev et al. We handle the uncertainties through a monte-carlo approach. The catalog provides uncertainties for distances, radial velocities, proper motions, and mass, and a covariance term between the proper motions. We repeate the whole experiment 50 times, for each of which we vary the initial conditions of each cluster by sampling its five-dimensional gaussian uncertaintiy distribution. However, for the first simulation, which we name \texttt{Sampling 000}, we use the most probable values for the initial conditions. 
 
-    To generate initial conditions, we treat the four phase space variables with uncertainties (distance, line-of-sight velocities, and proper motions) and mass for each globular cluster as five-dimensional Gaussian distributions. Using the \texttt{np.random.gauss} function, we generate 50 samples per cluster, producing 50 sets of initial conditions for the entire globular cluster system. These samples are stored in data files for later use.
+    We convert the initial conditions from sky coordinates into a galactocentric reference frame. We use the local standard of rest and the peculiary motion of the sun as reported by Sch\"onrich 2010. The circular velocity at the solar radius was set to: $v_{\text{LSR}} = 240$~km~s$^{-1}$. The peculiar velocity of the sun was set to $(U_\odot, V_\odot, W_\odot)=(11.1, 12.24, 7.25)$~km~s$^{-1}$. The position of the Sun was set to $(x_\odot,y_\odot,z_\odot) = (-8.34,0,0.027)$~kpc, vertical position above the disk was taken from Chen et al 2001 and the galacto-radial distance was taken from Reid et al 2014. These transformations were performed using the \texttt{astropy} package. (for the next paper, I would also like to sample these uncertainties)
 
-    Next, we convert the initial conditions into a galactocentric reference frame. The local standard of rest was computed using XXX, with the Sun's peculiar velocity set to XXX, and the Sun's distance from the Galactic center taken as XXX. These transformations were performed using the \texttt{astropy} package.
-
-    For the galactic potential, we employed the second static model proposed by Pouliasis et al. (2017), which consists of a superposition of a thin disk, thick disk, and a dark matter halo. This model is assumed to be time-independent over the course of our simulations.
+    For the galactic potential, we employed the second static model proposed by Pouliasis et al. (2017), which consists of a superposition of a thin disk, thick disk, and a dark matter halo. The values are provided in Table 1 of Ferrone et al 2023. This model is time-independent over the course of our simulations. 
 
     The primary methodological departure from Ferrone et al. (2023) is that now we include globular cluster interactions. Instead of treating the clusters as point masses that only experience the gravitational potential of the galaxy, we now compute N-body interactions between the clusters during the backward integration over 5 billion years. The equation of motion for the globular clusters is thus: 
     \begin{equation}
       \ddot{\vec{r}}_i = -\nabla \Phi(R_i,z_i) + \left.\sum_{j\neq i} \frac{Gm_j}{\left(|\vec{r}_j - \vec{r}_i|^2 + b_j^2\right)^{3/2}}\right. \left(\vec{r}_j - \vec{r}_i\right).
       \end{equation}\label{eq:GCNBody}
-    Although these interactions were included, we observed no significant exchanges of orbital energy or momentum between clusters. The resulting orbits were saved to data files for subsequent analysis. We integrate clusters into the past by 5 Gyr.
+    Although these interactions were included, we observed no significant exchanges of orbital energy or momentum between clusters. 
 
-    At the computed positions 5 Gyr ago, each globular cluster was gifted a system of 100,000 particles, sampled from a Plummer distribution to represent the stellar content of the cluster. We then integrated the evolution of these particles forward in time to the present day. During this forward integration, each star particle feels the gravitational influence of the galaxy and all globular clusters, but not other star particles. We do not perform direct N-body simulations between star particles as in eq.~\ref{eq:GCNBody}; instead, at each time step, we compute the positions of all globular clusters and apply their forces to the star particles. The equation of motion is thus: 
+    At the computed positions 5 Gyr ago, each globular cluster was gifted a system of 100,000 particles, sampled from a Plummer distribution to represent the stellar content of the cluster. For eaching sampling of the initial conditions, a different sampling of the positions of the 100,000 star particles was performed. This is becuase, we sampled the uncertainties on the mass in this experiment contraty to Ferrone et al 2023. 
+    
+    We then integrated the evolution of these particles forward in time to the present day. During this forward integration, each star particle feels the gravitational influence of the galaxy and all globular clusters, but not other star particles. We do not perform direct N-body simulations between star particles as in eq.~\ref{eq:GCNBody}; instead, at each time step, we load the positions of all globular clusters, as found from the initial integration, and apply their forces to the star particles. The equation of motion is thus: 
     \begin{equation}
-      \ddot{\vec{r}}_p = -\nabla \Phi(R_p,z_p) + \left.\sum_{j} \frac{Gm_j}{\left(|\vec{r}_j(t) - \vec{r}_p|^2 + b_j^2\right)^{3/2}}\right. \left(\vec{r}_j(t)- \vec{r}_p\right)
+      \ddot{\vec{r}}_p = -\nabla \Phi(R_p,z_p) + \left.\sum_{j} \frac{Gm_j}{\left(|\vec{r}_j(t) - \vec{r}_p|^2 + b_j^2\right)^{3/2}}\right. \left(\vec{r}_j(t)- \vec{r}_p\right).
       \end{equation}
 
     The integration was performed using a leapfrog integrator. The timestep was chosen to be sufficiently small to ensure both the conservation of energy and that the integration error over 5 Gyr was negligible compared to the scale radius of the globular clusters. Further details on the timestep selection are discussed in the appendix.
 
-    During the integration, intermediate snapshots were saved to facilitate the analysis of stellar streams and the effects of cluster impacts. Specifically, for each of the 50 realizations of the Palomar 5 stream, we saved 5,000 intermediate timesteps, resulting in approximately XX GB of data ($N_p \times N_s \times 7 \times \text{float}$).
+    During the integration, intermediate snapshots were saved to facilitate the analysis of stellar streams and the effects of cluster impacts. Specifically, for each of the 50 realizations of the Palomar 5 stream, we saved 5,000 intermediate timesteps which is a temporal resolution of 1 million years. To provide an estimate of the size of our simulations, we have $N_p=100 000$, $N_\textrm{time stamps} = 5000$, $N_\textrm{phase}=6$, $N_\textrm{sampling}=50$, and using the data type as a single precision floating point number $\textrm{Single}=4$~bytes results in approximately 600 GB of data.
 
 
 
