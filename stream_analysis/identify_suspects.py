@@ -110,7 +110,7 @@ def doplot(FIGSTUFF,DATASTUFF,PROPERTIESSTUFF,x_text_shift=-0.1,y_text_shift=0.0
     
     im=axis1.pcolorfast(time_foob,tau_foob,convolved_mask.T,**foobpcolor)
     cbarfoob=fig.colorbar(im,cax=caxisFOOB,label="Force on Orbit")
-    for i in range(5):
+    for i in range(len(coordinates)):
         x,y=coordinates[i]
         axis1.scatter(time_foob[x], tau_foob[y], marker="o", s=75,edgecolor="red",facecolors='none')
         axis1.text(x=time_foob[x]+x_text_shift,y=tau_foob[y]+y_text_shift,s=str(i)+" "+suspects[i],**TEXT)
