@@ -7,8 +7,8 @@ import parameterize_and_compute_impact as pci  #type: ignore
 def loop_over_targets(dataparams,hyperparams):
     GCname,NP,MWpotential,montecarlokey,internal_dynamics = dataparams
     _,n_adjacent_points,nDynTimes,width_factor,streampolyorder,perturberPolyOrder = hyperparams
-
-    for i in range(5):
+    NKEEPS = 8
+    for i in range(NKEEPS):
         dataparams  =   (GCname,NP,MWpotential,montecarlokey,internal_dynamics)
         hyperparams =   (i,n_adjacent_points,nDynTimes,width_factor,streampolyorder,perturberPolyOrder)
         pci.main(dataparams,hyperparams)
@@ -28,6 +28,7 @@ if __name__=="__main__":
     width_factor        = 10
     streampolyorder     = 2
     perturberPolyOrder  = 2
+    NKEEPS              = 8
 
 
     hyperparams =   (0,n_adjacent_points,nDynTimes,width_factor,streampolyorder,perturberPolyOrder)    
