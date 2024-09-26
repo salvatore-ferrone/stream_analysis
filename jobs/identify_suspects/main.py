@@ -47,8 +47,8 @@ def main(dataparams,hyperparams):
         return None
 
     if os.path.exists(outfilename):
-        print(outfilename, " already exists")
-        return None 
+        print(outfilename, " already exists, overwriting")
+        # return None 
 
 
     time_foob,tau_foob,mag_total,Perturbers,GCmags = sa.identify_suspects.extract_FOOB(fileFOOB)
@@ -68,22 +68,24 @@ def main(dataparams,hyperparams):
 
 
     coordinates = sa.identify_suspects.get_peaks(convolved_mask)
+    coordinates = [coordinates[i] for i in range(NKEEPS) ]
 
     time,tau,mag,convolved,suspects=sa.identify_suspects.build_output_data(coordinates,tau_foob,time_foob,mag_total,convolved_data,GCmags,Perturbers,NKEEPS)
     dframe =pd.DataFrame({'time':time,'tau':tau,'mag':mag,'convolved':convolved,'suspects':suspects})
     dframe.to_csv(outfilename,index=False)
     print("Saved to ",outfilename)
 
-
-    fig,axis1,axis2,caxisFOOB,caxisTau = sa.identify_suspects.getfigure()
-    foobNORM,tauNORM,AXIS1,AXIS2 = sa.identify_suspects.properties(time_foob,tau_left,tau_right,NP,montecarlokey)
-    FIGSTUFF=[fig,axis1,axis2,caxisFOOB,caxisTau]
-    DATASTUFF=time_foob,tau_foob,convolved_mask,suspects,coordinates,tau_counts,tau_centers,time_stamps,tau_left,tau_right
-    PROPERTIESSTUFF=foobNORM,tauNORM,AXIS1,AXIS2
-    sa.identify_suspects.doplot(FIGSTUFF,DATASTUFF,PROPERTIESSTUFF)
-    fig.savefig(fname,dpi=300) 
-    print("Saved to ",fname)
-    plt.close(fig)
+    doplot=False
+    if doplot:
+        fig,axis1,axis2,caxisFOOB,caxisTau = sa.identify_suspects.getfigure()
+        foobNORM,tauNORM,AXIS1,AXIS2,TEXT = sa.identify_suspects.properties(time_foob,tau_left,tau_right,NP,montecarlokey)
+        FIGSTUFF=[fig,axis1,axis2,caxisFOOB,caxisTau]
+        DATASTUFF=time_foob,tau_foob,convolved_mask,suspects,coordinates,tau_counts,tau_centers,time_stamps,tau_left,tau_right
+        PROPERTIESSTUFF=foobNORM,tauNORM,AXIS1,AXIS2,TEXT
+        sa.identify_suspects.doplot(FIGSTUFF,DATASTUFF,PROPERTIESSTUFF)
+        fig.savefig(fname,dpi=300) 
+        print("Saved to ",fname)
+        plt.close(fig)
 
 
 if __name__=="__main__":
@@ -95,7 +97,7 @@ if __name__=="__main__":
     
     # hyper params
     threshold=50
-    NKEEPS = 5
+    NKEEPS = 8
     plotdir="/home/sferrone/plots/stream_analysis/identify_suspects/"
 
 

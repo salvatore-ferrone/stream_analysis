@@ -270,11 +270,11 @@ if __name__=="__main__":
     GCname = "Pal5"
     NP = int(1e5)
     MWpotential = "pouliasis2017pii-GCNBody"
-    montecarlokey="monte-carlo-009"
+    montecarlokey="monte-carlo-014"
     internal_dynamics = "isotropic-plummer"
 
     # hyper params
-    targetnumber        = 2
+    targetnumber        = 6
     n_adjacent_points   = 5
     n_stamps            = 2*n_adjacent_points+1
     nDynTimes           = 2
