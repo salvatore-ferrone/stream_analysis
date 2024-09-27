@@ -1,4 +1,4 @@
-\documentclass[draft]{aa}
+\documentclass{aa}
 
 
 
@@ -251,28 +251,30 @@
 
   One of the 50 simulations is shown in Fig.~\ref{fig:stream_on_sky}--which we selected for its clear and prominent gaps which are visibile in the scatter plot of the stars on the sky and becomes even more apparent when marginalizing over latitutde to see it's 1D density over longitude. 
 
-  We then transformed the stream to tail coordinates for the both the \texttt{vanilla} and \texttt{full} simulations in Fig.~\ref{fig:profiles}. As described in section~\ref{sec:gap_detection}, we locate regions on the stream where the full simulations are significantly less dense than the vanilla simulations. Notice the \textit{Tiny Gap} labeled in the middle plot. This signal is not present in the 1D profile since it is too small in size and at an oblique angle, thus is lost when marginalizing. This process was followed for all 50 simulations to identify possible gaps. We find that small gaps are identifiable by eye rather well, where the 1D profiles aid in finding subtle yet extended underdensities. All simulations and labeled gaps are presented in the Appendix~\ref{appendix:gallery_of_gaps}. The profile method was useful in identifying the subtle underdense gaps of Samplings: 000, 002, 006, 008, 029, 030. 
+  We then transformed the stream to tail coordinates for the both the \texttt{vanilla} and \texttt{full} simulations in Fig.~\ref{fig:profiles}. As described in section~\ref{sec:gap_detection}, we locate regions on the stream where the full simulations are significantly less dense than the vanilla simulations. Notice the \textit{Tiny Gap} labeled in the middle plot. This signal is not present in the 1D profile since it is too small in size and at an oblique angle, thus is lost when marginalizing. This process was followed for all 50 simulations to identify possible gaps. We find that small gaps are identifiable by eye rather well, where the 1D profiles aid in finding subtle yet extended underdensities. All simulations and labeled gaps are presented in the Appendix~\ref{appendix:gallery_of_gaps}. The profile method was useful in identifying the subtle underdense gaps of Samplings: 000, 002, 006, 024, 028, 029, 030, 044, \& 048. 
   
-  Besides gaps, a handful of simulations show the entire stream laterally shifted in tail coordinates. The most extreme case was observed in Sampling 006 and is presented in the appendix XXX. This of course hampered our 1D profile difference analysis whose based the assumption that any difference in density would be due to the passage of other globular clusters and thus under densities. To combat this, we performed a cosmetique data reduction where I moved the \texttt{Full} 1D profile to best overlap with \texttt{Vanilla} by computing the correlation integral. Since this is not the focus of this study, we did not investigate further. We conjecture that the translation may arrise from a resonance phenomenon, most likely coming from Omega Centauri. Perhaps, in some orbital configurations Palomar 5 and Omega Centauri pass each other in regular intervals that can accelerate the globular cluster differently from the stream. 
+  Besides gaps, a handful of simulations show the entire stream laterally shifted in tail coordinates. The most extreme case was observed in Sampling 006 and is presented in the Appendix~\ref{appendix:gallery_of_gaps}. This hampered our 1D profile difference analysis whose based the assumption that any difference in density would be due to the passage of other globular clusters and thus under densities. To combat this, we performed a cosmetique data reduction where I moved the \texttt{Full} 1D profile to best overlap with \texttt{Vanilla} by computing the correlation integral. Since this is not the focus of this study, we did not investigate further. We conjecture that the translation may arrise from a resonance phenomenon, most likely coming from Omega Centauri. Perhaps, in some orbital configurations Palomar 5 and Omega Centauri pass each other in regular intervals that can accelerate the globular cluster differently from the stream. 
+  
 
-  The clusters that impacted Palomar 5 in our simulations are presented in Fig.~\ref{fig:histogram_impact_time}, along with when they impacted the stream. An imediate result is 
 
-      - It takes a while for the stream to grow to hit a significant length
-      - A lot of them are from NGC2808. This is is because it is very recent. 
-      - Of the recent hits, the gaps like NGC2808 have widths as small as 100 parsecs.
-      - of the morphology, there are some gaps that have "bites" removed from them. Like that of NGC6333 in Sampling 033. 
-      - I think it is important to keep in mind that many of said gaps would not be detectable with current 
+  The clusters that impacted Palomar 5's stream in our simulations are presented in Fig.~\ref{fig:histogram_impact_time}, along with when they impacted the stream. First, there are few impacts that happen early on in the simulation. This is not surprising, as it the tidal tails are smaller and thus there is less volume to be perturbed. Next, is that 44/50 simulations contain a visible gap from NGC2808, all of the encounters occuring about 200~Myr ago. This is so much more than any other peak that we broke the scale of the histogram. The reason is that the uncertainty in the precise position of the clusters along their orbits grows in look back time. Since this encounter is recent, most of the sampled initial conditions give rise to a significant enough impact in the stream that causes a gap.
 
   \begin{figure*}
     \centering
     \includegraphics[width=\linewidth]{histogram_impact_time.png}
     \caption{When the impacts occured}
     \label{fig:histogram_impact_time}
-    \end{figure*}    
+    \end{figure*}  
+
+  To speak on the morphological of gaps, the passage of globular clusters has not effected the width of the streams, i.e. they have not made them dynamically \textit{warmer}. The flybys gently impart a change in momentum on a local patch of particles and general pushes them to the side. As identified in Erkal et al 2015, the width of a gap is determined by how long ago the impact occured, while the depth of a gap is more indicative of how hard it was hit. 
+
+  The quantities of the gap that perhap define how much of a gap it is, would be the width and the depth. We do not attempt to quantify this in this study. However, there are very few simulations that have both wide and deep gaps. These are the most prominent gaps and come from NGC104 and NGC7078 on Sampling 009, NGC104 on Sampling 027, NGC7089 on Samplings 035, 049. 
 
 
-    in terms of statistics: 
-    - We observe that only clusters above 1e5 cause gaps
+
+  We desire to search for some generalizable characterisitcs of the perturbers to see what contrasts them to globular clusters that do not impact the Pal5 Stream. We present three different graphs in Fig.~\ref{fig:mass_size_plane}. The top plot shows the angular momentm and energy plane. The 
+
+
     
     - to no surprise, you have to come within Palomar 5's orbital space 
     
@@ -285,7 +287,7 @@
     \includegraphics[width=1\linewidth]{E_Lz_perturbers.png}
     \includegraphics[width=1\linewidth]{mass_size_plane.png}
     \includegraphics[width=1\linewidth]{impact_geometry_statistics_deltaP.png}
-    \caption{One plot shows the distribution in energy and angular momentum, the next are the inernal proeprties of the clusters, and the last show when the clusters commit their crime, and how many times it happens accross the 50 simulations. }
+    \caption{Characterisitcs of clusters that cause gaps compared to those that do not. \textbf{Top:} shows the energy-angular momentum space of the globular clusters present in the simulations. Notice that we include all initial conditions that were sampled, therefore there are 50 $\times$ 165 data points. The clusters of a given simulation that impacted Palomar 5 are given with a Red marker, while non-gap causing clusters are given in gray. \textbf{Middle:} The mass-size plane. Uncertainties on the mass are indicated, while no uncertainties on the radius were reported. \textbf{Bottom:} the imparted momentum on the star-particles from a given flyby as given in Eq.~\ref{eq:change_in_momentum}. The top 5 strongest flybys from each simulation are included in this dataset, those that cause gaps are flagged.}
     \label{fig:mass_size_plane}
     \end{figure}
 
@@ -347,10 +349,10 @@
     \begin{figure*}
       \centering
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-000.png}
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-000.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-001.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-002.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-003.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-004.png}
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-002.png}
       \caption{Gap Gallery}
       \label{fig:TailCoordinates}
     \end{figure*}    
@@ -358,79 +360,90 @@
 
     \begin{figure*}
       \centering
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-003.png}      
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-004.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-005.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-006.png}
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-006.png}
+      \caption{Gap Gallery}
+      \label{fig:TailCoordinates}
+    \end{figure*}        
+
+
+    \begin{figure*}
+      \centering
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-007.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-008.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-009.png}
-      \caption{Gap Gallery}
-      \label{fig:TailCoordinates}
-    \end{figure*}        
-
-
-    \begin{figure*}
-      \centering
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-009.png}      
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-010.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-011.png}
+      \caption{Gap Gallery}
+      \label{fig:TailCoordinates}
+    \end{figure*}        
+
+
+    \begin{figure*}
+      \centering
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-012.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-013.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-014.png}
-      \caption{Gap Gallery}
-      \label{fig:TailCoordinates}
-    \end{figure*}        
-
-
-    \begin{figure*}
-      \centering
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-014.png}      
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-015.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-016.png}
+      \caption{Gap Gallery}
+      \label{fig:TailCoordinates}
+    \end{figure*}        
+
+    \begin{figure*}
+      \centering
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-017.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-018.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-019.png}
-      \caption{Gap Gallery}
-      \label{fig:TailCoordinates}
-    \end{figure*}        
-
-    \begin{figure*}
-      \centering
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-019.png}      
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-020.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-021.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-022.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-023.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-024.png}
       \caption{Gap Gallery}
       \label{fig:TailCoordinates}
     \end{figure*}        
 
     \begin{figure*}
       \centering
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-022.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-023.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-024.png}   
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-024.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-025.png}
+      \caption{Gap Gallery}
+      \label{fig:TailCoordinates}
+    \end{figure*}        
+
+    \begin{figure*}
+      \centering
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-026.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-027.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-028.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-029.png}
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-028.png}
       \caption{Gap Gallery}
       \label{fig:TailCoordinates}
     \end{figure*}        
 
     \begin{figure*}
-      \centering
+      \centering      
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-029.png}    
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-029.png}  
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-030.png}
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-030.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-031.png}
+      \caption{Gap Gallery}
+      \label{fig:TailCoordinates}
+    \end{figure*}        
+
+
+    \begin{figure*}
+      \centering
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-032.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-033.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-034.png}
-      \caption{Gap Gallery}
-      \label{fig:TailCoordinates}
-    \end{figure*}        
-
-    \begin{figure*}
-      \centering
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-034.png}      
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-035.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-036.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-037.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-038.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-039.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-036.png}      
       \caption{Gap Gallery}
       \label{fig:TailCoordinates}
     \end{figure*}    
@@ -439,21 +452,31 @@
 
     \begin{figure*}
       \centering
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-037.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-038.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-039.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-040.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-041.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-042.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-043.png}
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-044.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-041.png}      
       \caption{Gap Gallery}
       \label{fig:TailCoordinates}
     \end{figure*}        
+    \begin{figure*}
+      \centering
+
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-042.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-043.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-044.png}
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-044.png}
+      \caption{Gap Gallery}
+      \label{fig:TailCoordinates}
+    \end{figure*}   
 
     \begin{figure*}
       \centering
-      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-045.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-046.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-047.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-048.png}
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-048.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-049.png}
       \caption{Gap Gallery}
       \label{fig:TailCoordinates}
