@@ -153,7 +153,7 @@
       This method, however, has its limitations, especially when detecting smaller gaps. As outlined by Erkal et al. (2015), a small gap is indicative of a weak impact, but rather a more recent one. This is because gap growth is a dispersion phenomenon. Additionally, since our streams have finite width, some gaps are oblique with respect to the stream axis. In such cases, marginalizing over $y'$ erases the gap's signal, making it impossible to detect in a 1D profile. This limitation is particularly evident in gaps caused by NGC~2808, as discussed in the results. Therefore, this quantitative analysis serves as an \textit{aid} to visual inspection rather than a complete substitute for it. This method helps particularly with large subtle gaps that the eye does not notice in the 2D maps.
 
     
-    \subsubsection*{From Suspect to Culprit} \label{SuspectToCulprit}
+    \subsubsection*{From Suspect to Culprit} \label{sec:SuspectToCulprit}
 
       A key question we seek to answer is: from the gaps present at the end of the simulation, who caused them? To address this, we examine the evolution of stream density over time. Instead of using the x'-coordinate, we introduce $\tau$, which represents time rather than distance. Specifically, $\tau$ indicates how long it will take for a cluster to reach, or how long ago it passed, a given point on its orbit. This is advantageous because the growth of the stream is approximately linear in $\tau$ whereas in physical space, streams on eccentric orbits expand and contract depending on the orbital phase.
 
@@ -198,7 +198,7 @@
 
     Erkal et al. (2015) extended this impact theory from one point mass impacting another point mass, to studying how an extended body impacts as stream. This quantifies the change in momentum of a given particle as a function of its distance from the point of greatest impact. In their analysis, the perturber was modeled as a Plummer sphere. Since the stream is not zero-dimensional and has length, both the parallel and perpendicular components of the velocity must be considered. Consequently, five parameters determine the change in velocity of a given particle: $M$, $r_p$, $b$, $W_\parallel$, and $W_\perp$. Our goal is to constrain these parameters during the impact in our simulations and compare them to close approaches that do not generate gaps, in order to establish the criteria necessary for gap formation.
 
-    To achieve this, we begin by identifying the approximate moments of impact from the most significant clusters, as determined in the previous analysis in Sec.~\ref{SuspectToCulprit}. Then, we refine these estimates. While the orbit serves as a good first-order proxy for the stream, it is insufficient, as the typical offset between the stream and its orbit can be on the order of 200-400 pc—--significantly larger than the impact parameters we are investigating.
+    To achieve this, we begin by identifying the approximate moments of impact from the most significant clusters, as determined in the previous analysis in Sec.~\ref{sec:SuspectToCulprit}. Then, we refine these estimates. While the orbit serves as a good first-order proxy for the stream, it is insufficient, as the typical offset between the stream and its orbit can be on the order of 200-400 pc—--significantly larger than the impact parameters we are investigating.
 
     In this refinement process, we aim to pinpoint both the exact location of the impact along the stream and the precise moment it occurred. To do so, we fit a third-order parametric polynomial to the stream, using the saved snapshots from our simulations:
     \begin{equation}
@@ -249,14 +249,25 @@
 
 \section{Results}
 
-  One of the 50 simulations is shown in Fig.~\ref{fig:stream_on_sky}--which we selected for its clear and prominent gaps which are visibile in the scatter plot of the stars on the sky and becomes even more apparent when marginalizing over latitutde to see it's 1D density over longitude. 
+  \subsection*{Overview}
+  This experiment follows a monte-carlo scheme, where we sample the initial conditions of the globular clusters' masses and kinematics based on their corresponding uncertainties and then repeat the experiment multiple times. We choose to perform the simulation 50 times to balance computational cost with a high enough number to allow us to explore a range of possible outcomes. The uncertainties on the globular clusters are large enough that over the course of the 5 Gyr integration period, they could be anywhere allowed in their phase space given their initial energy and angular momenta. We inspected all simulations upon their completion and present one of them in in Fig.~\ref{fig:stream_on_sky}--which we selected for its clear and prominent gaps. Two of these gaps are visible in galactic coordinates and become even more apparent when marginalizing over latitutde to view it's 1D profile density over longitude. 
 
-  We then transformed the stream to tail coordinates for the both the \texttt{vanilla} and \texttt{full} simulations in Fig.~\ref{fig:profiles}. As described in section~\ref{sec:gap_detection}, we locate regions on the stream where the full simulations are significantly less dense than the vanilla simulations. Notice the \textit{Tiny Gap} labeled in the middle plot. This signal is not present in the 1D profile since it is too small in size and at an oblique angle, thus is lost when marginalizing. This process was followed for all 50 simulations to identify possible gaps. We find that small gaps are identifiable by eye rather well in the 2D density maps, where the 1D profiles aid in finding subtle yet extended underdensities. All simulations and labeled gaps are presented in the Appendix~\ref{appendix:gallery_of_gaps}. The profile method was useful in identifying the subtle underdense gaps of Samplings: 000, 002, 006, 024, 028, 029, 030, 044, \& 048. 
+  For each completed simulation, we follow the scheme laid out in the methods. I.e. we simulate the creation of the Palomar 5 stream for 50 different samplings of the initial conditions, with two different cases. The \textit{Full} simulation that includes the influence of all globualr clusters on the star particles representing Palomar 5 and its stream, as well as the \textit{vanilla} simulations in which the star-particles feel only the galaxy and Palomar 5. We do this for we attempt to quantify the number of gaps from globular clusters in the limit of maximum information. I.e. we are not limited by contamination of field stars, and since we are computing our own simulations, we know what a gapless stream should look like. 
+
+  This comparative analysis is shown in Fig.~\refP{fig:profiles}. We visually compare the 2D density map in tail coordinates as well as their marginalized 1D density profiles along the length of Palomar 5's orbit. As described in section~\ref{sec:gap_detection}, we locate regions on the stream where the full simulations are significantly less dense than the vanilla simulations. We find that many streams as visible by eye. However, some subtle under densities only became apparent when comparing the 1D density profiles. All simulations and labeled gaps are presented in the Appendix~\ref{appendix:gallery_of_gaps}.
+
+  Subsequently, we followed the analysis presented in section~\ref{sec:SuspectToCulprit} to identify which globualr clusters were responsible for the gaps. This method used the orbit of Palomar 5 as a proxy for the stream. The gravitational force from all other globular clusters as computed at segments of the orbit about the position of Palomar 5 for the entire simulation. The top 5 strongest flybys were recorded to identify which cluster was responsible. This is shown in Fig.~\ref{fig:force-on-orbit}, where the top panel shows the force from the globular clusters on the orbit, while the bottom panel shows the density of the stream. A density threshold was imparted to quantify the length of the stream.  The location and time of impact was cross referenced to the location of the gaps to identify which cluster was responsible.
   
-  Besides gaps, a handful of simulations show the entire stream laterally shifted in tail coordinates. The most extreme case was observed in Sampling 006 and is presented in the Appendix~\ref{appendix:gallery_of_gaps}. This hampered our 1D profile difference analysis whose based the assumption that any difference in density would be due to the passage of other globular clusters and thus under densities. To combat this, we performed a cosmetique data reduction where I moved the \texttt{Full} 1D profile to best overlap with \texttt{Vanilla} by computing the correlation integral. Since this is not the focus of this study, we did not investigate further. We conjecture that the translation may arrise from a resonance phenomenon, most likely coming from Omega Centauri. Perhaps, in some orbital configurations Palomar 5 and Omega Centauri pass each other in regular intervals that can accelerate the globular cluster differently from the stream. 
+  Fig.~\ref{fig:force-on-orbit} contains some interesting information. Notice the periodic ribbions of force in the $(t,\tau)$ plane. This is due to pericenter passages where Palomar 5 is getting closer to the center of mass of the globular cluster system. Additionally, for the impacts of NGC104 and NGC7078, wakes can be observed in the density map. Another important aspect, is that the strongest peak in gravitational force does not necessarily create a gap. Notice how NGC5272, which was labeled with 0 to indicate that it has the greatest local maxima does not have a gap. This is manifold, for instance, the force needs to be modulated with the time of impact because the  important quantity that determins gap creation.  Additionally, there is an offset of about 200~pc between the stream at the orbit, as seen when viewing the stream in tail coordinates, so peaks upon the orbit are good proxy's for the stream but are not definitive. We found that the top five greatest impacts accounted for all gaps, except for Sampling~014 as shown in Fig.~\ref{fig:gallery3}, whose gap from NGC~6584 corresponded to the 7th peak. 
+
+ For some cases, we performed a double check by launching extra simulations only including one suspect at a time to confirm that this suspect indeed caused a gap in question, an example is shown in Fig.~\ref{fig:decomposition}. Note that the gap from NGC~7078 was \textit{hit twice}. 
+
+
+ \subsection*{Gap Morphology}
+ 
+ \subsection*{Perturber Statistics}
+  With this analysis complete, we are able to study the population of globular clusters that could perturb Palomar 5's stream. 
   
-
-
   The clusters that impacted Palomar 5's stream in our simulations are presented in Fig.~\ref{fig:histogram_impact_time}, along with when they impacted the stream. First, there are few impacts that happen early on in the simulation. This is not surprising, as it the tidal tails are smaller and thus there is less volume to be perturbed. Next, is that 44/50 simulations contain a visible gap from NGC2808, all of the encounters occuring about 200~Myr ago. This is so much more than any other peak that we broke the scale of the histogram. The reason is that the uncertainty in the precise position of the clusters along their orbits grows in look back time. Since this encounter is recent, most of the sampled initial conditions give rise to a significant enough impact in the stream that causes a gap.
 
   \begin{figure*}
@@ -264,17 +275,9 @@
     \includegraphics[width=\linewidth]{histogram_impact_time.png}
     \caption{When the impacts occured}
     \label{fig:histogram_impact_time}
-    \end{figure*}  
-
-  To speak on the morphological of gaps, the passage of globular clusters has not effected the width of the streams, i.e. they have not made them dynamically \textit{warmer}. The flybys gently impart a change in momentum on a local patch of particles and general pushes them to the side. As identified in Erkal et al 2015, the width of a gap is determined by how long ago the impact occured, while the depth of a gap is more indicative of how hard it was hit. 
-
-  The quantities of the gap that perhap define how much of a gap it is, would be the width and the depth. We do not attempt to quantify this in this study. However, there are very few simulations that have both wide and deep gaps. These are the most prominent gaps and come from NGC104 and NGC7078 on Sampling 009, NGC104 on Sampling 027, NGC7089 on Samplings 035, 049. 
-
-
-
-  We desire to search for some generalizable characterisitcs of the perturbers to see what contrasts them to globular clusters that do not impact the Pal5 Stream. We present three different graphs in Fig.~\ref{fig:mass_size_plane}. The top plot shows the angular momentm and energy plane. The 
-
-
+    \end{figure*}    
+  
+    We desire to search for some generalizable characterisitcs of the perturbers to see what contrasts them to globular clusters that do not impact the Pal5 Stream. We present three different graphs in Fig.~\ref{fig:mass_size_plane}. The top plot shows the angular momentm and energy plane. The 
     
     - to no surprise, you have to come within Palomar 5's orbital space 
     
@@ -282,24 +285,22 @@
     
     - Notice that the distributions between the gap and no gap are significantly different, yet also have significant overlap. Perhaps these 3 parameters don't tell the whole story but also there's the factor identifies in Sanders, that I don't understand yet, that shows that a gap will not be identifiable. 
   
-  \begin{figure}
-    \centering
-    \includegraphics[width=1\linewidth]{E_Lz_perturbers.png}
-    \includegraphics[width=1\linewidth]{mass_size_plane.png}
-    \includegraphics[width=1\linewidth]{impact_geometry_statistics_deltaP.png}
-    \caption{Characterisitcs of clusters that cause gaps compared to those that do not. \textbf{Top:} shows the energy-angular momentum space of the globular clusters present in the simulations. Notice that we include all initial conditions that were sampled, therefore there are 50 $\times$ 165 data points. The clusters of a given simulation that impacted Palomar 5 are given with a Red marker, while non-gap causing clusters are given in gray. \textbf{Middle:} The mass-size plane. Uncertainties on the mass are indicated, while no uncertainties on the radius were reported. \textbf{Bottom:} the imparted momentum on the star-particles from a given flyby as given in Eq.~\ref{eq:change_in_momentum}. The top 5 strongest flybys from each simulation are included in this dataset, those that cause gaps are flagged.}
-    \label{fig:mass_size_plane}
-    \end{figure}
+    \begin{figure}
+      \centering
+      \includegraphics[width=1\linewidth]{E_Lz_perturbers.png}
+      \includegraphics[width=1\linewidth]{mass_size_plane.png}
+      \includegraphics[width=1\linewidth]{impact_geometry_statistics_deltaP.png}
+      \caption{Characterisitcs of clusters that cause gaps compared to those that do not. \textbf{Top:} shows the energy-angular momentum space of the globular clusters present in the simulations. Notice that we include all initial conditions that were sampled, therefore there are 50 $\times$ 165 data points. The clusters of a given simulation that impacted Palomar 5 are given with a Red marker, while non-gap causing clusters are given in gray. \textbf{Middle:} The mass-size plane. Uncertainties on the mass are indicated, while no uncertainties on the radius were reported. \textbf{Bottom:} the imparted momentum on the star-particles from a given flyby as given in Eq.~\ref{eq:change_in_momentum}. The top 5 strongest flybys from each simulation are included in this dataset, those that cause gaps are flagged.}
+      \label{fig:mass_size_plane}
+      \end{figure}
 
 
   
   
-  After we discuss the magic to make detections, I THEN will discuss some general properties, i.e. is there something special about these perturbers compared to other clusters? The main results is that \textit{you need to enter Pal5's orbital space}, which is not a shocker. If you can hit me, you can't perturb me. NEXT, I want to compare the population of perturbers to all globular clusters based on their internal parameters, so here we do show a tendency. Next, I wanna show how often gaps appear, and thus how many time a given GC pertubered Pal5, and when the gaps occur. I think a conclusion with the histograms in time is 
-
-  Lastly, I will try to show something about the impact geometry. I will state that we want to compare the ones that create gaps to those that did not. We wanted to apply what we learned from Carlberg, Erkal and Sanders. The moral of the story will be that, no combination of parameters explaining the geometry cleared demarcated the presence of a gap or not. This can be inline with Sander's expanion of the analysis initiated by Carlberg and extended by Erkal. Namly, a uniformly dense stream on a circular orbit is just not good enough. I think Sanders also said that the streams needs to be sufficiently diffuse, which could make sense given the epicycles. 
 
 
-  \textbf{\textit{Action item:}} I need to make sure I check out real good the papers that investigate the gaps from Palomar 5. I wanna compare this to the known length of Palomar 5, how does this reduce the results, and are there observed gaps in Palomar 5 that are consistent with these simulations? 
+
+    \textbf{\textit{Action item:}} I need to make sure I check out real good the papers that investigate the gaps from Palomar 5. I wanna compare this to the known length of Palomar 5, how does this reduce the results, and are there observed gaps in Palomar 5 that are consistent with these simulations? 
 
 
 
@@ -354,8 +355,8 @@
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-002.png}
       \includegraphics[width=\linewidth]{tau-profile-monte-carlo-002.png}
       \caption{Gap Gallery}
-      \label{fig:TailCoordinates}
-    \end{figure*}    
+      \label{fig:gallery0}
+      \end{figure*}    
 
 
     \begin{figure*}
@@ -366,8 +367,8 @@
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-006.png}
       \includegraphics[width=\linewidth]{tau-profile-monte-carlo-006.png}
       \caption{Gap Gallery}
-      \label{fig:TailCoordinates}
-    \end{figure*}        
+      \label{fig:gallery1}
+      \end{figure*}        
 
 
     \begin{figure*}
@@ -378,8 +379,8 @@
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-010.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-011.png}
       \caption{Gap Gallery}
-      \label{fig:TailCoordinates}
-    \end{figure*}        
+      \label{fig:gallery2}
+      \end{figure*}        
 
 
     \begin{figure*}
@@ -390,8 +391,8 @@
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-015.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-016.png}
       \caption{Gap Gallery}
-      \label{fig:TailCoordinates}
-    \end{figure*}        
+      \label{fig:gallery3}
+      \end{figure*}        
 
     \begin{figure*}
       \centering
@@ -401,8 +402,8 @@
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-020.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-021.png}
       \caption{Gap Gallery}
-      \label{fig:TailCoordinates}
-    \end{figure*}        
+      \label{fig:gallery4}
+      \end{figure*}        
 
     \begin{figure*}
       \centering
@@ -412,8 +413,8 @@
       \includegraphics[width=\linewidth]{tau-profile-monte-carlo-024.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-025.png}
       \caption{Gap Gallery}
-      \label{fig:TailCoordinates}
-    \end{figure*}        
+      \label{fig:gallery5}
+      \end{figure*}        
 
     \begin{figure*}
       \centering
@@ -422,8 +423,8 @@
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-028.png}
       \includegraphics[width=\linewidth]{tau-profile-monte-carlo-028.png}
       \caption{Gap Gallery}
-      \label{fig:TailCoordinates}
-    \end{figure*}        
+      \label{fig:gallery6}
+      \end{figure*}        
 
     \begin{figure*}
       \centering      
@@ -433,8 +434,8 @@
       \includegraphics[width=\linewidth]{tau-profile-monte-carlo-030.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-031.png}
       \caption{Gap Gallery}
-      \label{fig:TailCoordinates}
-    \end{figure*}        
+      \label{fig:gallery7}
+      \end{figure*}        
 
 
     \begin{figure*}
@@ -445,8 +446,8 @@
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-035.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-036.png}      
       \caption{Gap Gallery}
-      \label{fig:TailCoordinates}
-    \end{figure*}    
+      \label{fig:gallery8}
+      \end{figure*}    
 
 
 
@@ -458,17 +459,18 @@
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-040.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-041.png}      
       \caption{Gap Gallery}
-      \label{fig:TailCoordinates}
+      \label{fig:gallery9}
     \end{figure*}        
+    
     \begin{figure*}
       \centering
-
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-042.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-043.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-044.png}
       \includegraphics[width=\linewidth]{tau-profile-monte-carlo-044.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-045.png}
       \caption{Gap Gallery}
-      \label{fig:TailCoordinates}
+      \label{fig:gallery010}
     \end{figure*}   
 
     \begin{figure*}
@@ -479,7 +481,7 @@
       \includegraphics[width=\linewidth]{tau-profile-monte-carlo-048.png}
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-049.png}
       \caption{Gap Gallery}
-      \label{fig:TailCoordinates}
+      \label{fig:gallery11}
     \end{figure*} 
 
 \end{appendix}
