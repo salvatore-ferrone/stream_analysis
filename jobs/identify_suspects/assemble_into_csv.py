@@ -45,7 +45,7 @@ if __name__ == '__main__':
                 tau=myfile['geometry']['tau'][()]
                 gap_flag = False
                 profile_density = myfile['geometry']['profile_density'][()]
-                data_slice = {'impact_parameter':impact_parameter,'w_par':w_par,'w_per':w_per,'v_rel':v_rel,'alpha':alpha,'Mass':Mass,'rplum':rplum,'T':T,'tau':tau,"suspect":suspect,"montecarlokey":montecarlokey,"target_number":target_number,"gap_flag":gap_flag,"profile_density":profile_density}
+                data_slice = {'impact_parameter':impact_parameter,'w_par':w_par,'w_per':w_per,'v_rel':v_rel,'alpha':alpha,'Mass':Mass,'rplum':rplum,'T':T,'tau':tau,"profile_density":profile_density,"suspect":suspect,"montecarlokey":montecarlokey,"target_number":target_number,"gap_flag":gap_flag}
             row_list.append(data_slice)
     df = pd.DataFrame(row_list)
     df.to_csv(outpath + outfilename,index=False)
