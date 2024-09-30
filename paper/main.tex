@@ -266,18 +266,31 @@
 
 
  \subsection*{Gap Morphology}
- 
- \subsection*{Perturber Statistics}
-  With this analysis complete, we are able to study the population of globular clusters that could perturb Palomar 5's stream. 
-  
-  The clusters that impacted Palomar 5's stream in our simulations are presented in Fig.~\ref{fig:histogram_impact_time}, along with when they impacted the stream. First, there are few impacts that happen early on in the simulation. This is not surprising, as it the tidal tails are smaller and thus there is less volume to be perturbed. Next, is that 44/50 simulations contain a visible gap from NGC2808, all of the encounters occuring about 200~Myr ago. This is so much more than any other peak that we broke the scale of the histogram. The reason is that the uncertainty in the precise position of the clusters along their orbits grows in look back time. Since this encounter is recent, most of the sampled initial conditions give rise to a significant enough impact in the stream that causes a gap.
+  We study the structure of the streams that have been impact by the globular clusters. The gallery of gaps is shown in the appendix, which includes the results from all of the simulations we considered in this experiment. 
 
-  \begin{figure*}
-    \centering
-    \includegraphics[width=\linewidth]{histogram_impact_time.png}
-    \caption{When the impacts occured}
-    \label{fig:histogram_impact_time}
-    \end{figure*}    
+  In general, how did the passage of these globular clusters effect the stream? well. A lot of this has been studied quite well and presented in Sanders et al 2016. They even consdiered different types of impactors. I.e. impactors that had different density profiles. They compared Hernquist, Plummer, NFW, and a truncated NFW. There are some minor differences between the impactors however, the conclusion is still the same. Impacts from small and dense perturbers such as globular clusters only effect the stream locally. 
+  
+  Our results are consistent with those shown previously. Perturber crossings only perturb the stream locally. Global characterisitcs of the stream do not change. For instance, the stream is not warmer of thicker. Other types of interactions have been demonstrated to do this. For example THIS AUTHOR showed that XXX and do YYY. As laid out in Erkal et al 2015, perturbers pull particles from the sides towards the impact point. These particles eventually move beyond the impact point and leave an under dense center and then pile up on the sides leaving an overdensity on the shoulders. 
+
+  Interestingly, most of our gaps occur for the leading tail. 8 on the trailing tail. 21 excluding NGC~2808 are on the leading tail. We have to exclude NGC~2808 because the simulations are clearly correlated with one another, so trials are not independent. So is 8/29 consistent with a fair coin toss? In anycase, we argue this may be a coincidence since being hit should only depend on the size and location of the stream. The main difference between the tails is a $\approx$ 300-400 pc offset in $r$, yet this is negligible. 
+
+  All of the gaps are oblique in tail coordinates. This is an artifact of using tail coordinates and arrises because we project the star-particles onto the nearest point of the orbit. (this is really difficult to explain with words and super simple with a picture. The picture being that we have three evenly spaced parallel lines that are close together. Then, a third point that is far away.  )
+  
+  Do our gaps grow linearly in time? what about this square root stuff? 
+
+  Lastly, since the streams have width, there are some instances where the stream is not significantly impact across this width. For instance, the gaps from NGC~5284 in Sampling 019 and NGC~6333 in Sampling 033 are more akin to bites than gaps.
+
+  \subsection*{Perturber Statistics}
+    With this analysis complete, we are able to study the population of globular clusters that could perturb Palomar 5's stream. 
+  
+    The clusters that impacted Palomar 5's stream in our simulations are presented in Fig.~\ref{fig:histogram_impact_time}, along with when they impacted the stream. First, there are few impacts that happen early on in the simulation. This is not surprising, as it the tidal tails are smaller and thus there is less volume to be perturbed. Next, is that 44/50 simulations contain a visible gap from NGC2808, all of the encounters occuring about 200~Myr ago. This is so much more than any other peak that we broke the scale of the histogram. The reason is that the uncertainty in the precise position of the clusters along their orbits grows in look back time. Since this encounter is recent, most of the sampled initial conditions give rise to a significant enough impact in the stream that causes a gap.
+
+    \begin{figure*}
+      \centering
+      \includegraphics[width=\linewidth]{histogram_impact_time.png}
+      \caption{When the impacts occured}
+      \label{fig:histogram_impact_time}
+      \end{figure*}    
   
     We desire to search for some generalizable characterisitcs of the perturbers to see what contrasts them to globular clusters that do not impact the Pal5 Stream. We present three different graphs in Fig.~\ref{fig:mass_size_plane}. The top plot shows the angular momentm and energy plane. The 
     
@@ -294,7 +307,7 @@
       \includegraphics[width=1\linewidth]{impact_geometry_statistics_deltaP.png}
       \caption{Characterisitcs of clusters that cause gaps compared to those that do not. \textbf{Top:} shows the energy-angular momentum space of the globular clusters present in the simulations. Notice that we include all initial conditions that were sampled, therefore there are 50 $\times$ 165 data points. The clusters of a given simulation that impacted Palomar 5 are given with a Red marker, while non-gap causing clusters are given in gray. \textbf{Middle:} The mass-size plane. Uncertainties on the mass are indicated, while no uncertainties on the radius were reported. \textbf{Bottom:} the imparted momentum on the star-particles from a given flyby as given in Eq.~\ref{eq:change_in_momentum}. The top 5 strongest flybys from each simulation are included in this dataset, those that cause gaps are flagged.}
       \label{fig:mass_size_plane}
-      \end{figure}
+    \end{figure}
 
 
   
