@@ -1,4 +1,4 @@
-\documentclass[draft]{aa}
+\documentclass{aa}
 
 
 
@@ -136,12 +136,6 @@
 
   \subsection*{Overview}
 
-    Firstly, to our knowledge this is the first time any one tried to study the interactions between the globular clusters. By including N~body forces on the orbits with the globular clusters, we did not observe any significant changes to orbital properties such as energy or angular momentum between any of the globular clusters in any of the simulations. This is an expected result given their small sizes and vast distances between them. 
-
-    We inspected all simulations upon their completion and present one of them in in Fig.~\ref{fig:stream_on_sky}--which we selected for its clear and prominent gaps. Two of these gaps are visible in galactic coordinates and become even more apparent when marginalizing over latitutde to view it's 1D profile density over longitude. 
-    
-    We apply the gap detection methods described in Appendix.~\ref{sec:gap_detection} and the perturber identification methods from Appendix.~\ref{sec:Perturber_Identification}. We present the results from all the simulations in Appendix.~\ref{sec:gallery_of_gaps}. Since we identify which perturber is responsible for a given gap, we launch the more simulations in which only one globular cluster at a time is included to isolate specific gaps. We present this in Fig.~\ref{fig:decomposition}.
-
     \begin{figure*}
       \centering
       \includegraphics[width=\linewidth]{decomposition-monte-carlo-009-with-3-gaps.png}
@@ -149,22 +143,38 @@
       \label{fig:decomposition}
     \end{figure*} 
 
+    Firstly, to our knowledge this is the first time any one tried to study the interactions between the globular clusters. By including N~body forces on the orbits with the globular clusters, we did not observe any significant changes to orbital properties such as energy or angular momentum between any of the globular clusters in any of the simulations. This is an expected result given their small sizes and vast distances between them. 
 
- \subsection*{Gap Morphology}
+    We inspected all simulations upon their completion and present one of them in in Fig.~\ref{fig:stream_on_sky}--which we selected for its clear and prominent gaps. Two of these gaps are visible in galactic coordinates and become even more apparent when marginalizing over latitutde to view it's 1D profile density over longitude. 
+    
+    We apply the gap detection methods described in Appendix.~\ref{sec:gap_detection} and the perturber identification methods from Appendix.~\ref{sec:Perturber_Identification}. We present the results from all the simulations in Appendix.~\ref{sec:gallery_of_gaps}. Since we identify which perturber is responsible for a given gap, we launch the more simulations in which only one globular cluster at a time is included to isolate specific gaps. We present this in Fig.~\ref{fig:decomposition}.
+
+    We present a summary of the number of gaps found in the simulation of the gallery of gaps from Appendix.~\ref{sec:gallery_of_gaps} in Fig.~\ref{fig:histogram_impact_time}, where the number of impacts and the time of impact is reported. 
+
+    \begin{figure*}
+      \centering
+      \includegraphics[width=\linewidth]{histogram_impact_time.png}
+      \caption{The time of impact for all gap causing flybys summed over all 50 simulations. Each perturbing cluster is label and is color consistent. Time is presented in integration units. Note that 1~s~kpc~km~$^{-1}$ is roughly 1~Gyr. Also, the y-axis is broken to show the total number of encounters from NGC~2808 yet not dwarf the scale from the other interactions.}
+      \label{fig:histogram_impact_time}
+      \end{figure*}
+
+
+    A striking result from the simulations is that more than half of the gaps are caused by NGC~2808. Upon inspecting the figures in the appendix, we notice that these gaps are of similar size and occur in nearly the same position in the leading tail across multiple simulations. The size of a gap is a function of time, and recent encounters leave limited time for the gap to grow. As shown in Fig.~\ref{fig:histogram_impact_time}, the gaps from NGC~2808 do occur at about 200 Myr ago. It is no coincidence that a recent fly occurs in most of the simulations. As we look further back in time, present-day uncertainties allow for much broader variation in the phase space positions of the globular clusters. However, the uncertainties associated with NGC 2808 and Palomar 5 are sufficiently low that the recent flyby of NGC 2808 occurs in 44 out of 50 simulated cases. The flybys do not happen exactly the same way in each simulation, the range in contrast of the gaps shown in the appendix illustrates that some encounters were closer, leading to more significant impacts.
+    
+    Next, we notice that most of the gaps occur on the leading tail. However, we believe this to be a coincidence. Stars escape from the globular cluster at the lagrange points at roughly equivalent rates. The two substantial differences are the orbital phase, and that the leading tail is about ~400~pc closers to the galactic center than the trailing tail. However, this is peanuts and negligible compared to the orbital radius of 8-12~kpc. Therefore, we expect the probability of a gap appearing in the leading or trailing tail to be equal and the presence of one gap should not influence the likelihood of another.
+
+    Yet, the observation of only 8 gaps in the trailing tail out of 73 total gaps is inconsistent with this expectation. However, 44 of these gaps are associated with NGC~2808. As shown in Fig.\ref{fig:histogram_impact_time}, all of these gaps result from the same recent encounter. We thus discard NGC~2808 for the current analysis, as its gaps violate the assumption of independent events. After excluding these, we are left with 21 gaps in the leading tail and 8 in the trailing tail across the remaining simulations. By integrating the binomial distribution, we compute that the probability of having at least 8 successes or fewer given 29 trials is approximately 1.2\%. While this outcome is unlikely it is not impossible.
+
+    Overall, in 50 simulations we observe 73 gaps. The distribution of number of simulations with a give number of gaps is zero: 4, one: 25, two: 16, three: 4, four:1. If we regard NGC2808 as a fluke, then we are stil left with 29 gaps. Thus, in our simulations we expect [0.6-1.5] gaps. 
+
+    
+
+
+
  
  \subsection*{Perturber Statistics}
-  With this analysis complete, we are able to study the population of globular clusters that could perturb Palomar 5's stream. 
   
-  The clusters that impacted Palomar 5's stream in our simulations are presented in Fig.~\ref{fig:histogram_impact_time}, along with when they impacted the stream. First, there are few impacts that happen early on in the simulation. This is not surprising, as it the tidal tails are smaller and thus there is less volume to be perturbed. Next, is that 44/50 simulations contain a visible gap from NGC2808, all of the encounters occuring about 200~Myr ago. This is so much more than any other peak that we broke the scale of the histogram. The reason is that the uncertainty in the precise position of the clusters along their orbits grows in look back time. Since this encounter is recent, most of the sampled initial conditions give rise to a significant enough impact in the stream that causes a gap.
-
-
-
-  \begin{figure*}
-    \centering
-    \includegraphics[width=\linewidth]{histogram_impact_time.png}
-    \caption{When the impacts occured}
-    \label{fig:histogram_impact_time}
-    \end{figure*}    
+ 
   
     We desire to search for some generalizable characterisitcs of the perturbers to see what contrasts them to globular clusters that do not impact the Pal5 Stream. We present three different graphs in Fig.~\ref{fig:mass_size_plane}. The top plot shows the angular momentm and energy plane. The 
     
