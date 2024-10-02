@@ -138,18 +138,9 @@
 
     Firstly, to our knowledge this is the first time any one tried to study the interactions between the globular clusters. By including N~body forces on the orbits with the globular clusters, we did not observe any significant changes to orbital properties such as energy or angular momentum between any of the globular clusters in any of the simulations. This is an expected result given their small sizes and vast distances between them. 
 
-   We inspected all simulations upon their completion and present one of them in in Fig.~\ref{fig:stream_on_sky}--which we selected for its clear and prominent gaps. Two of these gaps are visible in galactic coordinates and become even more apparent when marginalizing over latitutde to view it's 1D profile density over longitude. 
-
-    For each completed simulation, we follow the scheme laid out in the methods. I.e. we simulate the creation of the Palomar 5 stream for 50 different samplings of the initial conditions, with two different cases. The \textit{Full} simulation that includes the influence of all globualr clusters on the star particles representing Palomar 5 and its stream, as well as the \textit{vanilla} simulations in which the star-particles feel only the galaxy and Palomar 5. 
-
-    This comparative analysis is shown in Fig.~\ref{fig:profiles}. We visually compare the 2D density map in tail coordinates as well as their marginalized 1D density profiles along the length of Palomar 5's orbit. As described in section~XXX, we locate regions on the stream where the full simulations are significantly less dense than the vanilla simulations. We find that many streams as visible by eye. However, some subtle under densities only became apparent when comparing the 1D density profiles. All simulations and labeled gaps are presented in the Appendix~\ref{appendix:gallery_of_gaps}.
-
-    Subsequently, we followed the analysis presented in section~\ref{sec:Perturber_Identification} to identify which globualr clusters were responsible for the gaps. This method used the orbit of Palomar 5 as a proxy for the stream. The gravitational force from all other globular clusters as computed at segments of the orbit about the position of Palomar 5 for the entire simulation. The top 5 strongest flybys were recorded to identify which cluster was responsible. This is shown in Fig.~\ref{fig:force-on-orbit}, where the top panel shows the force from the globular clusters on the orbit, while the bottom panel shows the density of the stream. A density threshold was imparted to quantify the length of the stream.  The location and time of impact was cross referenced to the location of the gaps to identify which cluster was responsible.
-
-
-    Fig.~\ref{fig:force-on-orbit} contains some interesting information. Notice the periodic ribbions of force in the $(t,\tau)$ plane. This is due to pericenter passages where Palomar 5 is getting closer to the center of mass of the globular cluster system. Additionally, for the impacts of NGC104 and NGC7078, wakes can be observed in the density map. Another important aspect, is that the strongest peak in gravitational force does not necessarily create a gap. Notice how NGC5272, which was labeled with 0 to indicate that it has the greatest local maxima does not have a gap. This is manifold, for instance, the force needs to be modulated with the time of impact because the  important quantity that determins gap creation.  Additionally, there is an offset of about 200~pc between the stream at the orbit, as seen when viewing the stream in tail coordinates, so peaks upon the orbit are good proxy's for the stream but are not definitive. We found that the top five greatest impacts accounted for all gaps, except for Sampling~014 as shown in Fig.~\ref{fig:gallery3}, whose gap from NGC~6584 corresponded to the 7th peak. 
-
-    For some cases, we performed a double check by launching extra simulations only including one suspect at a time to confirm that this suspect indeed caused a gap in question, an example is shown in Fig.~\ref{fig:decomposition}. Note that the gap from NGC~7078 was \textit{hit twice}. 
+    We inspected all simulations upon their completion and present one of them in in Fig.~\ref{fig:stream_on_sky}--which we selected for its clear and prominent gaps. Two of these gaps are visible in galactic coordinates and become even more apparent when marginalizing over latitutde to view it's 1D profile density over longitude. 
+    
+    We apply the gap detection methods described in Appendix.~\ref{sec:gap_detection} and the perturber identification methods from Appendix.~\ref{sec:Perturber_Identification}. We present the results from all the simulations in Appendix.~\ref{sec:gallery_of_gaps}. Since we identify which perturber is responsible for a given gap, we launch the more simulations in which only one globular cluster at a time is included to isolate specific gaps. We present this in Fig.~\ref{fig:decomposition}.
 
     \begin{figure*}
       \centering
@@ -202,7 +193,7 @@
 
     We do this for we attempt to quantify the number of gaps from globular clusters in the limit of maximum information. I.e. we are not limited by contamination of field stars, and since we are computing our own simulations, we know what a gapless stream should look like. 
 
-    
+
     What about drawing attention to future studies? 
 
     Doing a complete census of all globular clusters? 
@@ -278,6 +269,10 @@
 
 
       Afterward, we cross-referenced these peaks with the locations of the gaps identified by studying the density maps and profiles from Fig.~\ref{fig:profiles}. For large gaps resulting from strong interactions, we observed that after an impact, a low-density wake is left behind in the ($t,\tau$) plane, which can be seen corresponding to the impacts of NGC~104 and NGC~7808 in the bottom panel of Fig.~\ref{fig:force-on-orbit}.
+
+
+
+      Fig.~\ref{fig:force-on-orbit} contains some interesting information. Notice the periodic ribbions of force in the $(t,\tau)$ plane. This is due to pericenter passages where Palomar 5 is getting closer to the center of mass of the globular cluster system. Additionally, for the impacts of NGC104 and NGC7078, wakes can be observed in the density map. Another important aspect, is that the strongest peak in gravitational force does not necessarily create a gap. Notice how NGC5272, which was labeled with 0 to indicate that it has the greatest local maxima does not have a gap. This is manifold, for instance, the force needs to be modulated with the time of impact because the  important quantity that determins gap creation.  Additionally, there is an offset of about 200~pc between the stream at the orbit, as seen when viewing the stream in tail coordinates, so peaks upon the orbit are good proxy's for the stream but are not definitive. We found that the top five greatest impacts accounted for all gaps, except for Sampling~014 as shown in Fig.~\ref{fig:gallery3}, whose gap from NGC~6584 corresponded to the 7th peak. 
 
       The results of this analysis were compiled into a table. If a gap was attributed to a particular globular cluster, it was labeled as \texttt{TRUE}; otherwise, it was marked as \texttt{FALSE}. For a handful of simulations, to double check that the verdict made correctly when passing from suspect to culprit, we re-compute the simulations yet individually adding one globular cluster at a time. As a result, we are able to confirm that singular gaps arrise from the suspected clusters, an example of which is shown in Fig.~\ref{fig:decomposition}. 
 
@@ -356,7 +351,7 @@
 
 
 
-  \section{Gallery of Gaps} \label{appendix:gallery_of_gaps}
+  \section{Gallery of Gaps} \label{sec:gallery_of_gaps}
 
     \begin{figure*}
       \centering
