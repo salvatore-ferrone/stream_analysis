@@ -1,4 +1,4 @@
-\documentclass{aa}
+\documentclass[draft]{aa}
 
 
 
@@ -86,8 +86,6 @@
 
 \section{Methods}
 
-
-
   \subsection{Numerical Methodology}
     Our numerical methodology follows the approach outlined in Ferrone et al. (2023), which we present here for completeness. We begin by extracting the phase space properties (positions, velocities) as well as the masses and half-mass radii of 165 globular clusters from the galactic globular cluster catalog by Baumgardt and Vasiliev et al. We handle the uncertainties through a monte-carlo approach. The catalog provides uncertainties for mass, distances, line of sight velocities, proper motions and includes a covariance term between the proper motions. We repeate the whole experiment 50 times, for each of which we vary the initial conditions of each cluster by sampling its five-dimensional gaussian uncertaintiy distribution. However, for the first simulation, which we name \texttt{Sampling 000}, we use the most probable values for the initial conditions. 
 
@@ -110,27 +108,27 @@
 
     The integration was performed using a leapfrog integrator. The timestep was chosen to be sufficiently small to ensure both the conservation of energy and that the integration error over 5 Gyr was negligible compared to the scale radius of the globular clusters. Further details on the timestep selection are discussed in the appendix.
 
-    During the integration, intermediate snapshots were saved to facilitate the analysis of stellar streams and the effects of cluster impacts. Specifically, for each of the 50 realizations of the Palomar 5 stream, we saved $5000$ intermediate timesteps which is a temporal resolution of 1 million years. To provide an estimate of the size of our simulations, we have $N_p=100 000$ number of particles, $N_\textrm{time stamps} = 5 000$ time steps, $N_\textrm{phase}=6$ phase space coordinates, $N_\textrm{sampling}=50$ monte-carlo samplings, and using single precision floating point numbers, $\textrm{Single}=4$~bytes. The product of the aforementioned terms results in approximately: $N_p=100 000 \times N_\textrm{time stamps}\times N_\textrm{phase}\times N_\textrm{sampling} 4 \textrm{bytes}\approx$ 600 GB of data.
+    During the integration, intermediate snapshots were saved to facilitate the analysis of stellar streams and the effects of cluster impacts. Specifically, for each of the 50 realizations of the Palomar 5 stream, we saved $5000$ intermediate timesteps which is a temporal resolution of 1 million years. To provide an estimate of the size of our simulations, we have $N_p=100 000$ particles, $N_\textrm{time stamps} = 5 000$ time steps, $N_\textrm{phase}=6$ phase space coordinates, $N_\textrm{sampling}=50$ monte-carlo samplings, and using single precision floating point numbers, $\textrm{Single}=4$~bytes. The product of the aforementioned terms results in approximately: $N_p \times N_{\textrm{time stamps}}\times N_{\textrm{phase}}\times N_{\textrm{sampling}} \times 4 \textrm{bytes}\approx$ 600 GB of data.
 
 
 
 
-  \subsection{Gap detection and Characterization} \label{sec:gap_detection}
+  \subsection{Gap Detection and Characterization} \label{sec:gap_methods}
 
     At the end of the simulations, some gaps in the stellar stream are so prominent that they can be identified visually without any sophisticated quantitative analysis. However, upon closer inspection, more subtle gaps emerge, highlighting the need for quantitative methods to systematically detect and assess these features.
 
     We initially sought an automated, quantitative approach from signal and image processing that could reliably detect all gaps and evaluate their significance. Unfortunately, despite extensive efforts, an ideal method remained elusive. As a result, we opted for a simpler approach: a combination of visual inspection aided by comparative analysis.
 
-    To facilitate this process, we ran a series of \texttt{reference} simulations. In these control simulations, we used the same 50 sets of initial conditions but excluded interactions between globular clusters and omitted the gravitational influence of the clusters on the star particles within the stream--save for the host cluster Palomar 5. By comparing the morphological differences between these control simulations and the \texttt{full} simulations (which included cluster interactions), we could identify and assess the impact of globular clusters on the stream structure more effectively. 
+    To facilitate this process, we conducted a series of \texttt{reference} simulations. These control simulations used the same 50 sets of initial conditions but excluded interactions with globular clusters, except for the host cluster, Palomar 5. In other words, the gravitational influence of all other clusters on the star particles within the stream was omitted. By comparing the morphological differences between these control simulations and the \texttt{full} simulations (which included cluster interactions), we could more effectively identify and assess the impact of globular clusters on the stream's structure. Details on gap identification are provided in Appendix~\ref{sec:gap_detection}, and the identification of corresponding perturbing globular clusters is detailed in Appendix~\ref{sec:Perturber_Identification}.
 
 
     Comparisons between the \texttt{reference} and \texttt{full} simulations were performed in the tail coordinate system. This system allows for consistent morphological comparisons by aligning the stream with the cluster's orbit. The coordinate system is based on the work of Dehnen et al. (2004) and is detailed in Appendix~\ref{appendix:TailCoordinates}. Briefly, the x' coordinate represents the position of a particle along the orbit relative to the globular cluster—whether it is ahead or behind the cluster. The y' coordinate measures the particle's distance within the orbital plane, where positive values indicate that the particle is farther from the Galactic center and negative values indicate that it is closer.
 
-    More details on how the gaps and corresponding perturbing globular clusters were identified is provided in Appendix.~XXX. A first order approach of understanding the significance of an impact one needs to compute its change in momentum, which is determined by integrating the force acting on the particle over the duration of the interaction. A useful approximation for this change in momentum is the force at the closest approach multiplied by an estimate of the interaction time:
-    \begin{equation} 
-      \Delta v \approx \text{Force} \times \text{interaction time} = \frac{GM}{b^2} \times 2\frac{b}{v} = 2\frac{GM}{bv}, 
-      \end{equation} \label{eq:change_in_momentum}
-    where $M$ is the mass of the perturber, $m$ is the mass of the particle, $b$ is the impact parameter, $v$ is the relative velocity of the perturber with respect to the particle, and $G$ is the gravitational constant. We compute this for the top five cloestest approaches of all globular clusters on an orbital segment about Palomar 5 that approximates the stream through out each of the 50 simulations. In the end, we have a sample of 250 impacts and compare the impact geometry of those that cause gaps to those that do not. 
+    
+    Once the gaps and perturbers were identified, we sought to characterize the properties of the globular clusters that caused gaps and differentiate them from those that did not. Carlberg (2012) initiated the theory of gap creation in stellar streams due to gravitational flybys. This analysis was extended both analytically and numerically by Erkal et al. (2015), who studied uniform-density streams on circular orbits. Sanders et al. (2016) presented the most comprehensive theory, generalizing Erkal et al.'s work to include impacts on streams of varying densities on inclined and eccentric orbits using an action-angle approach.
+
+    The significance of an impact is measured by the change in momentum imparted to the stream stars by the perturber. To first order, we follow the developments from collision theory as laid out in Galactic Dynamics (Binney \& Tremaine) and similar works by John Taylor. In the simplest case, the perturber is considered unperturbed during the interaction, and thus has constant velocity. We can consider the most basic scenario of one point mass impacting another. A useful approximation for the change in momentum is the force at the closest approach multiplied by an estimate of the interaction time: \begin{equation} \Delta v \approx \text{Force} \times \text{interaction time} = \frac{GM}{b^2} \times 2\frac{b}{v} = 2\frac{GM}{bv}, \end{equation} where $M$ is the mass of the perturber, $b$ is the impact parameter, $v$ is the relative velocity of the perturber with respect to the particle, and $G$ is the gravitational constant. We compute this for the five closest approaches of all globular clusters throughout each of the 50 simulations. Details on how this computation was performed are given in Appendix~\ref{sec:reconstruction}. Ultimately, we obtained a sample of 250 impacts and compared the impact geometry of those that caused gaps with those that did not.
+    
 
 \section{Results}
 
@@ -138,15 +136,15 @@
 
   \subsection*{Overview}
 
-    Although these interactions were included, we observed no significant exchanges of orbital energy or momentum between clusters.   
+    Firstly, to our knowledge this is the first time any one tried to study the interactions between the globular clusters. By including N~body forces on the orbits with the globular clusters, we did not observe any significant changes to orbital properties such as energy or angular momentum between any of the globular clusters in any of the simulations. This is an expected result given their small sizes and vast distances between them. 
 
-    This experiment follows a monte-carlo scheme, where we sample the initial conditions of the globular clusters' masses and kinematics based on their corresponding uncertainties and then repeat the experiment multiple times. We choose to perform the simulation 50 times to balance computational cost with a high enough number to allow us to explore a range of possible outcomes. The uncertainties on the globular clusters are large enough that over the course of the 5 Gyr integration period, they could be anywhere allowed in their phase space given their initial energy and angular momenta. We inspected all simulations upon their completion and present one of them in in Fig.~\ref{fig:stream_on_sky}--which we selected for its clear and prominent gaps. Two of these gaps are visible in galactic coordinates and become even more apparent when marginalizing over latitutde to view it's 1D profile density over longitude. 
+   We inspected all simulations upon their completion and present one of them in in Fig.~\ref{fig:stream_on_sky}--which we selected for its clear and prominent gaps. Two of these gaps are visible in galactic coordinates and become even more apparent when marginalizing over latitutde to view it's 1D profile density over longitude. 
 
-    For each completed simulation, we follow the scheme laid out in the methods. I.e. we simulate the creation of the Palomar 5 stream for 50 different samplings of the initial conditions, with two different cases. The \textit{Full} simulation that includes the influence of all globualr clusters on the star particles representing Palomar 5 and its stream, as well as the \textit{vanilla} simulations in which the star-particles feel only the galaxy and Palomar 5. We do this for we attempt to quantify the number of gaps from globular clusters in the limit of maximum information. I.e. we are not limited by contamination of field stars, and since we are computing our own simulations, we know what a gapless stream should look like. 
+    For each completed simulation, we follow the scheme laid out in the methods. I.e. we simulate the creation of the Palomar 5 stream for 50 different samplings of the initial conditions, with two different cases. The \textit{Full} simulation that includes the influence of all globualr clusters on the star particles representing Palomar 5 and its stream, as well as the \textit{vanilla} simulations in which the star-particles feel only the galaxy and Palomar 5. 
 
-    This comparative analysis is shown in Fig.~\ref{fig:profiles}. We visually compare the 2D density map in tail coordinates as well as their marginalized 1D density profiles along the length of Palomar 5's orbit. As described in section~\ref{sec:gap_detection}, we locate regions on the stream where the full simulations are significantly less dense than the vanilla simulations. We find that many streams as visible by eye. However, some subtle under densities only became apparent when comparing the 1D density profiles. All simulations and labeled gaps are presented in the Appendix~\ref{appendix:gallery_of_gaps}.
+    This comparative analysis is shown in Fig.~\ref{fig:profiles}. We visually compare the 2D density map in tail coordinates as well as their marginalized 1D density profiles along the length of Palomar 5's orbit. As described in section~XXX, we locate regions on the stream where the full simulations are significantly less dense than the vanilla simulations. We find that many streams as visible by eye. However, some subtle under densities only became apparent when comparing the 1D density profiles. All simulations and labeled gaps are presented in the Appendix~\ref{appendix:gallery_of_gaps}.
 
-    Subsequently, we followed the analysis presented in section~\ref{sec:SuspectToCulprit} to identify which globualr clusters were responsible for the gaps. This method used the orbit of Palomar 5 as a proxy for the stream. The gravitational force from all other globular clusters as computed at segments of the orbit about the position of Palomar 5 for the entire simulation. The top 5 strongest flybys were recorded to identify which cluster was responsible. This is shown in Fig.~\ref{fig:force-on-orbit}, where the top panel shows the force from the globular clusters on the orbit, while the bottom panel shows the density of the stream. A density threshold was imparted to quantify the length of the stream.  The location and time of impact was cross referenced to the location of the gaps to identify which cluster was responsible.
+    Subsequently, we followed the analysis presented in section~\ref{sec:Perturber_Identification} to identify which globualr clusters were responsible for the gaps. This method used the orbit of Palomar 5 as a proxy for the stream. The gravitational force from all other globular clusters as computed at segments of the orbit about the position of Palomar 5 for the entire simulation. The top 5 strongest flybys were recorded to identify which cluster was responsible. This is shown in Fig.~\ref{fig:force-on-orbit}, where the top panel shows the force from the globular clusters on the orbit, while the bottom panel shows the density of the stream. A density threshold was imparted to quantify the length of the stream.  The location and time of impact was cross referenced to the location of the gaps to identify which cluster was responsible.
 
 
     Fig.~\ref{fig:force-on-orbit} contains some interesting information. Notice the periodic ribbions of force in the $(t,\tau)$ plane. This is due to pericenter passages where Palomar 5 is getting closer to the center of mass of the globular cluster system. Additionally, for the impacts of NGC104 and NGC7078, wakes can be observed in the density map. Another important aspect, is that the strongest peak in gravitational force does not necessarily create a gap. Notice how NGC5272, which was labeled with 0 to indicate that it has the greatest local maxima does not have a gap. This is manifold, for instance, the force needs to be modulated with the time of impact because the  important quantity that determins gap creation.  Additionally, there is an offset of about 200~pc between the stream at the orbit, as seen when viewing the stream in tail coordinates, so peaks upon the orbit are good proxy's for the stream but are not definitive. We found that the top five greatest impacts accounted for all gaps, except for Sampling~014 as shown in Fig.~\ref{fig:gallery3}, whose gap from NGC~6584 corresponded to the 7th peak. 
@@ -199,9 +197,12 @@
 
 
 
-  \section{Discussion}
+\section{Discussion}
     How many of these could be observable? What's the main result? in 5 billion years of evolution, perhaps you'd only expect to 1.4 gaps, reaching up to maximum three? However, its possible that we dont see gaps at all for sure. 
 
+    We do this for we attempt to quantify the number of gaps from globular clusters in the limit of maximum information. I.e. we are not limited by contamination of field stars, and since we are computing our own simulations, we know what a gapless stream should look like. 
+
+    
     What about drawing attention to future studies? 
 
     Doing a complete census of all globular clusters? 
@@ -223,40 +224,40 @@
 
   \section{Tail Coordinates} \label{appendix:TailCoordinates}
 
-  \begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{figures/along_orbit_coordinate_system-approved.png}
-    \caption{Tail coordinates}
-    \label{fig:TailCoordinates}
-  \end{figure}
-
-  \section{Gap detection and characterization methods}
-    \subsubsection*{Density Maps and Profiles}
-      For each of the 50 simulations, we compare the final snapshots between the \texttt{vanilla} and \texttt{full} simulations using the tail coordinate system. We inspect these differences by generating 2D density maps of the streams. Additionally, we marginalize over the $y'$-coordinate to produce 1D density profiles along the $x'$-axis. These comparisons are shown in the results section (see Fig.~\ref{fig:profiles}).
-
-      \begin{figure*}
-        \centering
-        \includegraphics[width=\linewidth, trim=20 0 15 0]{monte-carlo-009-pouliasis2017pii-GCNBody-2000-milisigma-5-noisefactor-20-boxcarindexlength-shifted-0.png}
-        \caption{A comparison between the density maps and profiles of the \texttt{full} and \texttt{vanilla} simulations is presented. The locations where the full simulation is less dense than the vanilla simulation by 2-$\sigma$ is highlighted by blue vertical bars. Bins below the noise threshold are not considered when measuring the differences between the two 1D profiles. The 1D profiles have been smoothed with a median box-car filter.}
-        \label{fig:profiles}
-        \end{figure*}
-
-      To construct the 1D density profiles, we first bin the data using the $\sqrt{N}$ rule, where $N$ is the number of data points ($N_p = 10^5$). After binning the 1D profiles, we apply a boxcar smoothing technique. The density profiles are scanned. At each bin, a selected number of adjacent data points from both sides are placed in a list. The bin is then replaced with the median. We choose to use 10 adjacent points per side, which corresponding to a smoothing length of approximately 1~kpc. This procedure reduces high-frequency noise and smooths the profiles. For instance, notice the absence of a high mass peak indicating for the center of mass in the bottom panel of Fig.~\ref{fig:profiles}.
-
-      With the smoothed 1D density profiles in hand, we treat the \texttt{vanilla} simulations as the reference model and search for regions in the \texttt{full} simulations that are significantly underdense compared to \texttt{vanilla}, surpassing stochastic fluctuations. To accomplish this, we first impose a signal-to-noise ratio threshold, $\mathcal{SNR}$. The signal is defined as the log of the counts per bin from the \texttt{vanilla} 1D density profile, and errors are propagated assuming a Poisson distribution. We then compute a threshold for the number of counts in the \texttt{vanilla} simulation, $N_v$, using the transcendental equation:
-      \begin{equation}
-          \mathcal{SNR} = \ln(10) \log_{10}\left(N_v\right) \sqrt{N_v}.
-        \end{equation} \label{eq:density_threshold}
-      By setting $\mathcal{SNR} = 5$, we solve for $N$ using \texttt{scipy.optimize.fsolve}, finding that $N$ must be greater than 7. After discarding insignificant bins (i.e., those with counts below the threshold), we compute the log ratio of the counts between the \texttt{vanilla} and full simulations:
-      \begin{equation}
-          \mathcal{R}_i = \log_{10}\left(\frac{N_{f,i}}{N_{v,i}}\right),
-        \end{equation}
-      where $\mathcal{R}_i$ is the log ratio, $N_{f,i}$ are the counts from the full simulation, and $N_{v,i}$ are the counts from the \texttt{vanilla} simulation for each bin $i$. We then analyze the distribution of $\mathcal{R}_i$. If the differences between the density profiles are primarily due to stochastic processes of similar magnitude, this distribution should resemble a Gaussian as expected from the central limit theorem. Thus, we flag all regions where the density is underdense by more than two standard deviations, which should highlight regions whose underdensity is unlikely to be the result of the sum of stochastic processess but rather the passage of another globular cluster. 
-
-      This method, however, has its limitations, especially when detecting smaller gaps. As outlined by Erkal et al. (2015), a small gap is indicative of a weak impact, but rather a more recent one. This is because gap growth is a dispersion phenomenon. Additionally, since our streams have finite width, some gaps are oblique with respect to the stream axis. In such cases, marginalizing over $y'$ erases the gap's signal, making it impossible to detect in a 1D profile. This limitation is particularly evident in gaps caused by NGC~2808, as discussed in the results. Therefore, this quantitative analysis serves as an \textit{aid} to visual inspection rather than a complete substitute for it. This method helps particularly with large subtle gaps that the eye does not notice in the 2D maps.
+    \begin{figure}
+      \centering
+      \includegraphics[width=\linewidth]{figures/along_orbit_coordinate_system-approved.png}
+      \caption{Tail coordinates}
+      \label{fig:TailCoordinates}
+    \end{figure}
 
 
-    \subsubsection*{From Suspect to Culprit} \label{sec:SuspectToCulprit}
+  \section{Gap Detection} \label{sec:gap_detection}
+    For each of the 50 simulations, we compare the final snapshots between the \texttt{vanilla} and \texttt{full} simulations using the tail coordinate system. We inspect these differences by generating 2D density maps of the streams. Additionally, we marginalize over the $y'$-coordinate to produce 1D density profiles along the $x'$-axis. These comparisons are shown in the results section (see Fig.~\ref{fig:profiles}).
+
+    \begin{figure*}
+      \centering
+      \includegraphics[width=\linewidth, trim=20 0 15 0]{monte-carlo-009-pouliasis2017pii-GCNBody-2000-milisigma-5-noisefactor-20-boxcarindexlength-shifted-0.png}
+      \caption{A comparison between the density maps and profiles of the \texttt{full} and \texttt{vanilla} simulations is presented. The locations where the full simulation is less dense than the vanilla simulation by 2-$\sigma$ is highlighted by blue vertical bars. Bins below the noise threshold are not considered when measuring the differences between the two 1D profiles. The 1D profiles have been smoothed with a median box-car filter.}
+      \label{fig:profiles}
+      \end{figure*}
+
+    To construct the 1D density profiles, we first bin the data using the $\sqrt{N}$ rule, where $N$ is the number of data points ($N_p = 10^5$). After binning the 1D profiles, we apply a boxcar smoothing technique. The density profiles are scanned. At each bin, a selected number of adjacent data points from both sides are placed in a list. The bin is then replaced with the median. We choose to use 10 adjacent points per side, which corresponding to a smoothing length of approximately 1~kpc. This procedure reduces high-frequency noise and smooths the profiles. For instance, notice the absence of a high mass peak indicating for the center of mass in the bottom panel of Fig.~\ref{fig:profiles}.
+
+    With the smoothed 1D density profiles in hand, we treat the \texttt{vanilla} simulations as the reference model and search for regions in the \texttt{full} simulations that are significantly underdense compared to \texttt{vanilla}, surpassing stochastic fluctuations. To accomplish this, we first impose a signal-to-noise ratio threshold, $\mathcal{SNR}$. The signal is defined as the log of the counts per bin from the \texttt{vanilla} 1D density profile, and errors are propagated assuming a Poisson distribution. We then compute a threshold for the number of counts in the \texttt{vanilla} simulation, $N_v$, using the transcendental equation:
+    \begin{equation}
+        \mathcal{SNR} = \ln(10) \log_{10}\left(N_v\right) \sqrt{N_v}.
+      \end{equation} \label{eq:density_threshold}
+    By setting $\mathcal{SNR} = 5$, we solve for $N$ using \texttt{scipy.optimize.fsolve}, finding that $N$ must be greater than 7. After discarding insignificant bins (i.e., those with counts below the threshold), we compute the log ratio of the counts between the \texttt{vanilla} and full simulations:
+    \begin{equation}
+        \mathcal{R}_i = \log_{10}\left(\frac{N_{f,i}}{N_{v,i}}\right),
+      \end{equation}
+    where $\mathcal{R}_i$ is the log ratio, $N_{f,i}$ are the counts from the full simulation, and $N_{v,i}$ are the counts from the \texttt{vanilla} simulation for each bin $i$. We then analyze the distribution of $\mathcal{R}_i$. If the differences between the density profiles are primarily due to stochastic processes of similar magnitude, this distribution should resemble a Gaussian as expected from the central limit theorem. Thus, we flag all regions where the density is underdense by more than two standard deviations, which should highlight regions whose underdensity is unlikely to be the result of the sum of stochastic processess but rather the passage of another globular cluster. 
+
+    This method, however, has its limitations, especially when detecting smaller gaps. As outlined by Erkal et al. (2015), a small gap is indicative of a weak impact, but rather a more recent one. This is because gap growth is a dispersion phenomenon. Additionally, since our streams have finite width, some gaps are oblique with respect to the stream axis. In such cases, marginalizing over $y'$ erases the gap's signal, making it impossible to detect in a 1D profile. This limitation is particularly evident in gaps caused by NGC~2808, as discussed in the results. Therefore, this quantitative analysis serves as an \textit{aid} to visual inspection rather than a complete substitute for it. This method helps particularly with large subtle gaps that the eye does not notice in the 2D maps.
+
+
+    \section{Perturber Identification} \label{sec:Perturber_Identification}
 
       A key question we seek to answer is: from the gaps present at the end of the simulation, who caused them? To address this, we examine the evolution of stream density over time. Instead of using the x'-coordinate, we introduce $\tau$, which represents time rather than distance. Specifically, $\tau$ indicates how long it will take for a cluster to reach, or how long ago it passed, a given point on its orbit. This is advantageous because the growth of the stream is approximately linear in $\tau$ whereas in physical space, streams on eccentric orbits expand and contract depending on the orbital phase.
 
@@ -282,7 +283,7 @@
 
 
 
-    \subsection{Reconstruction of the impact geometry}
+    \section{Reconstruction of the impact geometry} \label{sec:reconstruction}
 
       With the perturbers identified, we perform statistics in the pursuit of understanding what conditions are necessary for a globular cluster and a stream to have in order for a gap to form. We turn to impact theory, which in its simplest form as presented in works such as Binney and Tremaine, John Taylor, and Galaxiesbook, considers two particles: one stationary and the other moving past it. The distance between the two particles at their closest approach is known as the impact parameter. To simplify the analysis, the \textit{impulse approximation} is often employed, which assumes that the velocity of the perturber remains unchanged during the interaction. This assumption greatly simplifies the computation.
 
@@ -296,7 +297,7 @@
 
       Erkal et al. (2015) extended this impact theory from one point mass impacting another point mass, to studying how an extended body impacts as stream. This quantifies the change in momentum of a given particle as a function of its distance from the point of greatest impact. In their analysis, the perturber was modeled as a Plummer sphere. Since the stream is not zero-dimensional and has length, both the parallel and perpendicular components of the velocity must be considered. Consequently, five parameters determine the change in velocity of a given particle: $M$, $r_p$, $b$, $W_\parallel$, and $W_\perp$. Our goal is to constrain these parameters during the impact in our simulations and compare them to close approaches that do not generate gaps, in order to establish the criteria necessary for gap formation.
 
-      To achieve this, we begin by identifying the approximate moments of impact from the most significant clusters, as determined in the previous analysis in Sec.~\ref{sec:SuspectToCulprit}. Then, we refine these estimates. While the orbit serves as a good first-order proxy for the stream, it is insufficient, as the typical offset between the stream and its orbit can be on the order of 200-400 pc—--significantly larger than the impact parameters we are investigating.
+      To achieve this, we begin by identifying the approximate moments of impact from the most significant clusters, as determined in the previous analysis in Sec.~\ref{sec:Perturber_Identification}. Then, we refine these estimates. While the orbit serves as a good first-order proxy for the stream, it is insufficient, as the typical offset between the stream and its orbit can be on the order of 200-400 pc—--significantly larger than the impact parameters we are investigating.
 
       In this refinement process, we aim to pinpoint both the exact location of the impact along the stream and the precise moment it occurred. To do so, we fit a third-order parametric polynomial to the stream, using the saved snapshots from our simulations:
       \begin{equation}
