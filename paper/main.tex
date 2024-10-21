@@ -156,7 +156,7 @@
     
     Once the gaps and perturbers were identified, we sought to characterize the properties of the globular clusters that caused gaps and differentiate them from those that did not. \citet{2013ApJ...775...90C} initiated the theory of gap creation in stellar streams due to gravitational flybys. This analysis was extended both analytically and numerically by \citet{2015MNRAS.450.1136E}, who studied uniform-density streams on circular orbits. \citet{2016MNRAS.457.3817S} presented the most comprehensive theory, generalizing Erkal et al.'s work to include impacts on streams of varying densities on inclined and eccentric orbits using an action-angle approach.
 
-    The significance of an impact is measured by the change in momentum imparted to the stream stars by the perturber. A useful approximation for the change in momentum is the force at the closest approach multiplied by an estimate of the interaction time: \begin{equation} \Delta v \approx \text{Force} \times \text{interaction time} = \frac{GM}{b^2} \times 2\frac{b}{v} = 2\frac{GM}{bv}, \end{equation} where $M$ is the mass of the perturber, $b$ is the impact parameter, $v$ is the relative velocity of the perturber with respect to the particle, and $G$ is the gravitational constant. We compute this for the five closest approaches of all globular clusters throughout each of the 50 simulations. Details on how this computation was performed are given in Appendix~\ref{sec:reconstruction}. Ultimately, we obtained a sample of 250 impacts and compared the impact geometry of those that caused gaps with those that did not.
+    The significance of an impact is measured by the change in momentum imparted to the stream stars by the perturber. A useful approximation for the change in momentum is the force at the closest approach multiplied by an estimate of the interaction time: \begin{equation} \label{eq:change_in_momentum} \Delta v \approx \text{Force} \times \text{interaction time} = \frac{GM}{b^2} \times 2\frac{b}{v} = 2\frac{GM}{bv}, \end{equation} where $M$ is the mass of the perturber, $b$ is the impact parameter, $v$ is the relative velocity of the perturber with respect to the particle, and $G$ is the gravitational constant. We compute this for the five closest approaches of all globular clusters throughout each of the 50 simulations. Details on how this computation was performed are given in Appendix~\ref{sec:reconstruction}. Ultimately, we obtained a sample of 250 impacts and compared the impact geometry of those that caused gaps with those that did not.
     
 
 \section{Results}
@@ -211,9 +211,9 @@
  
  \subsection*{Perturber Statistics}
   
- 
+
   
-    We desire to search for some generalizable characterisitcs of the perturbers to see what contrasts them to globular clusters that do not impact the Pal5 Stream. We present three different graphs in Fig.~\ref{fig:mass_size_plane}. The top plot shows the angular momentm and energy plane. The 
+    We desire to search for some generalizable characterisitcs of the perturbers to see what contrasts them to globular clusters that do not impact the Pal5 Stream. We present a suite of figures to answer for this end in Fig.~\ref{fig:mass_size_plane}. Note that the colors of the markers and histogram bins are 
     
     - to no surprise, you have to come within Palomar 5's orbital space 
     
@@ -228,7 +228,7 @@
 
       \includegraphics[width=0.45\linewidth]{impact_geometry_statistics_deltaP.png}
       \includegraphics[width=0.45\linewidth]{impact_stats_phase_space.png}
-      \caption{Characterisitcs of clusters that cause gaps compared to those that do not. \textbf{Top:} shows the energy-angular momentum space of the globular clusters present in the simulations. Notice that we include all initial conditions that were sampled, therefore there are 50 $\times$ 165 data points. The clusters of a given simulation that impacted Palomar 5 are given with a Red marker, while non-gap causing clusters are given in gray. \textbf{Middle:} The mass-size plane. Uncertainties on the mass are indicated, while no uncertainties on the radius were reported. \textbf{Bottom:} the imparted momentum on the star-particles from a given flyby as given in Eq.~\ref{eq:change_in_momentum}. The top 5 strongest flybys from each simulation are included in this dataset, those that cause gaps are flagged.}
+      \caption{\textbf{Characterisitcs of gap causing clusters}--\textit{Note} that the colors of the markers and histogram bars are consistent with the clusters from \ref{fig:histogram_impact_time}.\\ \textbf{Top Left:} Energy-angular momentum space of the globular clusters in the simulations, with 50~$\times$~165 data points representing all sampled initial conditions. Clusters impacting Palomar 5 are shown with colored markers; non-gap-causing clusters are gray. Palomar 5 is marked with a white symbol and black edge. \\ \textbf{Top Right:} The mass-size plane. Uncertainties on the mass are indicated with vertical bars. \\ \textbf{Bottom Left:} The distribution of imparted momentum from a cluster flyby given by Eq.~\ref{eq:change_in_momentum}. The data set includes the top 5 strongest flybys from each simulation. Those that cause gaps are colored while those that do not are left in black. \\ \textbf{Bottom Right:} Palomar 5's orbit in the meridional plane. The grayscale represents all 50 stacked orbits, with $\mathcal{P}$ indicating the probability of  Palomar~5's position, normalized to $\mathcal{P}_\textrm{max}=1$. Markers show the perturber's position during each impact.}
       \label{fig:mass_size_plane}
       \end{figure*}
 
@@ -334,7 +334,7 @@
       To understand how the impacted particle is perturbed, one needs to compute its change in momentum, which is determined by integrating the force acting on the particle over the duration of the interaction. A useful approximation for this change in momentum is the force at the closest approach multiplied by an estimate of the interaction time:
       \begin{equation} 
         \Delta p \approx \text{Force} \times \text{interaction time} = \frac{GMm}{b^2} \times 2\frac{b}{v} = 2\frac{GM}{bv}, 
-        \end{equation} \label{eq:change_in_momentum}
+        \end{equation} 
       where $M$ is the mass of the perturber, $m$ is the mass of the particle, $b$ is the impact parameter, $v$ is the relative velocity of the perturber with respect to the particle, and $G$ is the gravitational constant.
 
       From this analysis, we can conclude that a more massive perturber, passing closer to the particle, and moving more slowly, will have a greater impact. It's important to note that the momentum change is inversely proportional to the velocity of the perturber, which contrasts with the intuition from elastic collisions, such as those between billiard balls, where higher velocities result in greater impacts.
