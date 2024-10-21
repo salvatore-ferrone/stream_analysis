@@ -126,7 +126,16 @@
 
     The integration was performed using a leapfrog integrator. The timestep size was chosen to be based on two critera. First, to ensure the conservation of energy to XXX. The second, is the drift in position due to numerical error over 5 Gyr was negligible compared to the scale radius of the globular clusters, which is about 5~pc. Further details on the timestep selection are discussed in the appendix.
 
-    During the integration, intermediate snapshots were saved to facilitate the analysis of stellar streams and the effects of cluster impacts. Specifically, for each of the 50 realizations of the Palomar 5 stream, we saved $5000$ intermediate timesteps which is a temporal resolution of 1 million years. To provide an estimate of the size of our simulations, we have $N_p=100 000$ particles, $N_\textrm{time stamps} = 5 000$ time steps, $N_\textrm{phase}=6$ phase space coordinates, $N_\textrm{sampling}=50$ monte-carlo samplings, and using single precision floating point numbers, $\textrm{Single}=4$~bytes. The product of the aforementioned terms results in approximately: $N_p \times N_{\textrm{time stamps}}\times N_{\textrm{phase}}\times N_{\textrm{sampling}} \times 4 \textrm{bytes}\approx$ 600 GB of data.
+    During the integration, intermediate snapshots were saved to facilitate the analysis of stellar streams and the effects of cluster impacts. Specifically, for each of the 50 realizations of the Palomar 5 stream, we saved $5000$ intermediate timesteps which is a temporal resolution of 1 million years. To provide an estimate of the size of our simulations, we have:
+    \begin{tabular}{c|c|c|c}
+      $N_p$ & $N_{\textrm{ts}}$ & $N_{\textrm{phase}}$ & $N_{\textrm{sampling}}$  \\
+      \hline
+      $100000$ & $5000$ & $6$ & $50$   \\
+    \end{tabular} 
+    where $N_p$  is the number of particles, $N_{\textrm{ts}}$ is the number of time-steps saved, $N_{\textrm{phase}}$ is the number of phase space coordinates, and $N_{\textrm{sampling}}$ is the number of monte-carlo samplings of the initial conditions. Using single precision floating point numbers, the size of our simulations is approximately:
+    \begin{equation*} 
+      N_p \times N_{\textrm{ts}}\times N_{\textrm{phase}}\times N_{\textrm{sampling}} \times 4~\textrm{bytes}\approx 600~\textrm{Gb}.
+    \end{equation*}
 
 
 
@@ -187,14 +196,13 @@
 
 
 
-    Overall, across 50 simulations, we observe 73 gaps. The distribution of simulations with a given number of gaps is as follows: 
-    \begin{itemize}
-      \item 0 gaps in 4 simulations,
-      \item 1 gap in 25 simulations,
-      \item 2 gaps in 16 simulations,
-      \item 3 gaps in 4 simulations,
-      \item 4 gaps in 1 simulation. 
-    \end{itemize} Excluding NGC~2808, we are left with 29 gaps, leading to an expected range of 0.6-1.5 gaps per simulation.
+    Overall, across 50 simulations, we observe 73 gaps. The distribution of simulations with a given number of gaps is as follows: \begin{tabular}{|l|c|c|c|c|c|}
+      \hline
+      Number of Gaps & 0 & 1 & 2 & 3 & 4 \\
+      \hline
+      Number of Sims. & 4 & 25 & 16 & 4 & 1 \\
+      \hline
+    \end{tabular} Excluding NGC~2808, we are left with 29 gaps, leading to an expected range of 0.6-1.5 gaps per simulation.
 
     
 
