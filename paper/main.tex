@@ -239,7 +239,10 @@
       The bottom-right panel reveals a strong negative correlation between the location of impacts and the galactocentric radius, $r$. The number of gap creating impacts follows the relation $N = -2.5r + 50$, with a Pearson coefficient of -0.86. This is a non-obvious result. While there are more clusters near the galactic center, orbits naturally spend more time near their apocenters, and the lower relative velocities in these regions should favor gap creation. However, this result suggests that cluster galactic number density outweighs these factors in determining the number of gaps.
 
 
-      Lastly, \citet{2012ApJ...748...20C} conceptualized the number of gaps with a statistical quantity, the rate at which gaps are created per unit stream-length. To put our results in these terms, the global cluster population has a gap creation rate on Palomar 5 of XXX.
+      Lastly, \citet{2012ApJ...748...20C} conceptualized the number of gaps with a statistical quantity, the rate at which gaps are created per unit stream-length. For our simulations, this is given by:\begin{equation}
+      \mathcal{R}_{\textrm{Pal 5}} =  \frac{1}{T}\int_{0}^T l^{-1}(t) \sum_i \delta(t-t_i) dt,\end{equation}where $T$ is the total integration time, $l(t)$ is the length of the stream, and $\sum_i \delta(t-t_i)$ sums over the number of gap occurances, where the index $i$ iterates over the number of gaps in a given simulation since $\delta$ is the diract delta function. This can be simplified to:\begin{equation}\mathcal{R}_{\textrm{Pal 5}} =  \frac{1}{T} \sum_i \frac{1}{l (t_i)}. \end{equation}
+
+
 
 
 \section{Discussion}
