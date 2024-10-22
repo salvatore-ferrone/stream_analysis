@@ -3,6 +3,9 @@ build/
 dist/
 *.egg-info/
 
+#VS Code
+.DS_Store
+
 # Ignore compiled Python files
 __pycache__/
 *.py[cod]
