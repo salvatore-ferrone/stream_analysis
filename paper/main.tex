@@ -1,4 +1,4 @@
-\documentclass{aa}
+\documentclass[draft]{aa}
 
 
 % \usepackage[draft]{graphicx}
@@ -278,7 +278,7 @@
     \begin{figure}
       \centering
       \includegraphics[width=\linewidth]{along_orbit_coordinate_system-approved.png}
-      \caption{Tail coordinates}
+      \caption{Tail coordinates. \textbf{I want to update this}. }
       \label{fig:TailCoordinates}
     \end{figure}
   
@@ -394,14 +394,20 @@
         \end{equation}
       where $\vec{v}_p$ and $\vec{v}_s$ are the velocities of the perturber and the stream, respectively. For each of the 50 simulations, this information was compute for the strongs 5 flybys of a perturber with the stream. Thus, we compute a sample of 250 impacts, and flag those that give way to gaps. 
 
-      From visual inspection of the five-impact defining quantifies ($M$, $r_p$, $b$, $W_\parallel$, and $W_\perp$) did not provide an obvious discrimination between flybys that provoke gaps from those that do not. From the clutter, we do not present this graph and instead present Fig.~\ref{fig:impact_geometry_statistics} in which we use the total relative velocity instead of separating between the parallel and perpendicular components. Also, we ommit the characterisitc radius which did not seem to correlate strongly with results. This is likely due to the small range of characterisitic radii of the globular clusters, as shown in the top right panel of Fig.~\ref{fig:mass_size_plane}. Perhaps this factor could be more influential for a dark matter subhalo population where the sizes can vary grately.
+
+      Visual inspection of the five key impact parameters ($M$, $r_p$, $b$, $W_\parallel$, and $W_\perp$) did not reveal a clear distinction between flybys that create gaps and those that do not. Due to the clutter, we omit this graph and instead present Fig.\ref{fig:impact_geometry_statistics}, which uses the total relative velocity rather than separating parallel and perpendicular components. We also exclude the characteristic radius, as it showed little correlation with the results, likely due to the narrow range of globular cluster radii (see Fig.\ref{fig:mass_size_plane}). This factor might be more significant for dark matter subhalos, where size variation is greater.
+      
+      
       \begin{figure*}
         \centering
         \includegraphics[width=\linewidth]{impact_geometry_statistics.png}
-        \caption{Impact geometry statistics}
+        \caption{The distribution and relationship between the basic impact variables from Eq.\ref{eq:change_in_momentum} and the close encounter that cause impacts, shown in red against those that do not, shown in blue. }
         \label{fig:impact_geometry_statistics}    
         \end{figure*}
-      While Fig.~\ref{fig:impact_geometry_statistics} shows us that in isolation Mass, relative velocity, or impact parameter from Eq.~\ref{eq:change_in_momentum} is insufficient to predict the presence of a gap or not, one interesting result does appear. There are not gaps from interactions with impact parameters at a distance greater than 200~pc. We notice that the widths of the stream are on the order of 200~pc, or have a radial thickness of 100~pc. This result becomes more obvious when looking at the plane of $b$-$M$, where the near vertical line at a mass of about 7$\times 10^5 M_\odot$ indicates the simulations with NGC~2808. The simulations with impact parameters greater than 200~pc do not provide gaps where ever encounter under this indeed does. 
+
+      While Fig.\ref{fig:impact_geometry_statistics} demonstrates that mass, relative velocity, or impact parameter alone (from Eq.\ref{eqeq:change_in_momentum}) cannot predict gap formation, one interesting result emerges: no gaps are created from interactions with impact parameters greater than 200~pc. The stream widths are roughly 200~pc, with a radial thickness of about 100~pc. This finding is even more evident when examining the $b$-$M$ plane. A series of perturbers at roughly $\sim7 \times 10^5 M_\odot$ highlights NGC~2808's flybys, where all encounters with impact parameters under 200~pc result in gaps, while those beyond this distance do not.
+        
+        
 
 
   \section{Gallery of Gaps} \label{sec:gallery_of_gaps}
