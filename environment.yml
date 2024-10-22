@@ -1,0 +1,12 @@
+name: stream_analysis
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - scipy=1.13
+  - h5py=3.12
+  - astropy=6.1
+  - matplotlib=3.9
+  - numpy
+  - jupyterlab
+  - ipykernel
