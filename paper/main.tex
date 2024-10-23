@@ -239,26 +239,37 @@
       The bottom-right panel reveals a strong negative correlation between the location of impacts and the galactocentric radius, $r$. The number of gap creating impacts follows the relation $N = -2.5r + 50$, with a Pearson coefficient of -0.86. This is a non-obvious result. While there are more clusters near the galactic center, orbits naturally spend more time near their apocenters, and the lower relative velocities in these regions should favor gap creation. However, this result suggests that cluster galactic number density outweighs these factors in determining the number of gaps.
 
 
-      Lastly, \citet{2012ApJ...748...20C} conceptualized the number of gaps with a statistical quantity, the rate at which gaps are created per unit stream-length. For our simulations, this is given by:\begin{equation}
-      \mathcal{R}_{\textrm{Pal 5}} =  \frac{1}{T}\int_{0}^T l^{-1}(t) \sum_i \delta(t-t_i) dt,\end{equation}where $T$ is the total integration time, $l(t)$ is the length of the stream, and $\sum_i \delta(t-t_i)$ sums over the number of gap occurances, where the index $i$ iterates over the number of gaps in a given simulation since $\delta$ is the diract delta function. This can be simplified to:\begin{equation}\mathcal{R}_{\textrm{Pal 5}} =  \frac{1}{T} \sum_i \frac{1}{l (t_i)}. \end{equation}
+      Lastly, \citet{2012ApJ...748...20C} conceptualized the number of gaps using a statistical quantity: the rate at which gaps are created per unit stream length. For our simulations, this is given by: \begin{equation} \label{eq:gap_creation_rate}
+      \mathcal{R}_{\textrm{Pal 5}} =  \frac{1}{T}\int_{0}^T l^{-1}(t) \sum_i \delta(t-t_i) dt,\end{equation}where $T$ is the total integration time, $l(t)$ is the length of the stream, and $\sum_i \delta(t-t_i)$ sums over the gap occurrences, with $i$ indexing over the number of gaps in a given simulation. Here, $\delta$ represents the diract delta function. This expression can be simplified to:\begin{equation}\mathcal{R}_{\textrm{Pal 5}} =  \frac{1}{T} \sum_i \frac{1}{l (t_i)}. \end{equation}
+      This computation allows us to analyze the distribution of gap creation rates across all simulations. The results are shown in Fig.~\ref{fig:TailCoordinates}. This is roughly consistent with a simple estimate of the average gap creation rate: with 72 gaps over 5 Gyr of integration time for a stream about 20 kpc in length, the naive estimate is approximately 0.014~[km~s$^{-1}$~kpc$^{-2}$]. This is about double the weighted mean gap creation rate of 0.009~[km~s$^{-1}$~kpc$^{-2}$]. The naive estimate is higher because it does not account for the growth of the stream over time, unlike Eq.\ref{eq:gap_creation_rate}, where the likelihood of impacting a shorter stream is lower.
+
+      \begin{figure}
+        \centering
+        \includegraphics[width=\linewidth]{gap_creation_rate.png}
+        \caption{The distribution of the number of gaps normalized over the total integration time and unit stream length, as described by Eq.\ref{eq:gap_creation_rate}. }
+        \label{fig:TailCoordinates}
+      \end{figure}
+      
 
 
 
 
 \section{Discussion}
-    How many of these could be observable? What's the main result? in 5 billion years of evolution, perhaps you'd only expect to 1.4 gaps, reaching up to maximum three? However, its possible that we dont see gaps at all for sure. 
 
-    We do this for we attempt to quantify the number of gaps from globular clusters in the limit of maximum information. I.e. we are not limited by contamination of field stars, and since we are computing our own simulations, we know what a gapless stream should look like. 
-
-
-    What about drawing attention to future studies? 
-
-    Doing a complete census of all globular clusters? 
-
-    Doing a complete census of dark matter subhaloes? 
-
-    How many gaps do you expect to see in Palomar 5? Bonaca said there are about 2 of them. 
-
+    \begin{itemize}
+      \item Would these gaps be observable? We are in the max info limit, what about observational difficulties?
+      \item the detected track of Palomar 5 is much shorter than my simulations. Does this mean cluster gaps sould excedingly rare?
+      \item What about Carlberg's Pal 5 gap paper? 
+      \item What about Bonaca's Pal 5 gap paper?
+      \item future works?
+      \item bars substructure?
+      \item What else?
+      \begin{itemize}
+        \item Doing a complete census of all globular clusters?
+        \item doing a compelte census of all observed streams? 
+        \item comparing to dark matter subhaloes?
+        \end{itemize}
+      \end{itemize}
 
 
 
