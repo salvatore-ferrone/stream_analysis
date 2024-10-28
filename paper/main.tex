@@ -1,4 +1,4 @@
-\documentclass{aa}
+\documentclass[draft]{aa}
 
 
 % \usepackage[draft]{graphicx}
@@ -118,9 +118,19 @@
       \ddot{\vec{r}}_i = -\nabla \Phi(R_i,z_i) + \left.\sum_{j\neq i} \frac{Gm_j}{\left(|\vec{r}_j - \vec{r}_i|^2 + b_j^2\right)^{3/2}}\right. \left(\vec{r}_j - \vec{r}_i\right),
     \end{equation}\label{eq:GCNBody} where $\vec{r}$ indicates the galacto-centric position, the index $i$ indicates a globular cluster of interest with $R_i,z_i$ being its galactocentric positions in cylindrical coordinates. The index $j$ indicates the other globular cluster that are summed over where: $m_j$ is its mass, $b_j$ is its plummer scale radius, and $r_j$ is it's galacto-centric position. $\Phi$ is the axis-symmteric potential of the model used for the Milky Way. 
 
-    At their computed positions 5 Gyr ago, each globular cluster was assigned 100,000 particles sampled from a Plummer distribution to represent its stellar content. For each set of initial conditions, the particle positions were resampled to account for uncertainties in mass, which is an improvement from \citet{2023A&A...673A..44F}. Since globular clusters are older than 8 Gyr, their most massive stars have already gone supernova, leaving primarily low-mass stars, typically under one solar mass (\@\salvatore{Citation? Paolo knows this stuff well.}). Given that clusters usually have masses between $10^5-10^6$ solar masses, 100~000 particles is sufficient to represent the distribution of tidal debris.
+    At their computed positions 5 Gyr ago, Palomar 5 was assigned 100,000 particles sampled from a Plummer distribution to represent its stellar content. For each set of initial conditions, the particle were resampled based on uncertainties in mass, which is an improvement from \citet{2023A&A...673A..44F}. 
 
+    We use a mass estimate for Palomar 5 taken from \citet{2021MNRAS.505.5957B}, $1.34\pm0.24\times10^{4}M_{\odot}$--which is a contested value. 
     
+    \salvatore{I'm a bit lost on trying to reconcile the differences between Baumgardt's estiamte and \citet{2017ApJ...842..120I}'s estimate in sections 5.2 and 5.3. It looks like 5.2 is based on counts and then supplementing the completness function with dNdM \citet{2001AJ....122.3231G} and demonstrating that Salpeter would overestimate the mass. I think 5.3 is showing that an MCMC was used to add more context to the estimate from 5.3.}
+    
+    \salvatore{\textbf{If Salpeter over estimates the number of low mass stars}, then wouldn't this appear in the velocity dispersion profile? or wait, is \citet{2017ApJ...842..120I} fitting the density for the King, supplementing missing stars by a Mass function from \citet{2001AJ....122.3231G}, and finding the total mass this way? i.e. no velocity dispersion was investigated? I feel like viewing the velocity dispersion directly would provide a good estiamte for the dynamical mass, no?}
+    
+    \salvatore{I am lost in Baumgardt's papers trying to flush out how a MF was used to provide their mass estimate. It looks like this information is within Sollima 2017. Need to revisit this. }
+
+    \salvatore{What I say will depend. I think using \citet{2021MNRAS.505.5957B}'s mass estimate is still ok because it is similar in order of magnitude to cluster + stream from \citet{2017ApJ...842..120I}. }
+
+
     We then integrated the evolution of these particles forward in time to the present day. During this forward integration, each star particle feels the gravitational influence of the galaxy and all globular clusters, but not other star particles. We do not perform direct N-body simulations between star particles as in eq.~\ref{eq:GCNBody}; instead, at each time step, we load the positions of all globular clusters, as found from the initial integration, and apply their forces to the star particles. The equation of motion is thus: 
     \begin{equation}
       \ddot{\vec{r}}_p = -\nabla \Phi(R_p,z_p) + \left.\sum_{j} \frac{Gm_j}{\left(|\vec{r}_j(t) - \vec{r}_p|^2 + b_j^2\right)^{3/2}}\right. \left(\vec{r}_j(t)- \vec{r}_p\right),
@@ -147,7 +157,6 @@
     At the end of the simulations, some gaps in the stellar stream are so prominent that they can be identified visually without any sophisticated quantitative analysis. The analysis of the morphology of the tidal tails of Palomar~5 is carried out by comparing simulations with globular clusters (called \texttt{full}) and without them (called \texttt{reference}). A preliminary evaluation is performed visually, followed by a quantitative analysis of the differences between the density profiles in the two mentioned cases. 
 
 
-    % We initially sought an automated, quantitative approach from signal and image processing that could reliably detect all gaps and evaluate their significance. Unfortunately, despite extensive efforts, an ideal method remained elusive. As a result, we opted for a simpler approach: a combination of visual inspection aided by comparative analysis.
 
 
     The \texttt{reference} simulations used the same 50 sets of initial conditions but excluded interactions with globular clusters, except for the host cluster, Palomar 5. In other words, the gravitational influence of all other clusters on the star particles within the stream was omitted. By comparing the morphological differences between these \texttt{reference} simulations and the \texttt{full} simulations, we could more effectively identify and assess the impact of globular clusters on the stream's structure. Details on gap identification are provided in Appendix~\ref{sec:gap_detection}, and the identification of corresponding perturbing globular clusters is detailed in Appendix~\ref{sec:Perturber_Identification}.
@@ -228,20 +237,20 @@
       \label{fig:mass_size_plane}
       \end{figure*}
 
-      The top-left panel shows that all clusters impacting the stream fall within a specific range of orbital energies, between $-2$ and $-1 \times10^5~\textrm{km}^2\textrm{s}^{-2}$. This is expected, as only clusters within Palomar 5's orbital space can interact with the stream. Our results are consistent with the findings from \citet{2021MNRAS.505.5978V}, who identified a wide range of orbital solutions for the least bound clusters, including both retrograde and prograde orbits. In our potential model, only three clusters samplings had positive orbital energies.
+    The top-left panel shows that all clusters impacting the stream fall within a specific range of orbital energies, between $-2$ and $-1 \times10^5~\textrm{km}^2\textrm{s}^{-2}$. This is expected, as only clusters within Palomar 5's orbital space can interact with the stream. Our results are consistent with the findings from \citet{2021MNRAS.505.5978V}, who identified a wide range of orbital solutions for the least bound clusters, including both retrograde and prograde orbits. In our potential model, only three clusters samplings had positive orbital energies.
     
 
-      The mass-size relation, shown in the top-right panel, reveals a lower limit of $10^5~\textrm{M}_{\odot}$ for clusters that provoke gaps. While mass and size alone are insufficient predictors, this empirical limit is useful because relative velocity and impact parameters are historical values. The bottom-left panel offers a more physically meaningful result: gap-creating impacts tend to impart more momentum into the stream than non-gap impacts, though with some overlap. While \citet{2015MNRAS.450.1136E} extended the three-parameter model (Eq.~\ref{eq:change_in_momentum}) to include the size of the perturber and the perpendicular and parallel components of relative velocity, we found no clear combination of these factors that distinguishes gap from non-gap cases.
+    The mass-size relation, shown in the top-right panel, reveals a lower limit of $10^5~\textrm{M}_{\odot}$ for clusters that provoke gaps. While mass and size alone are insufficient predictors, this empirical limit is useful because relative velocity and impact parameters are historical values. The bottom-left panel offers a more physically meaningful result: gap-creating impacts tend to impart more momentum into the stream than non-gap impacts, though with some overlap. While \citet{2015MNRAS.450.1136E} extended the three-parameter model (Eq.~\ref{eq:change_in_momentum}) to include the size of the perturber and the perpendicular and parallel components of relative velocity, we found no clear combination of these factors that distinguishes gap from non-gap cases.
     
-      Further insights are shown in Fig.\ref{fig:impact_geometry_statistics}, highlighting a maximum impact parameter of around 200~pc, roughly the width of the stream. Additionally, as \citet{2016MNRAS.457.3817S} demonstrated, the dispersion of action-frequencies in the stream plays a role. Regions of the stream with well-separated frequencies are more susceptible to gap formation, while those with a wide frequency range (near the cluster) tend to erase the history of impacts. Thus, for a gap to form, the imparted change in frequency must exceed the range of frequencies in the impacted region. Thus, the strong flybys that occured close to the cluster and were thus inconsequential for gap formation.
+    Further insights are shown in Fig.\ref{fig:impact_geometry_statistics}, highlighting a maximum impact parameter of around 200~pc, roughly the width of the stream. Additionally, as \citet{2016MNRAS.457.3817S} demonstrated, the dispersion of action-frequencies in the stream plays a role. Regions of the stream with well-separated frequencies are more susceptible to gap formation, while those with a wide frequency range (near the cluster) tend to erase the history of impacts. Thus, for a gap to form, the imparted change in frequency must exceed the range of frequencies in the impacted region. Thus, the strong flybys that occured close to the cluster and were thus inconsequential for gap formation.
 
 
-      The bottom-right panel reveals a strong negative correlation between the location of impacts and the galactocentric radius, $r$. The number of gap creating impacts follows the relation $N = -2.5r + 50$, with a Pearson coefficient of -0.86. This is a non-obvious result. While there are more clusters near the galactic center, orbits naturally spend more time near their apocenters, and the lower relative velocities in these regions should favor gap creation. However, this result suggests that cluster galactic number density outweighs these factors in determining the number of gaps.
+    The bottom-right panel reveals a strong negative correlation between the location of impacts and the galactocentric radius, $r$. The number of gap creating impacts follows the relation $N = -2.5r + 50$, with a Pearson coefficient of -0.86. This is a non-obvious result. While there are more clusters near the galactic center, orbits naturally spend more time near their apocenters, and the lower relative velocities in these regions should favor gap creation. However, this result suggests that cluster galactic number density outweighs these factors in determining the number of gaps.
 
 
-      Lastly, \citet{2012ApJ...748...20C} conceptualized the number of gaps using a statistical quantity: the rate at which gaps are created per unit stream length. For our simulations, this is given by: \begin{equation} \label{eq:gap_creation_rate}
-      \mathcal{R}_{\textrm{Pal 5}} =  \frac{1}{T}\int_{0}^T l^{-1}(t) \sum_i \delta(t-t_i) dt,\end{equation}where $T$ is the total integration time, $l(t)$ is the length of the stream, and $\sum_i \delta(t-t_i)$ sums over the gap occurrences, with $i$ indexing over the number of gaps in a given simulation. Here, $\delta$ represents the diract delta function. This expression can be simplified to:\begin{equation}\mathcal{R}_{\textrm{Pal 5}} =  \frac{1}{T} \sum_i \frac{1}{l (t_i)}. \end{equation}
-      This computation allows us to analyze the distribution of gap creation rates across all simulations. The results are shown in Fig.~\ref{fig:TailCoordinates}. This is roughly consistent with a simple estimate of the average gap creation rate: with 72 gaps over 5 Gyr of integration time for a stream about 20 kpc in length, the naive estimate is approximately 0.014~[km~s$^{-1}$~kpc$^{-2}$]. This is about double the weighted mean gap creation rate of 0.009~[km~s$^{-1}$~kpc$^{-2}$]. The naive estimate is higher because it does not account for the growth of the stream over time, unlike Eq.\ref{eq:gap_creation_rate}, where the likelihood of impacting a shorter stream is lower.
+    Lastly, \citet{2012ApJ...748...20C} conceptualized the number of gaps using a statistical quantity: the rate at which gaps are created per unit stream length. For our simulations, this is given by: \begin{equation} \label{eq:gap_creation_rate}
+    \mathcal{R}_{\textrm{Pal 5}} =  \frac{1}{T}\int_{0}^T l^{-1}(t) \sum_i \delta(t-t_i) dt,\end{equation}where $T$ is the total integration time, $l(t)$ is the length of the stream, and $\sum_i \delta(t-t_i)$ sums over the gap occurrences, with $i$ indexing over the number of gaps in a given simulation. Here, $\delta$ represents the diract delta function. This expression can be simplified to:\begin{equation}\mathcal{R}_{\textrm{Pal 5}} =  \frac{1}{T} \sum_i \frac{1}{l (t_i)}. \end{equation}
+    This computation allows us to analyze the distribution of gap creation rates across all simulations. The results are shown in Fig.~\ref{fig:TailCoordinates}. This is roughly consistent with a simple estimate of the average gap creation rate: with 72 gaps over 5 Gyr of integration time for a stream about 20 kpc in length, the naive estimate is approximately 0.014~[km~s$^{-1}$~kpc$^{-2}$]. This is about double the weighted mean gap creation rate of 0.009~[km~s$^{-1}$~kpc$^{-2}$]. The naive estimate is higher because it does not account for the growth of the stream over time, unlike Eq.\ref{eq:gap_creation_rate}, where the likelihood of impacting a shorter stream is lower.
 
       \begin{figure}
         \centering
@@ -256,11 +265,30 @@
 
 \section{Discussion}
 
+
+  In this work, we quantified the number of gaps expected in Palomar 5's stream from the 165 Galactic globular clusters using a Monte Carlo-style experiment. We performed 50 iterations, varying the orbits based on the uncertainties in their observed proper motions, radial velocities, and distances. Our findings are as follows:
+
+  \begin{itemize}
+    \item \textbf{Orbital Overlap}: clusters with orbital energies and angular momenta that overlap with Palomar 5's orbit can impact its stream.
+    \item \textbf{Mass Threshold}: Perturbing clusters have masses above $10^5 M_\odot$; no perturber has a mass smaller than this.
+    \item \textbf{Galactic radius}: Impacts preferentially occur at shorter galactic radii.
+    \item \textbf{Momentum and Frequency Change}: Gap creation is linked to the momentum imparted to the stream during the flyby, yet not entirely. As showcased by \citet{2016MNRAS.457.3817S}, the change in orbital frequencies induced by the flyby must be greater than the spread in frequencies present in the stream. Some impacts imparted significant momentum changes that did not lead to gap growth for this reason.
+  \end{itemize}
+
+  Finally, we present a gap creation rate as conceptualized by \citet{2012ApJ...748...20C}, which is the number of gaps normalized to the age and length of the stream. This rate is: 0.009~[km~s$^{-1}$~kpc$^{-2}$], or 0.01~[Gyr$^{-1}$~kpc$^{-1}$].
+
+
+  Now, \textit{is this consistent with reality?} Can globular clusters explain the observed gaps in Palomar 5? Currently, the results on the number of gaps in the stream are debated. \citet{2012ApJ...760...75C} and \citet{2020ApJ...889...70B} attempted to quantify the stream's density along its width, isolating the stream from background and foreground contamination. \citet{2020ApJ...889...70B} reported the existence of two potential gaps, whereas \citet{2012ApJ...760...75C} identified five gaps with a 99~\% detection confidence, leading to a gap creation rate of 0.17~Gyr$^{-1}$~kpc$^{-1}$. If true, this rate is too high to be explained by Galactic globular clusters.
+
+  On the other hand, for a stream length of 10~kpc reported from \citet{2020ApJ...889...70B} and given our gap creation rate, in 5~Gyr we would expect to see about 0.5 gaps, in 10~Gyr's we would expect 1. Therefore, finding two gaps from globular clusters would not be impossible.
+
+
+
+
+
     \begin{itemize}
       \item Would these gaps be observable? We are in the max info limit, what about observational difficulties?
       \item the detected track of Palomar 5 is much shorter than my simulations. Does this mean cluster gaps sould excedingly rare?
-      \item What about Carlberg's Pal 5 gap paper? 
-      \item What about Bonaca's Pal 5 gap paper?
       \item future works?
       \item bars substructure?
       \item link to tstrippy? open source
@@ -269,6 +297,7 @@
       \item \textbf{What else?}
       \item Future potential works
       \begin{itemize}
+        \item mock observations to build confusion matrix for gaps true/false positive/neagtive detections. 
         \item Doing a complete census of all globular clusters?
         \item doing a compelte census of all observed streams? 
         \item comparing to dark matter subhaloes?
