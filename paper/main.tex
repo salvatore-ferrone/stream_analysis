@@ -1,4 +1,4 @@
-\documentclass{aa}
+\documentclass[draft]{aa}
 
 
 % \usepackage[draft]{graphicx}
@@ -139,16 +139,24 @@
 
     The integration was performed using a leapfrog integrator. The timestep size was chosen to be based on two critera. First, to ensure the conservation of energy to XXX. The second, is the drift in position due to numerical error over 5 Gyr was negligible compared to the scale radius of the globular clusters, which is about 5~pc. Further details on the timestep selection are discussed in the appendix.
 
-    During the integration, intermediate snapshots were saved to facilitate the analysis of stellar streams and the effects of cluster impacts. Specifically, for each of the 50 realizations of the Palomar 5 stream, we saved $5000$ intermediate timesteps which is a temporal resolution of 1 million years. To provide an estimate of the size of our simulations, we have:
-    \begin{tabular}{c|c|c|c}
-      $N_p$ & $N_{\textrm{ts}}$ & $N_{\textrm{phase}}$ & $N_{\textrm{sampling}}$  \\
-      \hline
-      $100000$ & $5000$ & $6$ & $50$   \\
-    \end{tabular} 
-    where $N_p$  is the number of particles, $N_{\textrm{ts}}$ is the number of time-steps saved, $N_{\textrm{phase}}$ is the number of phase space coordinates, and $N_{\textrm{sampling}}$ is the number of monte-carlo samplings of the initial conditions. Using single precision floating point numbers, the size of our simulations is approximately:
+    During the integration, intermediate snapshots were saved to facilitate the analysis of stellar streams and the effects of cluster impacts. Specifically, for each of the 50 realizations of the Palomar 5 stream, we saved $5000$ intermediate timesteps which is a temporal resolution of 1 million years. We provide the parameters that specify our data volumne in Table~\ref{tab:data_volume}. Using single precision floating point numbers, the size of our simulations is approximately:
     \begin{equation} \label{eq:data_volume_estimate}
       N_p \times N_{\textrm{ts}}\times N_{\textrm{phase}}\times N_{\textrm{sampling}} \times 4~\textrm{bytes}\approx 600~\textrm{Gb}.
     \end{equation}
+
+    \begin{table}[h]
+      \centering
+      \begin{tabular}{|c|c|c|c|}
+          \hline
+          $N_p$ & $N_{\textrm{ts}}$ & $N_{\textrm{phase}}$ & $N_{\textrm{sampling}}$ \\
+          \hline
+          $100000$ & $5000$ & $6$ & $50$ \\
+          \hline
+      \end{tabular}
+      \caption{The parameters determining the data volume of this experiment. where $N_p$  is the number of particles, $N_{\textrm{ts}}$ is the number of time-steps saved, $N_{\textrm{phase}}$ is the number of phase space coordinates, and $N_{\textrm{sampling}}$ is the number of monte-carlo samplings of the initial conditions.}
+      \label{tab:data_volume}
+  \end{table}
+
 
 
 
@@ -208,13 +216,20 @@
 
 
 
-    Overall, across 50 simulations, we observe 73 gaps. The distribution of simulations with a given number of gaps is as follows: \begin{tabular}{|l|c|c|c|c|c|}
-      \hline
-      Number of Gaps & 0 & 1 & 2 & 3 & 4 \\
-      \hline
-      Number of Sims. & 4 & 25 & 16 & 4 & 1 \\
-      \hline
-    \end{tabular} If we consider NGC 2808 to be an outlier and exclude it from the experiment, we observe an average of 0.6 gaps per simulation. Including all observed gaps results in an average of 1.5 gaps per simulation.
+    Overall, across 50 simulations, we observe 73 gaps. The distribution of simulations with a given number of gaps is provided in Table~\ref{table:gap_distribution}.  If we consider NGC 2808 to be an outlier and exclude it from the experiment, we observe an average of 0.6 gaps per simulation. Including all observed gaps results in an average of 1.5 gaps per simulation.
+
+    \begin{table}[h]
+      \centering
+        \begin{tabular}{|l|c|c|c|c|c|}
+          \hline
+          Number of Gaps & 0 & 1 & 2 & 3 & 4 \\
+          \hline
+          Number of Sims. & 4 & 25 & 16 & 4 & 1 \\
+          \hline
+        \end{tabular}
+      \caption{The gap occurrences.}\label{table:gap_distribution}
+    \end{table}
+    
 
 
     
