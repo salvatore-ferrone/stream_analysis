@@ -92,7 +92,7 @@
   \begin{figure*}
     \centering
     \includegraphics[width=\linewidth]{stream_on_sky_Pal5_monte-carlo-009_pouliasis2017pii-GCNBody.png}
-    \caption{An instsance of the Palomar 5 stream created modeling the cluster as a plummer sphere within an axis-symmetric galactic potential plus 164 other galactic globular clusters. The top plot is a scatter plot of star-particles that escaped the cluster due to tidal forces, the bottom plot shows the marginalized 1D density profile in longitude. Two large gaps are present and are due to the passage of two globular clusters.}
+    \caption{An instsance of the Palomar 5 stream created modeling the cluster as a Plummer sphere within an axis-symmetric galactic potential plus 164 other galactic globular clusters. The top plot is a scatter plot of star-particles that escaped the cluster due to tidal forces, the bottom plot shows the marginalized 1D density profile in longitude. Two large gaps are present and are due to the passage of two globular clusters.}
     \label{fig:stream_on_sky}
     \end{figure*}
 
@@ -116,7 +116,7 @@
     The primary methodological departure from \citet{2023A&A...673A..44F} is that now we include globular cluster interactions. Instead of treating the clusters as point masses that only experience the gravitational potential of the galaxy, we now compute N-body interactions between the clusters during the backward integration over 5 billion years. The equations of motion for the globular cluster system are thus: 
     \begin{equation}
       \ddot{\vec{r}}_i = -\nabla \Phi(R_i,z_i) + \left.\sum_{j\neq i} \frac{Gm_j}{\left(|\vec{r}_j - \vec{r}_i|^2 + b_j^2\right)^{3/2}}\right. \left(\vec{r}_j - \vec{r}_i\right),
-    \end{equation}\label{eq:GCNBody} where $\vec{r}$ indicates the galacto-centric position, the index $i$ indicates a globular cluster of interest with $R_i,z_i$ being its galactocentric positions in cylindrical coordinates. The index $j$ indicates the other globular cluster that are summed over where: $m_j$ is its mass, $b_j$ is its plummer scale radius, and $r_j$ is it's galacto-centric position. $\Phi$ is the axis-symmteric potential of the model used for the Milky Way. 
+    \end{equation}\label{eq:GCNBody} where $\vec{r}$ indicates the galacto-centric position, the index $i$ indicates a globular cluster of interest with $R_i,z_i$ being its galactocentric positions in cylindrical coordinates. The index $j$ indicates the other globular cluster that are summed over where: $m_j$ is its mass, $b_j$ is its Plummer scale radius, and $r_j$ is it's galacto-centric position. $\Phi$ is the axis-symmteric potential of the model used for the Milky Way. 
 
     At their computed positions 5 Gyr ago, Palomar 5 was assigned 100,000 particles sampled from a Plummer distribution to represent its stellar content. For each set of initial conditions, the particle were resampled based on uncertainties in mass, which is an improvement from \citet{2023A&A...673A..44F}. 
 
@@ -131,7 +131,7 @@
     \salvatore{What I say will depend. I think using \citet{2021MNRAS.505.5957B}'s mass estimate is still ok because it is similar in order of magnitude to cluster + stream from \citet{2017ApJ...842..120I}. }
 
 
-    We then integrated the evolution of these particles forward in time to the present day. During this forward integration, each star particle feels the gravitational influence of the galaxy and all globular clusters, but not other star particles. We do not perform direct N-body simulations between star particles as in eq.~\ref{eq:GCNBody}; instead, at each time step, we load the positions of all globular clusters, as found from the initial integration, and apply their forces to the star particles. The equation of motion is thus: 
+    We then integrate the evolution of these particles forward in time to the present day. During this forward integration, each star particle feels the gravitational influence of the galaxy and all globular clusters, but not other star particles. We do not perform direct N-body simulations between star particles as in eq.~\ref{eq:GCNBody}; in other words, we are using test-particle and solving the restricted three body problem. At each time step, we load the positions of all globular clusters, as found from the initial integration, and apply their forces to the star particles. The equation of motion is thus: 
     \begin{equation}
       \ddot{\vec{r}}_p = -\nabla \Phi(R_p,z_p) + \left.\sum_{j} \frac{Gm_j}{\left(|\vec{r}_j(t) - \vec{r}_p|^2 + b_j^2\right)^{3/2}}\right. \left(\vec{r}_j(t)- \vec{r}_p\right),
       \end{equation} \label{eq:equation_of_motion_particle} where the index $p$ represents one of the 100,000 particles of interest.
@@ -282,27 +282,14 @@
 
   On the other hand, for a stream length of 10~kpc reported from \citet{2020ApJ...889...70B} and given our gap creation rate, in 5~Gyr we would expect to see about 0.5 gaps, in 10~Gyr's we would expect 1. Therefore, finding two gaps from globular clusters would not be impossible.
 
+  In the future, I would like to investigate stream detections in a full mock observation experiment and build a confusion matrix for the number of true/false positivies/negatives for the stream gaps from globular cluster and dark matter subhaloes. Like this, we will be able to understand what data quality is necessary to make such distinctions and what signs in the streams from substructure will be recoverable. This could support the https://via-project.org/ mission by Bonaca and Conroy. Additionally, I would like to expand this work to include all gap creation rates for all observed stellar streams. 
+
+\section*{Data Availability}
+
+  The code used to produce the data in these simulations is publically available at https://github.com/salvatore-ferrone/tstrippy. Examples on the codes installation and use are provided at https://tstrippy.readthedocs.io. The simulations will also be made publically available at etidal-project.obspm.fr.
 
 
 
-
-    \begin{itemize}
-      \item Would these gaps be observable? We are in the max info limit, what about observational difficulties?
-      \item the detected track of Palomar 5 is much shorter than my simulations. Does this mean cluster gaps sould excedingly rare?
-      \item future works?
-      \item bars substructure?
-      \item link to tstrippy? open source
-      \item add the new simulations to etidal public database?
-      \item the new proposed instrument and survey by Conroy and Bonaca to get improve stream data? https://via-project.org/. How to cite or include in the discussion?
-      \item \textbf{What else?}
-      \item Future potential works
-      \begin{itemize}
-        \item mock observations to build confusion matrix for gaps true/false positive/neagtive detections. 
-        \item Doing a complete census of all globular clusters?
-        \item doing a compelte census of all observed streams? 
-        \item comparing to dark matter subhaloes?
-        \end{itemize}
-      \end{itemize}
 
 
 
