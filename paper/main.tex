@@ -128,17 +128,7 @@
     At the end of this integration we have positions and velocities of the entire globular cluster system 5 Gyr ago. We sample 100,000 particles from a Plummer distribution using the same total mass and characteristic radius for the orbital integration. We repeate this sampling for each of the 50 Monte-Carlo initial conditions. Considering the mass uncertainties is an improvement from \citet{2023A&A...673A..44F} where the most probable mass was used for each Monte-Carlo sampling. 
 
     Regarding Palomar 5's mass, we use a mass estimate for Palomar 5 taken from \citet{2021MNRAS.505.5957B}, $1.34\pm0.24\times10^{4}M_{\odot}$--which is a contested value. 
-    
-    \salvatore{I'm a bit lost on trying to reconcile the differences between Baumgardt's estiamte and \citet{2017ApJ...842..120I}'s estimate in sections 5.2 and 5.3. It looks like 5.2 is based on counts and then supplementing the completness function with dNdM \citet{2001AJ....122.3231G} and demonstrating that Salpeter would overestimate the mass. I think 5.3 is showing that an MCMC was used to add more context to the estimate from 5.3.}
-    
-    \salvatore{\textbf{If Salpeter over estimates the number of low mass stars}, then wouldn't this appear in the velocity dispersion profile? or wait, is \citet{2017ApJ...842..120I} fitting the density for the King, supplementing missing stars by a Mass function from \citet{2001AJ....122.3231G}, and finding the total mass this way? i.e. no velocity dispersion was investigated? I feel like viewing the velocity dispersion directly would provide a good estiamte for the dynamical mass, no?}
-    
-    \salvatore{I am lost in Baumgardt's papers trying to flush out how a MF was used to provide their mass estimate. It looks like this information is within Sollima 2017. Need to revisit this. }
-
-    \salvatore{What I say will depend. I think using \citet{2021MNRAS.505.5957B}'s mass estimate is still ok because it is similar in order of magnitude to cluster + stream from \citet{2017ApJ...842..120I}. }
-
-    \salvatore{What's the point? In the end were more interested in the streams for probing the galaxy. Having a more accurate model of the internal dynamics Palomar 5 would change the luminosity per square degree. }
-
+  
 
     We then integrate the evolution of these particles forward in time to the present day. During this forward integration, each star particle feels the gravitational influence of the galaxy and all globular clusters, but not other star particles. We do not perform direct N-body simulations between star particles as we did for globular clusters. In other words, we are using test-particle and solving the restricted three body problem. The particles do not exert/feel gravitational forces upon/from one another. At each time step, we load the positions of all globular clusters, as found from the initial integration, and apply their forces to the star particles. The equation of motion is thus: 
     \begin{equation}
@@ -169,11 +159,13 @@
 
 
 
+
+
+\section{Results}
+
   \subsection{Gap Detection and Characterization} \label{sec:gap_methods}
 
     At the end of the simulations, some gaps in the stellar stream are so prominent that they can be identified visually without any sophisticated quantitative analysis. The analysis of the morphology of the tidal tails of Palomar~5 is carried out by comparing simulations with globular clusters (called \texttt{full}) and without them (called \texttt{reference}). A preliminary evaluation is performed visually, followed by a quantitative analysis of the differences between the density profiles in the two mentioned cases. 
-
-
 
 
     The \texttt{reference} simulations used the same 50 sets of initial conditions but excluded interactions with globular clusters, except for the host cluster, Palomar 5. In other words, the gravitational influence of all other clusters on the star particles within the stream was omitted. By comparing the morphological differences between these \texttt{reference} simulations and the \texttt{full} simulations, we could more effectively identify and assess the impact of globular clusters on the stream's structure. Details on gap identification are provided in Appendix~\ref{sec:gap_detection}, and the identification of corresponding perturbing globular clusters is detailed in Appendix~\ref{sec:Perturber_Identification}.
@@ -181,14 +173,10 @@
 
     Comparisons between the \texttt{reference} and \texttt{full} simulations were performed in the tail coordinate system. This system allows for consistent morphological comparisons by aligning the stream with the cluster's orbit. The coordinate system is based on the work of \citet{2004AJ....127.2753D} and is shown in Fig.~\ref{fig:TailCoordinates}. Briefly, the x' coordinate represents the position of a particle along the orbit relative to the globular cluster—whether it is ahead or behind the cluster. The y' coordinate measures the particle's distance within the orbital plane, where positive values indicate that the particle is farther from the Galactic center and negative values indicate that it is closer.
 
-    
+
     Once the gaps and perturbers were identified, we sought to characterize the properties of the globular clusters that caused gaps and differentiate them from those that did not. \citet{2013ApJ...775...90C} initiated the theory of gap creation in stellar streams due to gravitational flybys. This analysis was extended both analytically and numerically by \citet{2015MNRAS.450.1136E}, who studied uniform-density streams on circular orbits. \citet{2016MNRAS.457.3817S} presented the most comprehensive theory, generalizing Erkal et al.'s work to include impacts on streams of varying densities on inclined and eccentric orbits using an action-angle approach.
 
     The significance of an impact is measured by the change in momentum imparted to the stream stars by the perturber. A useful approximation for the change in momentum is the force at the closest approach multiplied by an estimate of the interaction time: \begin{equation} \label{eq:change_in_momentum} \Delta v \approx \text{Force} \times \text{interaction time} = \frac{GM}{b^2} \times 2\frac{b}{v} = 2\frac{GM}{bv}, \end{equation} where $M$ is the mass of the perturber, $b$ is the impact parameter, $v$ is the relative velocity of the perturber with respect to the particle, and $G$ is the gravitational constant. We compute this for the five closest approaches of all globular clusters throughout each of the 50 simulations. Details on how this computation was performed are given in Appendix~\ref{sec:reconstruction}. Ultimately, we obtained a sample of 250 impacts and compared the impact geometry of those that caused gaps with those that did not.
-    
-
-\section{Results}
-
 
 
   \subsection*{Overview}
@@ -294,6 +282,18 @@
 
 
   \salvatore{Model limits? lets discuss them here.}
+
+
+  \salvatore{I'm a bit lost on trying to reconcile the differences between Baumgardt's estiamte and \citet{2017ApJ...842..120I}'s estimate in sections 5.2 and 5.3. It looks like 5.2 is based on counts and then supplementing the completness function with dNdM \citet{2001AJ....122.3231G} and demonstrating that Salpeter would overestimate the mass. I think 5.3 is showing that an MCMC was used to add more context to the estimate from 5.3.}
+    
+  \salvatore{\textbf{If Salpeter over estimates the number of low mass stars}, then wouldn't this appear in the velocity dispersion profile? or wait, is \citet{2017ApJ...842..120I} fitting the density for the King, supplementing missing stars by a Mass function from \citet{2001AJ....122.3231G}, and finding the total mass this way? i.e. no velocity dispersion was investigated? I feel like viewing the velocity dispersion directly would provide a good estiamte for the dynamical mass, no?}
+  
+  \salvatore{I am lost in Baumgardt's papers trying to flush out how a MF was used to provide their mass estimate. It looks like this information is within Sollima 2017. Need to revisit this. }
+
+  \salvatore{What I say will depend. I think using \citet{2021MNRAS.505.5957B}'s mass estimate is still ok because it is similar in order of magnitude to cluster + stream from \citet{2017ApJ...842..120I}. }
+
+  \salvatore{What's the point? In the end were more interested in the streams for probing the galaxy. Having a more accurate model of the internal dynamics Palomar 5 would change the luminosity per square degree. }
+
 
   In this work, we quantified the number of gaps expected in Palomar 5's stream from the 165 Galactic globular clusters using a Monte Carlo-style experiment. We performed 50 iterations, varying the orbits based on the uncertainties in their observed proper motions, radial velocities, and distances. Our findings are as follows:
 
