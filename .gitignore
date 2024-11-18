@@ -39,3 +39,7 @@ paper/*.pdf
 *.swp
 *.swo
 *~
+
+# other versions of the paper
+*main_paola_raw.tex
+*main_salvatore_PDM.tex
