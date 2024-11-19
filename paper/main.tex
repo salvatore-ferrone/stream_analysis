@@ -1,4 +1,4 @@
-\documentclass{aa}
+\documentclass[draft]{aa}
 
 
 % \usepackage[draft]{graphicx}
@@ -165,9 +165,9 @@
 
   \subsubsection*{Numerical Stability}
 
-    The integration was conducted using a leapfrog integrator, chosen for its ability to preserve phase-space volume and conserve the Hamiltonian with each integration step. This method is preferable to, for instance, a Runge-Kutta scheme, which can introduce non-physical and significant numerical errors in systems that require long-term stability and energy conservation. One drawback of the leapfrog integrator is that it requires a uniform timestep across the entire system, leading to unnecessary computations for slower-moving particles compared to adaptive timestep methods. However, energy conservation and phase-space volume preservation are paramount when modeling stellar streams. The timestep was therefore set small enough to ensure energy conservation for all particles within the host globular cluster, a value that depends on the system and scales inversely with its concentration.
-
-    For these simulations, a timestep of 10,000 years was selected to maintain adequate energy conservation and enable \textit{reverse integrability} of the globular cluster system. By reverse integrability, we mean the integrator's capability to track the cluster backward in time and then re-integrate it forward along the same trajectory. The drift in the final position after forward integration, compared to the initial position from the backward integration, was consistently at least two orders of magnitude smaller than the Plummer scale radius used for Palomar 5. This high precision ensures that no fictitious evil numerical forces influenced the system, preventing any artificial mass loss or retention of star particles.
+    The integration was conducted using a leapfrog integrator, chosen for its ability to preserve phase-space volume and conserve the Hamiltonian with each integration step. This method is preferable to, for instance, a Runge-Kutta scheme, which can introduce non-physical and significant numerical errors in systems that require long-term stability and energy conservation. One drawback of the leapfrog integrator is that it requires a uniform timestep across the entire computation, leading to unnecessary computations for a particle after it escapes form the host cluster. However, energy conservation and phase-space volume preservation are paramount when modeling stellar streams. The time step was therefore set to be small enough to conserve energy for the most interior particles within the cluster---ensuring that a higher mass loss did not arise from numerical error. For these simulations, a timestep of 10,000 years was selected to maintain adequate energy conservation. 
+    
+    We also checked the \textit{reverse integrability} of the globular cluster system. By reverse integrability, we mean the integrator's capability to track the cluster backward in time and then re-integrate it forward along the same trajectory. The drift in the final position after forward integration, compared to the initial position from the backward integration, was consistently at least two orders of magnitude smaller than the Plummer scale radius used for Palomar 5. This high precision ensures that no fictitious evil numerical forces influenced the system, preventing any artificial mass loss or retention of star particles.
 
 
 
