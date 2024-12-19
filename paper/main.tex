@@ -1,4 +1,4 @@
-\documentclass{aa}
+\documentclass[draft]{aa}
 
 
 % \usepackage[draft]{graphicx}
@@ -43,23 +43,22 @@
        }
 
 \institute{
-        Dipartimento di Fisica, Universit\`a di Roma ``La Sapienza'',
-          Piazza Aldo Moro\\
-          \email{salvatore.ferrone@uniroma1.it}
-      \and
-        Dipartimento di Fisica e Astronomia. ``Galileo Gallilei'' Università di Padova, Vicolo dell'Osservatorio 3 Padova 35122, Italy.
-      \and
-        Paris Observatory. Paris Sciences et Lettres
-      \and
-        Universit\'e de Strasbourg, CNRS, Observatoire astronomique de Strasbourg, UMR 7550, F-67000 Strasbourg, France
-      \and
-        Leibniz-Institut für Astrophysik Potsdam (AIP), An der Sternwarte 16, 14482 Potsdam, Germany
-      \and
-        Exeter
-      % \thanks{}
-      }
+  Paris Observatory. Paris Sciences et Lettres
+  \email{salvatore.ferrone@obspm.fr}
+  \and
+    Dipartimento di Fisica, Universit\`a di Roma ``La Sapienza'',Piazza Aldo Moro\\
+  \and
+    Dipartimento di Fisica e Astronomia. ``Galileo Gallilei'' Università di Padova, Vicolo dell'Osservatorio 3 Padova 35122, Italy.
+    \and
+      Universit\'e de Strasbourg, CNRS, Observatoire astronomique de Strasbourg, UMR 7550, F-67000 Strasbourg, France
+    \and
+      Leibniz-Institut für Astrophysik Potsdam (AIP), An der Sternwarte 16, 14482 Potsdam, Germany
+    \and
+      Exeter
+    % \thanks{}
+  }
       
-      \date{Born in 1996; Accepted in 2025}
+  \date{Born in 1996; Accepted in 2025}
 
 \definecolor{darkgreen}{rgb}{0.0, 0.5, 0.0}
 
@@ -113,13 +112,13 @@
   
   The possibility to couple Gaia data with spectroscopic surveys, has extended the study of stellar streams beyond the quantification of their orbital properties, to a full chemical characterization. For example \citet{2019MNRAS.490.3508L} presents $S^5$, and is one example of a cross-catalog among other works \citep{2020AJ....160..181J, 2021ApJ...911..149L, 2022ApJ...928...30L, 2024MNRAS.529.2413U}. Currently, there are about a hundred stellar streams are currently known in our Galaxy. \citet{2023MNRAS.520.5225M} provides a compilation of their tracks on the sky. Interestingly, only about 20 streams are associated to known Galactic globular clusters.
 
-  One of the interests in studying stellar streams is that they can constrain the gravitational field of their host galaxies, particularly the Milky Way. Compared to the measurement of the HI rotation curve, stellar streams offer the opportunity to investigate the potential of the host galaxy over a wide range of distances, reaching the outermost regions of the halo. For example, \citet{2011MNRAS.417..198V} demonstrated how stellar streams can infer the mass and scale parameters of dark matter halos using various amounts of observational data, from basic right ascension and declination to full six-dimensional phase space information. \citet{2018ApJ...867..101B} reviewed this concept from an information-theoretic point of view, identifying which orbits and configurations of stellar streams yield the most information about the galactic potential. However, the use of single streams for constraining the potential led to some ambiguous and not converging results over time. For example, \citet{2010ApJ...718.1128L} made use of the Sagittarius stream to infer that the dark matter halo of our Galaxy has a triaxial shape \citep[but see also][]{2004MNRAS.351..643H, 2005ApJ...619..800J, 2005ApJ...619..807L}; \citet{2016ApJ...833...31B} concluded that the dark matter halo of our Galaxy is nearly spherical at the distances of the Palomar~5 and GD-1 streams. Probably only by using the set of known streams can the degeneracy of the solution be eliminated. Recently, \citet{2024ApJ...967...89I} constructed the most accurate model of the Milky Way to date by applying a Monte Carlo Markov Chain (MCMC) fitting procedure. This method identified the set of potential parameters in an axisymmetric model of the Milky Way that best reproduces all observed stellar streams. This work represents a seminal achievement and a significant milestone in the field.
+  One of the interests in studying stellar streams is that they can constrain the gravitational field of their host galaxies, particularly the Milky Way. Compared to the measurement of the HI rotation curve, stellar streams offer the opportunity to investigate the potential of the host galaxy over a wide range of distances, reaching the outermost regions of the halo. For example, \citet{2011MNRAS.417..198V} demonstrated how stellar streams can infer the mass and scale parameters of dark matter halos using various amounts of observational data, from basic right ascension and declination to full six-dimensional phase space information. \citet{2018ApJ...867..101B} reviewed this concept from an information-theoretic point of view, identifying which orbits and configurations of stellar streams yield the most information about the galactic potential. However, the use of single streams for constraining the potential led to some ambiguous and not converging results over time. For example, \citet{2010ApJ...718.1128L} made use of the Sagittarius stream to infer that the dark matter halo of our Galaxy has a triaxial shape \citep[but see also][]{2004MNRAS.351..643H, 2005ApJ...619..800J, 2005ApJ...619..807L}; \citet{2016ApJ...833...31B} concluded that the dark matter halo of our Galaxy is nearly spherical at the distances of the Palomar~5 and GD-1 streams. The two contrasting results could also show that at one distance is the halo is triaxial and at another spherical showcasing the need for streams at different distances to map the halo shape. Recently, \citet{2024ApJ...967...89I} constructed the most accurate model of the Milky Way to date by applying a Monte Carlo Markov Chain (MCMC) fitting procedure. This method identified the set of potential parameters in an axisymmetric model of the Milky Way that best reproduces all observed stellar streams. This work represents a seminal achievement and a significant milestone in the field.
 
 
   % \citet{2022MNRAS.516.5331M} showed that many very metal poor streams exist in the Milky Way. On the other hand, it is possible that some globular clusters do not loose a significant number of stars to create tidal tails. For instance, \citet{2022A&A...667A.112V} demonstrated that clusters existing in dark matter subhaloes can place the tidal radius far beyond their half mass radii and sheild stars from escape. Another factor is indeed detectability. Additionally, there are many cluster in the internal regional of the galaxy, a region overwhich \texttt{streamfinder} was not applied since the high stellar density implicates a computational cost that is currently far to expensive. Also, \citet{2018MNRAS.474.2479B} demonstrates that internal dynamics preferentially kicks out small stars first, which have lower luminosities. Earlier escape times places larger distances to the cluster and make detection more difficult. 
   
   
-  Beyond the global visible and dark mass distribution streams can be used also to infer the granularity of the dark matter, that is the mass and density of the sub-halos populating our Galaxy. According to simulations by \citet{2008MNRAS.391.1685S}, $\Lambda$~Cold Dark Matter ($\Lambda$~CDM) predicts that galaxies grow hierarchically, with dark matter clumps forming at a wide range of masses and sizes. These clumps, or \textit{sub-halos}, are predicted to follow a mass distribution with a power-law slope slightly shallower than -2.0. To date, the smallest observed dark matter halo was detected through gravitational lensing in an Einstein ring with a mass of $10^8$ solar masses by \citet{2012Natur.481..341V}. However, some models predict that dark matter clumps could exist down to at least the mass of Earth-like planets at least \citep[see][and discussion in \citet{2021arXiv211101148A}]{2005JCAP...08..003G}. 
+  Beyond the global visible and dark mass distribution streams can be used also to infer the granularity of the dark matter, that is the mass and density of the sub-halos populating our Galaxy. According to simulations by \citet{2008MNRAS.391.1685S}, $\Lambda$~Cold Dark Matter ($\Lambda$CDM) predicts that galaxies grow hierarchically, with dark matter clumps forming at a wide range of masses and sizes. These clumps, or \textit{sub-halos}, are predicted to follow a mass distribution with a power-law slope slightly shallower than -2.0. To date, the smallest observed dark matter halo was detected through gravitational lensing in an Einstein ring with a mass of $10^8$ solar masses by \citet{2012Natur.481..341V}. However, some models predict that dark matter clumps could exist down to at least the mass of Earth-like planets at least \citep[see][and discussion in \citet{2021arXiv211101148A}]{2005JCAP...08..003G}. 
 
   \citet{2002MNRAS.332..915I} first suggested that dark matter sub-halos could influence stellar streams by diffusing their orbital elements. Later, \citet{2012ApJ...748...20C} expanded this idea, proposing that sub-halos could create gaps in stellar streams during flyby encounters, where a sub-halo approaches closely enough to a segment of a stream and significantly changes the orbits of the closest stars.  \citet{2012ApJ...760...75C, 2013ApJ...768..171C} applied this idea and looked for the presence of gaps in the known Palomar~5 and GD-1 streams, concluding that the density variations found in their streams were consistent with expectations from $\Lambda$~CDM models.  \citet{2019ApJ...880...38B} provided further observational evidence for this idea, identifying a gap and a spur in the GD-1 stream that they could not explain by known objects, such as globular clusters, and which they suggested was due to the close passage of a dark matter sub-halo. Interestingly enough, as stated in \citet{2019ApJ...880...38B}, the recovered properties of this sub-halo (mass and size) were inconsistent with the $\Lambda$~CDM mass-size relationship presented in \cite{2017MNRAS.466.4974M}. The above-mentioned works are only a few of a much more extensive literature that has explored the impact of dark matter sub-halos in simulated streams \citep{2016ApJ...828L..10H, 2021MNRAS.507.1999H, 2021JCAP...10..043B, 2024arXiv240402953H, 2024arXiv241021174N}, or searched for their traces in observed streams \citep{2016MNRAS.460.2711T, 2017MNRAS.470...60E, 2020ApJ...889...70B, 2020ApJ...892L..37B}.
 
@@ -138,7 +137,7 @@
 
 
 \section{Methods}
-  The most accurate model of the Palomar~5 stream would involve full modeling of the internal dynamics of the cluster. This would mean computing N-Body interactions with a $\mathcal{O}(N^2)$ computation time, stellar evolution, super novae, an initial mass distirbution, treatment of binary star systems, etc. \citep[for such an example][see,]{2021NatAs...5..957G}. Instead, We opt for solving the restricted-three body problem or particle-test method as we did for \citet{2023A&A...673A..44F}, which we present here for completeness. 
+  The most accurate model of the Palomar~5 stream would involve full modeling of the internal dynamics of the cluster. This would mean computing $N$-Body interactions with a $\mathcal{O}(N^2)$ computation time, stellar evolution, super novae, an initial mass distirbution, treatment of binary star systems, etc. \citep[for such an example][see,]{2021NatAs...5..957G}. Instead, We opt for solving the restricted-three body problem or particle-test method as we did for \citet{2023A&A...673A..44F}, which we present here for completeness. 
 
   \subsection{Numerical Methodology}
     We begin by extracting positions in the sky, proper motions, line-of-sight velocities and distances, as well as masses and half-mass radii, of 165 globular clusters from the Galactic globular cluster catalog by \cite{2021MNRAS.505.5957B}.\footnote{The Baumgardt catalog has been assembled across a series of works, see: \cite{2020PASA...37...46B,2019MNRAS.482.5138B,2018MNRAS.478.1520B}. The catalog can be found on the World Wide Web at \href{https://people.smp.uq.edu.au/HolgerBaumgardt/globular/}{https://people.smp.uq.edu.au/HolgerBaumgardt/globular/}.} We then convert the initial conditions from sky coordinates into a Galactocentric reference frame, by adopting a velocity for the local standard of rest of $v_{\text{LSR}} = 240$~km~s$^{-1}$ and a peculiar velocity of the Sun equal to $(U_\odot, V_\odot, W_\odot)=(11.1, 12.24, 7.25)$~km~s$^{-1}$, as reported by \citet{2012MNRAS.427..274S}.  The position of the Sun was set to $(x_\odot,y_\odot,z_\odot) = (-8.34,0,0.027)$~kpc, vertical position above the disk was taken from \citet{2001ApJ...553..184C} and the distance of the Sun to the Galactic center was taken from \citet{2014ApJ...783..130R}. These transformations were performed using \texttt{astropy} \citep{2013A&A...558A..33A}.
