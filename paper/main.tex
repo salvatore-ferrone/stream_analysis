@@ -283,12 +283,12 @@
 
     We need a more sophisticated statistic that can be compared to other simulations and turn to the \textit{gap creation rate} developed by \citet{2012ApJ...748...20C}. The gap creation rate is the number of gaps that appear per time and normalized by the length of the stream. For our simulations, this rate is given by: \begin{equation} \label{eq:gap_creation_rate} \mathcal{R}_{\textrm{Pal 5}} =  \frac{1}{T}\int_{0}^T l^{-1}(t) \sum_i \delta(t-t_i) dt,\end{equation}where $T$ is the total integration time, $l(t)$ is the length of the stream, and $\sum_i \delta(t-t_i)$ sums over the gap occurrences, with $i$ indexing over the number of gaps in a given simulation. Here, $\delta$ represents the Dirac delta function. This expression can be simplified to:\begin{equation}\mathcal{R}_{\textrm{Pal 5}} =  \frac{1}{T} \sum_i \frac{1}{l (t_i)}. \end{equation}
     
-    This computation allows us to analyze the distribution of gap creation rates across all simulations. Notice that since the gap creation rate \textit{adds in parallel}, naturally gaps that occur at earlier times when the stream was shorter are weighted higher than those that occur when the stream is longer. The results are shown in Fig.~\ref{fig:gapcreationrate}. This is roughly consistent with a simple estimate of the average gap creation rate: with 73 gaps over 5~Gyr of integration time for a stream about 20 kpc in length, the naive estimate is approximately 0.015~km~s$^{-1}$~kpc$^{-2} $ (which is roughly equivalent to $0.015~\rm{Gyr^{-1}kpc^{-1}}$). This is about double the weighted mean gap creation rate of 0.009~km~s$^{-1}$~kpc$^{-2}$. The naive estimate is higher because it does not account for the growth of the stream over time, unlike Eq.\ref{eq:gap_creation_rate}.
+    This computation allows us to analyze the distribution of gap creation rates across all simulations. Notice that since the gap creation rate \textit{adds in parallel}, naturally gaps that occur at earlier times when the stream was shorter are weighted higher than those that occur when the stream is longer. The results are shown in Fig.~\ref{fig:gapcreationrate}. This is roughly consistent with a simple estimate of the average gap creation rate: with 73 gaps over 5~Gyr of integration time for a stream about 20 kpc in length, the naive estimate is approximately 0.015~km~s$^{-1}$~kpc$^{-2} $ (which is roughly equivalent to $0.015~\rm{Gyr^{-1}kpc^{-1}}$). This is about double the weighted mean gap creation rate of 0.009~km~s$^{-1}$~kpc$^{-2}$. The naive estimate is higher because it does not account for the growth of the stream over time, unlike Eq.~\ref{eq:gap_creation_rate}.
 
     \begin{figure}
       \centering
       \includegraphics[width=\linewidth]{gap_creation_rate.png}
-      \caption{The distribution of the number of gaps normalized over the total integration time and unit stream length, as described by Eq.\ref{eq:gap_creation_rate} for the whole set of 50 \texttt{full} simulations. }
+      \caption{The distribution of the number of gaps normalized over the total integration time and unit stream length, as described by Eq.~\ref{eq:gap_creation_rate} for the whole set of 50 \texttt{full} simulations. }
       \label{fig:gapcreationrate}
     \end{figure}
 
@@ -302,7 +302,7 @@
     \begin{figure*}
       \centering
       \includegraphics[width=\linewidth]{impact_geometry_statistics.png}
-      \caption{The distribution and relationship between the impact variables from Eq.\ref{eq:change_in_momentum} for all close fly-bys considered. The encounters that cause gaps are labeled with the same colors as from Fig.~
+      \caption{The distribution and relationship between the impact variables from Eq.~\ref{eq:change_in_momentum} for all close fly-bys considered. The encounters that cause gaps are labeled with the same colors as from Fig.~
       \ref{fig:histogram_impact_time} in the scatter plot, and binned in red for the histograms. The close encounters that did not lead to gaps are shown in grey. }
       \label{fig:impact_geometry_statistics}    
     \end{figure*}
@@ -420,7 +420,7 @@
   
   
   \section{Gap Detection} \label{sec:gap_detection}
-    For each of the 50 simulations, we compare the final snapshots between the \texttt{reference} and \texttt{full} simulations using the tail coordinate system, as shown in Fig.~\ref{fig:TailCoordinates}. The \texttt{reference} simulations were only saved at the final timestamps, thus from Eq.\ref{eq:data_volume_estimate} where $N_ts$=1, leading to a data volume of about one hundred messily megabytes. We inspect these differences by generating 2D density maps of the streams. Additionally, we marginalize over the $y'$-coordinate to produce 1D density profiles along the $x'$-axis. These comparisons are shown in the results section (see Fig.~\ref{fig:profiles}).
+    For each of the 50 simulations, we compare the final snapshots between the \texttt{reference} and \texttt{full} simulations using the tail coordinate system, as shown in Fig.~\ref{fig:TailCoordinates}. The \texttt{reference} simulations were only saved at the final timestamps, thus from Eq.~\ref{eq:data_volume_estimate} where $N_ts$=1, leading to a data volume of about one hundred messily megabytes. We inspect these differences by generating 2D density maps of the streams. Additionally, we marginalize over the $y'$-coordinate to produce 1D density profiles along the $x'$-axis. These comparisons are shown in the results section (see Fig.~\ref{fig:profiles}).
     \begin{figure}
       \centering
       \includegraphics[width=\linewidth]{along_orbit_coordinate_system-approved.png}
