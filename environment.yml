@@ -11,3 +11,6 @@ dependencies:
   - jupyterlab
   - ipykernel
   - pandas
+  - pip 
+  - pip:
+    - /home-filer/sferrone/gcs/
