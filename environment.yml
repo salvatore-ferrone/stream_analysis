@@ -7,7 +7,7 @@ dependencies:
   - h5py=3.12
   - astropy=6.1
   - matplotlib=3.9
-  - numpy
+  - numpy=1.22
   - jupyterlab
   - ipykernel
   - pandas
