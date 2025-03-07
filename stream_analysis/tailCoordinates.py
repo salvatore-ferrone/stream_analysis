@@ -10,15 +10,7 @@ Typical usage:
 
 '''
 import numpy as np 
-import gcs
 
-def tau_gamma(indexes:np.ndarray,yT:np.ndarray,TORB:np.ndarray,XORB:np.ndarray,YORB:np.ndarray,ZORB:np.ndarray,\
-    VXORB:np.ndarray,VYORB:np.ndarray,VZORB:np.ndarray,currenttime:float):
-    lenOrb=TORB.shape[0]
-    _,_,_,rdot,_,_=gcs.misc.cartesian_to_spherical(XORB,YORB,ZORB,VXORB,VYORB,VZORB)
-    tau = TORB[indexes] - currenttime
-    gamma=yT/np.abs(rdot[lenOrb//2])    
-    return tau,gamma
 
 def transform_from_galactico_centric_to_tail_coordinates(xp,yp,zp,vxp,vyp,vzp,tORB,xORB,yORB,zORB,vxORB,vyORB,vzORB,t0=0):
     '''
