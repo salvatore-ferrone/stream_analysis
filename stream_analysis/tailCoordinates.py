@@ -2,15 +2,11 @@
 A module to calculate the coordinates of the particles in the stream relative to the orbit of the GC
 
 Typical usage:
-    import StreamOrbitCoords as SOC
+    import tailCoordinates as TC
     # get the coordinates of the particles in the orbit frame
 
-    indexes0=SOC.GetClosestOrbitalIndex(\
-                WGC0[0],WGC0[1],WGC0[2],WP0[0],WP0[1],WP0[2])
-    xprimeOrbi0=SOC.get_xprimeOrbit(\
-                tORB0,WGC0[0],WGC0[1],WGC0[2],t0=currenttime0.value)
-    WP0f=SOC.numbaTransformGalcentricToOrbit(\
-                WP0,WGC0,xprimeOrbi0,indexes0,WP0f)
+    xprimeP,yprimeP,zprimeP,vxprimeP,vyprimeP,vzprimeP,indexes = TC.transform_from_galactico_centric_to_tail_coordinates(
+        xp,yp,zp,vxp,vyp,vzp,tORB,xORB,yORB,zORB,vxORB,vyORB,vzORB,t0=0)
 
 '''
 import numpy as np 
