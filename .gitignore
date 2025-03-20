@@ -39,6 +39,10 @@ paper/*.pdf
 *.swp
 *.swo
 *~
+*.png
+*.mp4
+*.err
+*.out
 
 # other versions of the paper
 *main_paola_raw.tex
