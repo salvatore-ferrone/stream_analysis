@@ -390,9 +390,9 @@ def main():
         v_bin = np.vstack((vx_bin, vy_bin, vz_bin)).T
         v_deviations=v_bin-v_bin.mean(axis=0)
         nbins_vel=int(np.sqrt(len(vx_bin)))
-
+        if nbins_vel>1:
+            add_histogram(axis_hist, v_deviations, nbins_vel, vrange, AXIS_HIST)
         add_ellipses(axis_ellipse, boot_strap_eigenvalues, boot_strap_eigenvectors, b, num_bootstrap, ELLIPSE, AXIS_ELLIPSE)
-        add_histogram(axis_hist, v_deviations, nbins_vel, vrange, AXIS_HIST)
         line_map=axis_map.vlines(bin_centers[b],AXISMAP['ylim'][0],AXISMAP['ylim'][1],color='black',linestyle='--')
         line_den=axis_density.vlines(bin_centers[b],AXISDEN['ylim'][0],AXISDEN['ylim'][1],color='black',linestyle='--')
         line_disp=axis_disp.vlines(bin_centers[b],AXISDISP['ylim'][0],AXISDISP['ylim'][1],color='black',linestyle='--')
