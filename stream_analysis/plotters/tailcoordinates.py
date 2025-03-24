@@ -15,7 +15,7 @@ def xy_AXIS_properties(xlims=[-10,10],ylims=[-1,1]):
 def profile_AXIS_properties(xlims=[-10,10]):
     return  {"yscale":"log","xlabel":" x' [kpc]","ylabel":" N/NP","xlim":xlims}
 
-def density_SCAT_properties(NP,s=3,upfactor=1e2,cmap=mpl.colormaps.get_cmap("rainbow")):
+def density_SCAT_properties(NP,s=3,upfactor=1e2,cmap=mpl.colormaps.get("rainbow")):
     cnorm=mpl.colors.LogNorm(vmin=1/NP, vmax=upfactor/NP)
     return {'s':s,'cmap':cmap,'norm':cnorm}
 

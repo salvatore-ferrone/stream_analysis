@@ -1,16 +1,23 @@
 name: stream_analysis
 channels:
   - conda-forge
+  - defaults
 dependencies:
-  - python
-  - scipy=1.13
-  - h5py=3.12
-  - astropy=6.1
-  - matplotlib
-  - numpy=1.22
-  - jupyterlab
+  - python=3.9.20
+  - numpy==1.22
+  - gcc==11.2.0
+  - gfortran
+  - setuptools=68.2
+  - astropy==5.0
+  - matplotlib==3.5
+  - jupyterlab==4.2  
+  - pyyaml==6.0.1
+  - h5py==3.11.0
   - ipykernel
-  - pandas
+  - scipy 
   - pip 
+  - pandas 
   - pip:
-    - /home-filer/sferrone/gcs/
+    - /obs/sferrone/gcs/
+    - /obs/sferrone/stream_analysis/
+    - /obs/sferrone/tstrippy/

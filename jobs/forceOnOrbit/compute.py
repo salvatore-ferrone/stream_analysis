@@ -14,9 +14,10 @@ import os
 
 
 def main(dataparams,hyperparams):
-    GCname,MWpotential,montecarlokey = dataparams
+    GCname,MWpotential,montecarloindex = dataparams
     side_length_factor,ntauskip,ntskip = hyperparams
 
+    montecarlokey="monte-carlo-{:03d}".format(montecarloindex)
     G = tstrippy.Parsers.potential_parameters.G
 
     outfilename = ph.ForceOnOrbit(GCname, MWpotential, montecarlokey)
@@ -29,7 +30,7 @@ def main(dataparams,hyperparams):
     t,x,y,z,vx,vy,vz            =   gcs.extractors.GCOrbits.extract_whole_orbit(hostorbitfilename, montecarlokey) 
     GCnames                     =   get_perturber_names(GCname)
     ts,xs,ys,zs,vxs,vys,vzs     =   get_perturbing_orbits(GCnames, MWpotential, montecarlokey)
-    Masses,rs                   =   get_masses_and_radii(GCnames,montecarlokey)
+    Masses,rs                   =   get_masses_and_radii(GCnames,montecarloindex)
 
 
     ####### DOWN SAMPLE ORBIT TO APPROX STREAM
@@ -75,10 +76,10 @@ def get_perturbing_orbits(GCnames, MWpotential, montecarlokey):
     vxs,vys,vzs=vxs[:,0:today_index],vys[:,0:today_index],vzs[:,0:today_index]
     return ts,xs,ys,zs,vxs,vys,vzs
 
-def get_masses_and_radii(GCnames,montecarlokey):
-    Masses,rh_mes,_,_,_,_,_,_=gcs.extractors.MonteCarloObservables.extract_all_GC_observables(GCnames,montecarlokey)
-    rs = np.array([gcs.misc.half_mass_to_plummer(x).value for x in rh_mes])
-    Masses = np.array([x.value for x in Masses])    
+def get_masses_and_radii(GCnames,montecarloindex):
+    Masses,rh_mes,_,_,_,_,_,_=gcs.extractors.MonteCarloObservables.extract_all_GC_observables(GCnames,montecarloindex)
+    rs = np.array([gcs.misc.half_mass_to_plummer(x) for x in rh_mes])
+    Masses = np.array([x for x in Masses])    
     return Masses,rs
 
 
@@ -87,11 +88,11 @@ if __name__=="__main__":
     #dataparams
     GCname = "Pal5"
     MWpotential = "pouliasis2017pii-GCNBody"
-    montecarlokey = "monte-carlo-000"
+    montecarloindex=9
     # hyper params
     side_length_factor  =   2
     ntauskip            =   10
     ntskip              =   10
-    dataparams = GCname,MWpotential,montecarlokey
+    dataparams = GCname,MWpotential,montecarloindex
     hyperparams = side_length_factor,ntauskip,ntskip
     main(dataparams=dataparams,hyperparams=hyperparams)
