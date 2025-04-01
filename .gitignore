@@ -47,3 +47,6 @@ paper/*.pdf
 # other versions of the paper
 *main_paola_raw.tex
 *main_salvatore_PDM.tex
+
+# anything with scrap in it 
+*scrap*
