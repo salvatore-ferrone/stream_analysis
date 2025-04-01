@@ -13,9 +13,9 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
 import h5py
-from astropy import units as u
 import os
 from scipy import signal
+import sys 
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from multiprocessing import Pool
 
@@ -100,7 +100,6 @@ def create_histograms(particles, groups, limits=[-20,20]):
 
 
 
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 def create_christmas_tree_plot(xT, tesc_escaped, groups, colors, bin_centers, counts_total, 
                               counts_groups, counts_leak, XORB, YORB, phase_space, escaped,
@@ -361,10 +360,19 @@ def main(
     ]
     
     # Use multiprocessing to generate frames
-    with Pool() as pool:
+    with Pool(processes=10) as pool:
         pool.starmap(generate_frame, args)
 
 
 if __name__ == "__main__":
-    main()
+    # find out the mass and radius of the stream
+    myinput = int(sys.argv[1])
+    nmass = 5
+    nradius = 5
+    assert myinput < nmass*nradius, "input must be less than 25"
+    MASS_INDEX = myinput // nradius
+    RADIUS_INDEX = myinput % nradius
+    # set the mass and radius
+
+    main(MASS_INDEX=MASS_INDEX, RADIUS_INDEX=RADIUS_INDEX)
 
