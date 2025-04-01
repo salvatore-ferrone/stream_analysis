@@ -220,7 +220,7 @@ def create_christmas_tree_plot(xT, tesc_escaped, groups, colors, bin_centers, co
 
 
 def generate_frame(i, valid_time_stamps, fnames, valid_NPs, torbit, xorbit, yorbit, zorbit, vxorbit, vyorbit, vzorbit, 
-                   pericenter_passages_indices, colors, minima_indices, limits, GCname, MWpotential, internal_dynamics):
+                   pericenter_passages_indices, colors, limits, baseout, title):
     """
     Generate a single frame for the Christmas tree animation.
     """
@@ -271,12 +271,13 @@ def generate_frame(i, valid_time_stamps, fnames, valid_NPs, torbit, xorbit, yorb
         counts_groups, counts_leak, XORB, YORB, phase_space,
         escaped, time_of_interest, limits=limits
     )
-
+    axis[0].set_title(title, fontsize=12)
+    
     # Save the figure
     figname = f"christmas_tree_{i:03d}.png"
-    fig.savefig(figname, dpi=300, bbox_inches='tight')
+    fig.savefig(baseout+figname, dpi=300, bbox_inches='tight')
     plt.close(fig)
-    print(f"Saved frame {i+1}/{len(valid_time_stamps)}: {figname}")
+    print(f"Saved frame {i} to {baseout+figname}")
 
 
 def main(
@@ -294,15 +295,23 @@ def main(
     # The limits for the histogram
     limits = [-20, 20]
 
+    # base out for the frames
+    baseout="/scratch2/sferrone/plots/stream_analysis/christmastree/" + MWpotential + "/" + GCname + "/" + "MASS_"+str(MASS_INDEX).zfill(3)+"_RADIUS_"+str(RADIUS_INDEX).zfill(3)+"/"
+    # the title for each frame
+    title = "{:s} $M_{{\odot}}$"
+    os.makedirs(baseout, exist_ok=True)
     # Load in the time stamps that were saved
     i = 0  # dummy NPs index
     montecarlokey = "monte-carlo-" + str(montecarloindex).zfill(3)
     path = "/scratch2/sferrone/simulations/StreamSnapShots/" + MWpotential + "/" + GCname + "/" + str(NPs[i]) + "/" + internal_dynamics + "/"
     fname = "{:s}-StreamSnapShots-{:s}_mass_{:s}_radius_{:s}.hdf5".format(GCname, montecarlokey, str(MASS_INDEX).zfill(3), str(RADIUS_INDEX).zfill(3))
     filepath = path + fname
-    with h5py.File(filepath, "r") as f:
-        valid_time_stamps = f['time_stamps'][:] 
-        
+    # obtain valid time stamps 
+    with h5py.File(filepath,"r") as f:
+        valid_time_stamps=f['time_stamps'][:]    
+        mass=int(np.ceil(f.attrs['MASS']))
+        halfmassradius=int(np.ceil(1000*f.attrs['HALF_MASS_RADIUS']))
+    title = r"{:s} {:s} {:d} $M_{{\odot}}$ {:d} pc".format(GCname, MWpotential, mass,halfmassradius)        
     # Load in the orbit 
     orbitpath = "/scratch2/sferrone/simulations/Orbits/{:s}/".format(MWpotential)
     orbitfilepath = orbitpath + "{:s}-orbits.hdf5".format(GCname)
@@ -342,9 +351,12 @@ def main(
     
     # Use multiprocessing to generate frames
     ntimestamps = len(valid_time_stamps)
+    fignamebase = "{:s}-StreamSnapShots-{:s}_mass_{:s}_radius_{:s}".format(GCname, montecarlokey, str(MASS_INDEX).zfill(3), str(RADIUS_INDEX).zfill(3))
+    # make some directories for this....
+    
     args = [
         (i, valid_time_stamps, fnames, valid_NPs, torbit, xorbit, yorbit, zorbit, vxorbit, vyorbit, vzorbit, 
-         pericenter_passages_indices, colors, minima_indices, limits, GCname, MWpotential, internal_dynamics)
+         pericenter_passages_indices, colors, limits, baseout, title)
         for i in range(1, ntimestamps)
     ]
     
