@@ -3,16 +3,18 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.9.20
-  - numpy==1.22
-  - gcc==11.2.0
+  - python>=3.9,<3.12
+  - numpy>=1.20
+  - setuptools>=65.5
+  - astropy>=6.0
+  - jupyterlab>=4.2  
+  - pyyaml>=6.0
+  - h5py>=3.11
+  - matplotlib>=3.7
+  - pytest
+  - gcc
   - gfortran
-  - setuptools=68.2
-  - astropy==5.0
-  - matplotlib==3.5
-  - jupyterlab==4.2  
-  - pyyaml==6.0.1
-  - h5py==3.11.0
+  - meson 
   - ipykernel
   - scipy 
   - pip 
@@ -20,4 +22,3 @@ dependencies:
   - pip:
     - /obs/sferrone/gcs/
     - /obs/sferrone/stream_analysis/
-    - /obs/sferrone/tstrippy/
