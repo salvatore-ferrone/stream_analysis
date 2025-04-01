@@ -17,7 +17,7 @@ from astropy import units as u
 import os
 from scipy import signal
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-
+from multiprocessing import Pool
 
 plt.rcParams.update({
     'font.size': 12,          # Basic font size
@@ -217,127 +217,142 @@ def create_christmas_tree_plot(xT, tesc_escaped, groups, colors, bin_centers, co
     return fig, axis
 
 
+
+
+def generate_frame(i, valid_time_stamps, fnames, valid_NPs, torbit, xorbit, yorbit, zorbit, vxorbit, vyorbit, vzorbit, 
+                   pericenter_passages_indices, colors, minima_indices, limits, GCname, MWpotential, internal_dynamics):
+    """
+    Generate a single frame for the Christmas tree animation.
+    """
+    time_of_interest = valid_time_stamps[i]
+    phase_space, tesc, snapshottime = stack_phase_space(fnames, valid_NPs, time_of_interest=time_of_interest)
+    
+    TORB, XORB, YORB, ZORB, VXORB, VYORB, VZORB = sa.tailCoordinates.filter_orbit_by_dynamical_time(
+        torbit,
+        xorbit, yorbit, zorbit,
+        vxorbit, vyorbit, vzorbit,
+        time_of_interest=time_of_interest,
+        nDynTimes=2,
+    )
+
+    # Grab those that escaped
+    escaped = tesc > -990
+    tesc_escaped = tesc[escaped]    
+
+    # Convert to tail coordinates
+    xT, yT, zT, vxT, vyT, vzT, indexes = sa.tailCoordinates.transform_from_galactico_centric_to_tail_coordinates(
+        phase_space[0, escaped], phase_space[1, escaped], phase_space[2, escaped],
+        phase_space[3, escaped], phase_space[4, escaped], phase_space[5, escaped],
+        TORB, XORB, YORB, ZORB, VXORB, VYORB, VZORB,
+        time_of_interest,
+    )       
+
+    # Obtain the groups of escaped stars that are not from the same pericenter passage
+    groups = []
+    cond = np.zeros(len(tesc_escaped), dtype=bool)
+    for ii in range(len(pericenter_passages_indices)):
+        minDex, upDex = pericenter_passages_indices[ii]
+        condA = tesc_escaped > torbit[minDex]
+        condB = tesc_escaped < torbit[upDex]
+        condC = np.logical_and(condA, condB)
+        groups.append(condC)
+        cond = np.logical_or(cond, condC)
+    ungroupped = ~cond
+
+    # Create histograms
+    counts_groups, bin_edges = create_histograms(xT, groups, limits)
+    counts_leak, _ = np.histogram(xT[ungroupped], bins=bin_edges)
+    counts_total, _ = np.histogram(xT, bins=bin_edges)
+    bin_centers = 0.5 * (bin_edges[1:] + bin_edges[:-1])    
+
+    # Create the plot
+    fig, axis = create_christmas_tree_plot(
+        xT, tesc_escaped, groups, colors, bin_centers, counts_total,
+        counts_groups, counts_leak, XORB, YORB, phase_space,
+        escaped, time_of_interest, limits=limits
+    )
+
+    # Save the figure
+    figname = f"christmas_tree_{i:03d}.png"
+    fig.savefig(figname, dpi=300, bbox_inches='tight')
+    plt.close(fig)
+    print(f"Saved frame {i+1}/{len(valid_time_stamps)}: {figname}")
+
+
 def main(
-    GCname = "Pal5",
-    MWpotential = "pouliasis2017pii-GCNBody",
-    NPs = np.array([4500, 9100, 9200, 9300, 9400, 9500, 9600, 9700, 9800, 9900, 10000]),
-    internal_dynamics = "isotropic-plummer_mass_radius_grid",
+    GCname="Pal5",
+    MWpotential="pouliasis2017pii-GCNBody",
+    NPs=np.array([4500, 9100, 9200, 9300, 9400, 9500, 9600, 9700, 9800, 9900, 10000]),
+    internal_dynamics="isotropic-plummer_mass_radius_grid",
     montecarloindex=9,
-    MASS_INDEX = 1,
-    RADIUS_INDEX = 3,
+    MASS_INDEX=1,
+    RADIUS_INDEX=3,
 ):
-    
-    # pick the color map for the tree
-    mycmap=mpl.cm.hsv
+    # Pick the color map for the tree
+    mycmap = mpl.cm.hsv
 
-    # the limits for the histogram
-    limits=[-20,20]
-    
+    # The limits for the histogram
+    limits = [-20, 20]
 
-    # load in the time stamps that were saved
-    i=0 # dummy NPs index
-    montecarlokey="monte-carlo-"+str(montecarloindex).zfill(3)
-    path="/scratch2/sferrone/simulations/StreamSnapShots/"+MWpotential+"/"+GCname+"/"+str(NPs[i])+"/"+internal_dynamics+"/"
+    # Load in the time stamps that were saved
+    i = 0  # dummy NPs index
+    montecarlokey = "monte-carlo-" + str(montecarloindex).zfill(3)
+    path = "/scratch2/sferrone/simulations/StreamSnapShots/" + MWpotential + "/" + GCname + "/" + str(NPs[i]) + "/" + internal_dynamics + "/"
     fname = "{:s}-StreamSnapShots-{:s}_mass_{:s}_radius_{:s}.hdf5".format(GCname, montecarlokey, str(MASS_INDEX).zfill(3), str(RADIUS_INDEX).zfill(3))
-    filepath=path+fname
-    with h5py.File(filepath,"r") as f:
-        valid_time_stamps=f['time_stamps'][:] 
+    filepath = path + fname
+    with h5py.File(filepath, "r") as f:
+        valid_time_stamps = f['time_stamps'][:] 
         
-    # load in the orbit 
-    orbitpath="/scratch2/sferrone/simulations/Orbits/{:s}/".format(MWpotential)
-    orbitfilepath=orbitpath+"{:s}-orbits.hdf5".format(GCname)
-    with h5py.File(orbitfilepath,"r") as orbitfile:
-        torbit=orbitfile[montecarlokey]['t'][:]
-        xorbit=orbitfile[montecarlokey]['xt'][:]
-        yorbit=orbitfile[montecarlokey]['yt'][:]
-        zorbit=orbitfile[montecarlokey]['zt'][:]
-        vxorbit=orbitfile[montecarlokey]['vxt'][:]
-        vyorbit=orbitfile[montecarlokey]['vyt'][:]
-        vzorbit=orbitfile[montecarlokey]['vzt'][:]
+    # Load in the orbit 
+    orbitpath = "/scratch2/sferrone/simulations/Orbits/{:s}/".format(MWpotential)
+    orbitfilepath = orbitpath + "{:s}-orbits.hdf5".format(GCname)
+    with h5py.File(orbitfilepath, "r") as orbitfile:
+        torbit = orbitfile[montecarlokey]['t'][:]
+        xorbit = orbitfile[montecarlokey]['xt'][:]
+        yorbit = orbitfile[montecarlokey]['yt'][:]
+        zorbit = orbitfile[montecarlokey]['zt'][:]
+        vxorbit = orbitfile[montecarlokey]['vxt'][:]
+        vyorbit = orbitfile[montecarlokey]['vyt'][:]
+        vzorbit = orbitfile[montecarlokey]['vzt'][:]
 
-    # stack all the simulations of the streams that were computed in parallel
-    fnames,valid_NPs = grab_valid_fnames(GCname, montecarlokey, NPs, MASS_INDEX, RADIUS_INDEX, MWpotential, internal_dynamics)
+    # Stack all the simulations of the streams that were computed in parallel
+    fnames, valid_NPs = grab_valid_fnames(GCname, montecarlokey, NPs, MASS_INDEX, RADIUS_INDEX, MWpotential, internal_dynamics)
     
-    # locate the pericenter passages
-    rorbit=np.sqrt(xorbit**2+yorbit**2+zorbit**2)
+    # Locate the pericenter passages
+    rorbit = np.sqrt(xorbit**2 + yorbit**2 + zorbit**2)
     minima_indices, _ = signal.find_peaks(-rorbit)
 
-    # compute the characteristic time of the shocks
-    pouliasis2017pii=tstrippy.Parsers.pouliasis2017pii()
-    ax,ay,az,_=tstrippy.potentials.pouliasis2017pii(pouliasis2017pii,xorbit[minima_indices],yorbit[minima_indices],zorbit[minima_indices])
-    accel= np.sqrt(ax**2 + ay**2 + az**2)
-    chartimes=np.sqrt(rorbit[minima_indices]/accel)
+    # Compute the characteristic time of the shocks
+    pouliasis2017pii = tstrippy.Parsers.pouliasis2017pii()
+    ax, ay, az, _ = tstrippy.potentials.pouliasis2017pii(pouliasis2017pii, xorbit[minima_indices], yorbit[minima_indices], zorbit[minima_indices])
+    accel = np.sqrt(ax**2 + ay**2 + az**2)
+    chartimes = np.sqrt(rorbit[minima_indices] / accel)
 
-
-    # find the upper and lower bounds of the time of interest
+    # Find the upper and lower bounds of the time of interest
     pericenter_passages_indices = []
-    for i in range(len(minima_indices)-1):
+    for i in range(len(minima_indices) - 1):
         downTime = torbit[minima_indices[i]] - chartimes[i]
         upTime = torbit[minima_indices[i]] + chartimes[i]
-        minDex=np.argmin(np.abs(torbit-downTime))
-        upDex=np.argmin(np.abs(torbit-upTime))
-        pericenter_passages_indices.append((minDex,upDex))
+        minDex = np.argmin(np.abs(torbit - downTime))
+        upDex = np.argmin(np.abs(torbit - upTime))
+        pericenter_passages_indices.append((minDex, upDex))
 
-    # set the colors for the tree
+    # Set the colors for the tree
     colors = mycmap(np.linspace(0, 1, len(minima_indices)))
     
-    ntimestamps=len(valid_time_stamps)
-    for i in range(1,ntimestamps):
-        time_of_interest=valid_time_stamps[i]
-        phase_space, tesc, snapshottime = stack_phase_space(fnames,valid_NPs,time_of_interest=time_of_interest)
-        
-        TORB, XORB, YORB, ZORB, VXORB, VYORB, VZORB=sa.tailCoordinates.filter_orbit_by_dynamical_time(
-            torbit,
-            xorbit,yorbit,zorbit,
-            vxorbit,vyorbit,vzorbit,
-            time_of_interest=time_of_interest,
-            nDynTimes=2,
-        )
-
-        # grab those that escaped
-        escaped=tesc>-990
-        tesc_escaped=tesc[escaped]    
-
-        # convert to tail coordinates
-        xT,yT,zT,vxT,vyT,vzT,indexes= sa.tailCoordinates.transform_from_galactico_centric_to_tail_coordinates(
-            phase_space[0,escaped],phase_space[1,escaped],phase_space[2,escaped],
-            phase_space[3,escaped],phase_space[4,escaped],phase_space[5,escaped],
-            TORB, XORB, YORB, ZORB, VXORB, VYORB, VZORB,
-            time_of_interest,)       
-
-        # obain the groups of escaped stars that are not from the same pericenter passage
-        groups = []
-        cond = np.zeros(len(tesc_escaped),dtype=bool)
-        for ii in range(len(pericenter_passages_indices)):
-            minDex,upDex=pericenter_passages_indices[ii]
-            condA = tesc_escaped > torbit[minDex]
-            condB = tesc_escaped < torbit[upDex]
-            condC = np.logical_and(condA,condB)
-            groups.append(condC)
-            cond = np.logical_or(cond,condC)
-        ungroupped =  ~cond
-        # Call the function with default parameters for bmin and bmax
-        counts_groups, bin_edges = create_histograms(xT, groups, limits)
-        # create global histogram
-        counts_leak, _ = np.histogram(xT[ungroupped], bins=bin_edges)
-        # create entire histogram
-        counts_total, _ = np.histogram(xT, bins=bin_edges)
-        bin_centers = 0.5*(bin_edges[1:]+bin_edges[:-1])    
-
-        # create the plot
-        fig, axis = create_christmas_tree_plot(
-            xT, tesc_escaped, groups, colors, bin_centers, counts_total,
-            counts_groups, counts_leak, XORB, YORB, phase_space,
-            escaped, time_of_interest, limits=limits
-        )
-        # save the figure
-        figname = f"christmas_tree_{i:03d}.png"
-        
-        fig.savefig(figname, dpi=300, bbox_inches='tight')
-        plt.close(fig)
-        print(figname)
-        print(f"Saved frame {i+1}/{ntimestamps} for time {time_of_interest:.2f} s kpc / km")
+    # Use multiprocessing to generate frames
+    ntimestamps = len(valid_time_stamps)
+    args = [
+        (i, valid_time_stamps, fnames, valid_NPs, torbit, xorbit, yorbit, zorbit, vxorbit, vyorbit, vzorbit, 
+         pericenter_passages_indices, colors, minima_indices, limits, GCname, MWpotential, internal_dynamics)
+        for i in range(1, ntimestamps)
+    ]
+    
+    # Use multiprocessing to generate frames
+    with Pool() as pool:
+        pool.starmap(generate_frame, args)
 
 
 if __name__ == "__main__":
     main()
+
