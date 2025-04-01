@@ -337,13 +337,7 @@ def main(
         plt.close(fig)
         print(figname)
         print(f"Saved frame {i+1}/{ntimestamps} for time {time_of_interest:.2f} s kpc / km")
+
+
 if __name__ == "__main__":
     main()
-    # Example usage
-    # main(GCname="Pal5", MWpotential="pouliasis2017pii-GCNBody", NPs=[4500, 9100, 9200, 9300, 9400, 9500, 9600, 9700, 9800, 9900, 10000], internal_dynamics="isotropic-plummer_mass_radius_grid", montecarloindex=9, MASS_INDEX=1, RADIUS_INDEX=3)
-
-
-    
-
-
-    
