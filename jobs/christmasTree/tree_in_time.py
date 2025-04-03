@@ -463,7 +463,7 @@ if __name__ == "__main__":
     MASS=1
     RADIUS=3
 
-    MASS = int(np.ceil(MASS_GRID[MASS_INDEX]))
+    MASS = int(np.floor(MASS_GRID[MASS_INDEX]))
     print("RADIUS_GRID[RADIUS_INDEX]",RADIUS_GRID[RADIUS_INDEX])
     RADIUS = int(np.floor(1000*RADIUS_GRID[RADIUS_INDEX]))
     print("Radius", RADIUS)
