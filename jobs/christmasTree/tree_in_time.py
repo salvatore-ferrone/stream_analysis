@@ -19,6 +19,15 @@ import sys
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from multiprocessing import Pool
 
+
+# MASS GRID AND RADIUS GRID
+SIZE_GRID = 5
+N_MASS_SAMPLING = SIZE_GRID
+N_RADIUS_SAMPLING = SIZE_GRID # square grid
+MASS_GRID = np.logspace(4,4.8, N_MASS_SAMPLING) # in Msun
+RADIUS_GRID = np.logspace(np.log10(2),np.log10(30),N_RADIUS_SAMPLING)/1000 # in kpc
+
+
 plt.rcParams.update({
     'font.size': 12,          # Basic font size
     'axes.labelsize': 12,     # Label font size
@@ -34,20 +43,86 @@ plt.rcParams.update({
     'lines.markersize': 6,    # Size of markers
 })
 
-def grab_valid_fnames(GCname, montecarlokey, NPs, MASS_INDEX, RADIUS_INDEX, potential_env, internal_dynamics):
+
+def get_streamSnapShotsFileName(GCname, NP, potential_env, internal_dynamics, montecarlokey, MASS, RADIUS, mytype='physical'):
+    """
+    Get the filename for the StreamSnapShots file based on the GC name, Monte Carlo key, mass index, and radius index.
+    
+    Parameters:
+    ----------
+    GCname : str
+        Name of the globular cluster.
+    montecarlokey : str
+        Key for the Monte Carlo simulation.
+    MASS_INDEX : int
+        Index for the mass.
+    RADIUS : int
+        Index for the radius.
+    Returns:
+    -------
+    str
+        The formatted filename.
+    """ 
+    valid_types = ['index', "physical"]
+    if mytype not in valid_types:
+        raise ValueError("type must be one of the following: {:s}".format(str(valid_types)))
+    if mytype == 'index':
+        assert isinstance(MASS, int), "MASS must be an integer but was {:}".format(type(MASS))
+        assert isinstance(RADIUS, int), "RADIUS must be an integer but was {:}".format(type(RADIUS))
+        path=gcs.path_handler._StreamSnapShots(GCname=GCname,NP=NP,potential_env=potential_env,internal_dynamics=internal_dynamics)
+        fname = "{:s}-StreamSnapShots-{:s}_mass_{:s}_radius_{:s}.hdf5".format(GCname, montecarlokey, str(MASS).zfill(3), str(RADIUS).zfill(3))
+        fname = path + fname
+    elif mytype == 'physical':
+        assert isinstance(MASS, int), "MASS must be a int IN SOLAR MASSES but was {:}".format(type(MASS))
+        assert isinstance(RADIUS, int), "RADIUS must be a int in PARSECS but was  {:}".format(type(RADIUS))
+        fname = gcs.path_handler.StreamSnapShotsMassRadius(GCname, NP, potential_env, internal_dynamics, montecarlokey, MASS, RADIUS)
+    return fname
+
+
+def grab_valid_fnames(GCname, NPs, potential_env, internal_dynamics, montecarlokey, MASS, RADIUS, mytype='physical'):
+
+    """
+    iterate over the NPs and check if the file exists
+    Parameters
+    ----------
+    GCname : str
+        Name of the globular cluster.
+    NPs : list
+        List of number of particles.
+    potential_env : str
+        Name of the potential environment.          
+    internal_dynamics : str
+        Name of the internal dynamics.
+    montecarlokey : str
+        Key for the Monte Carlo simulation.
+    MASS : int
+        Mass of the globular cluster in solar masses.
+    RADIUS : int
+        Half Mass Radius of the cluster in parsecs.
+    mytype : str
+        Type of the file name, either 'index' or 'physical'.
+    Returns
+    -------
+    fnames : list
+        List of valid file names.
+    valid_NPs : list
+        List of valid number of particles corresponding to the file names.
+    """
+
     fnames = []
     valid_NPs=[]
-    FNAME = "{:s}-StreamSnapShots-{:s}_mass_{:s}_radius_{:s}.hdf5".format(GCname, montecarlokey, str(MASS_INDEX).zfill(3), str(RADIUS_INDEX).zfill(3))
+    
     for i in range(len(NPs)):
-        path=gcs.path_handler._StreamSnapShots(GCname=GCname,NP=NPs[i],potential_env=potential_env,internal_dynamics=internal_dynamics)
-        fpath=path+FNAME
+        # get the file name
+        fpath=get_streamSnapShotsFileName(GCname, NPs[i], potential_env, internal_dynamics, montecarlokey, MASS, RADIUS, mytype=mytype)
+        # check if the file exists
         if os.path.exists(fpath):
             fnames.append(fpath)
             valid_NPs.append(NPs[i])
         else:
             print("file does not exist",fpath)
     valid_NPs=np.array(valid_NPs)
-    return fnames,valid_NPs
+    return fnames, valid_NPs
 
 
 def stack_phase_space(fnames,NPs,time_of_interest=0):
@@ -279,14 +354,18 @@ def generate_frame(i, valid_time_stamps, fnames, valid_NPs, torbit, xorbit, yorb
     print(f"Saved frame {i} to {baseout+figname}")
 
 
+    
+
 def main(
     GCname="Pal5",
     MWpotential="pouliasis2017pii-GCNBody",
-    NPs=np.array([4500, 9100, 9200, 9300, 9400, 9500, 9600, 9700, 9800, 9900, 10000]),
+    # NPs=np.array([4500, 9100, 9200, 9300, 9400, 9500, 9600, 9700, 9800, 9900, 10000]),
+    NPs = np.arange(3317,3347+1,1),
     internal_dynamics="isotropic-plummer_mass_radius_grid",
     montecarloindex=9,
-    MASS_INDEX=1,
-    RADIUS_INDEX=3,
+    MASS=1,
+    RADIUS=3,
+    fnametype='physical',
 ):
     # Pick the color map for the tree
     mycmap = mpl.cm.hsv
@@ -295,18 +374,19 @@ def main(
     limits = [-20, 20]
 
     # base out for the frames
-    baseout="/scratch2/sferrone/plots/stream_analysis/christmastree/" + MWpotential + "/" + GCname + "/" + "MASS_"+str(MASS_INDEX).zfill(3)+"_RADIUS_"+str(RADIUS_INDEX).zfill(3)+"/"
+    baseout="/scratch2/sferrone/plots/stream_analysis/christmastree/" + MWpotential + "/" + GCname + "/" + "MASS_"+str(MASS).zfill(3)+"_RADIUS_"+str(RADIUS).zfill(3)+"/"
     # the title for each frame
     title = "{:s} $M_{{\odot}}$"
     os.makedirs(baseout, exist_ok=True)
     # Load in the time stamps that were saved
     i = 0  # dummy NPs index
     montecarlokey = "monte-carlo-" + str(montecarloindex).zfill(3)
-    path = "/scratch2/sferrone/simulations/StreamSnapShots/" + MWpotential + "/" + GCname + "/" + str(NPs[i]) + "/" + internal_dynamics + "/"
-    fname = "{:s}-StreamSnapShots-{:s}_mass_{:s}_radius_{:s}.hdf5".format(GCname, montecarlokey, str(MASS_INDEX).zfill(3), str(RADIUS_INDEX).zfill(3))
-    filepath = path + fname
+    # path = "/scratch2/sferrone/simulations/StreamSnapShots/" + MWpotential + "/" + GCname + "/" + str(NPs[i]) + "/" + internal_dynamics + "/"
+    NP = NPs[i]
+    fname=get_streamSnapShotsFileName(GCname, NP, MWpotential, internal_dynamics, montecarlokey, MASS, RADIUS, mytype=fnametype)
+
     # obtain valid time stamps 
-    with h5py.File(filepath,"r") as f:
+    with h5py.File(fname,"r") as f:
         valid_time_stamps=f['time_stamps'][:]    
         mass=int(np.ceil(f.attrs['MASS']))
         halfmassradius=int(np.ceil(1000*f.attrs['HALF_MASS_RADIUS']))
@@ -324,7 +404,7 @@ def main(
         vzorbit = orbitfile[montecarlokey]['vzt'][:]
 
     # Stack all the simulations of the streams that were computed in parallel
-    fnames, valid_NPs = grab_valid_fnames(GCname, montecarlokey, NPs, MASS_INDEX, RADIUS_INDEX, MWpotential, internal_dynamics)
+    fnames, valid_NPs = grab_valid_fnames(GCname, NPs, MWpotential,  internal_dynamics, montecarlokey, MASS, RADIUS, mytype=fnametype)
     
     # Locate the pericenter passages
     rorbit = np.sqrt(xorbit**2 + yorbit**2 + zorbit**2)
@@ -350,7 +430,7 @@ def main(
     
     # Use multiprocessing to generate frames
     ntimestamps = len(valid_time_stamps)
-    fignamebase = "{:s}-StreamSnapShots-{:s}_mass_{:s}_radius_{:s}".format(GCname, montecarlokey, str(MASS_INDEX).zfill(3), str(RADIUS_INDEX).zfill(3))
+    fignamebase = "{:s}-StreamSnapShots-{:s}_mass_{:s}_radius_{:s}".format(GCname, montecarlokey, str(MASS).zfill(3), str(RADIUS).zfill(3))
     # make some directories for this....
     
     args = [
@@ -358,6 +438,8 @@ def main(
          pericenter_passages_indices, colors, limits, baseout, title)
         for i in range(1, ntimestamps)
     ]
+    # for arg  in args:
+        # print("arg",arg)
     
     # Use multiprocessing to generate frames
     with Pool(processes=10) as pool:
@@ -373,6 +455,25 @@ if __name__ == "__main__":
     MASS_INDEX = myinput // nradius
     RADIUS_INDEX = myinput % nradius
     # set the mass and radius
+    GCname="Pal5"
+    MWpotential="pouliasis2017pii-GCNBody"
+    NPs = np.arange(3317,3347+1,1)
+    internal_dynamics="isotropic-plummer_mass_radius_grid"
+    montecarloindex=9
+    MASS=1
+    RADIUS=3
 
-    main(MASS_INDEX=MASS_INDEX, RADIUS_INDEX=RADIUS_INDEX)
+    MASS = int(np.ceil(MASS_GRID[MASS_INDEX]))
+    print("RADIUS_GRID[RADIUS_INDEX]",RADIUS_GRID[RADIUS_INDEX])
+    RADIUS = int(np.floor(1000*RADIUS_GRID[RADIUS_INDEX]))
+    print("Radius", RADIUS)
+
+    fname= get_streamSnapShotsFileName(GCname, NPs[0], MWpotential, internal_dynamics, "monte-carlo-009", MASS, RADIUS, mytype='physical')
+    print("fname",fname)
+    print("file exists", os.path.exists(fname))
+    fname = get_streamSnapShotsFileName(GCname, NPs[0], MWpotential, internal_dynamics, "monte-carlo-009", MASS_INDEX, RADIUS_INDEX, mytype='index')
+    print("fname",fname)
+    print("file exists", os.path.exists(fname))
+    # Call the main function with the specified parameters
+    main(MASS=MASS, RADIUS=RADIUS)
 
