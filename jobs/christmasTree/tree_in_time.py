@@ -18,6 +18,7 @@ from scipy import signal
 import sys 
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from multiprocessing import Pool
+import re
 
 
 # MASS GRID AND RADIUS GRID
@@ -354,7 +355,29 @@ def generate_frame(i, valid_time_stamps, fnames, valid_NPs, torbit, xorbit, yorb
     print(f"Saved frame {i} to {baseout+figname}")
 
 
+def get_present_frame_numbers(directory):
+    """
+    Get a list of integers present in the file names in the given directory.
     
+    Parameters:
+    directory (str): Path to the directory containing the files.
+    
+    Returns:
+    list: A sorted list of integers extracted from the file names.
+    """
+    frame_numbers = []
+    # Regular expression to match the pattern "christmas_tree_<number>.png"
+    pattern = re.compile(r'christmas_tree_(\d+)\.png')
+    
+    # Iterate over all files in the directory
+    for filename in os.listdir(directory):
+        match = pattern.match(filename)
+        if match:
+            # Extract the integer and add it to the list
+            frame_numbers.append(int(match.group(1)))
+    
+    # Return the sorted list of integers
+    return sorted(frame_numbers)    
 
 def main(
     GCname="Pal5",
@@ -366,6 +389,7 @@ def main(
     MASS=1,
     RADIUS=3,
     fnametype='physical',
+    ONLYUNPROCESSED=True
 ):
     # Pick the color map for the tree
     mycmap = mpl.cm.hsv
@@ -430,23 +454,34 @@ def main(
     
     # Use multiprocessing to generate frames
     ntimestamps = len(valid_time_stamps)
+    timestampindexes= np.arange(ntimestamps)
     fignamebase = "{:s}-StreamSnapShots-{:s}_mass_{:s}_radius_{:s}".format(GCname, montecarlokey, str(MASS).zfill(3), str(RADIUS).zfill(3))
     # make some directories for this....
+    if ONLYUNPROCESSED:
+        # Get the present frame numbers
+        present_frame_numbers = get_present_frame_numbers(baseout)
+        # Remove the present frame numbers from the list of all timestamps
+        absent_frame_numbers = np.delete(timestampindexes, present_frame_numbers)
+
+        print("Number of missing frames", len(absent_frame_numbers))
+        # Remove the present frame numbers from the list of all timestamp
+    else:
+        absent_frame_numbers= timestampindexes
     
     args = [
         (i, valid_time_stamps, fnames, valid_NPs, torbit, xorbit, yorbit, zorbit, vxorbit, vyorbit, vzorbit, 
          pericenter_passages_indices, colors, limits, baseout, title)
-        for i in range(1, ntimestamps)
+        for i in absent_frame_numbers
     ]
     # for arg  in args:
         # print("arg",arg)
     
-    # Use multiprocessing to generate frames
-    cpus = int(os.getenv("SLURM_CPUS_PER_TASK", 1))  # Default to 1 if not set
-    print("CPUS", cpus) # should be 10
-    # Use multiprocessing to generate frames
-    with Pool(processes=cpus) as pool:
-        pool.starmap(generate_frame, args)
+    # # Use multiprocessing to generate frames
+    # cpus = int(os.getenv("SLURM_CPUS_PER_TASK", 1))  # Default to 1 if not set
+    # print("CPUS", cpus) # should be 10
+    # # Use multiprocessing to generate frames
+    # with Pool(processes=cpus) as pool:
+    #     pool.starmap(generate_frame, args)
 
 
 if __name__ == "__main__":
