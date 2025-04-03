@@ -19,6 +19,7 @@ dependencies:
   - scipy 
   - pip 
   - pandas 
+  - snakeviz
   - pip:
     - /obs/sferrone/gcs/
     - /obs/sferrone/stream_analysis/
