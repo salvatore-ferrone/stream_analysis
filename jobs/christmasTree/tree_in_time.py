@@ -442,7 +442,10 @@ def main(
         # print("arg",arg)
     
     # Use multiprocessing to generate frames
-    with Pool(processes=10) as pool:
+    cpus = int(os.getenv("SLURM_CPUS_PER_TASK", 1))  # Default to 1 if not set
+    print("CPUS", cpus) # should be 10
+    # Use multiprocessing to generate frames
+    with Pool(processes=cpus) as pool:
         pool.starmap(generate_frame, args)
 
 
@@ -468,12 +471,6 @@ if __name__ == "__main__":
     RADIUS = int(np.floor(1000*RADIUS_GRID[RADIUS_INDEX]))
     print("Radius", RADIUS)
 
-    fname= get_streamSnapShotsFileName(GCname, NPs[0], MWpotential, internal_dynamics, "monte-carlo-009", MASS, RADIUS, mytype='physical')
-    print("fname",fname)
-    print("file exists", os.path.exists(fname))
-    fname = get_streamSnapShotsFileName(GCname, NPs[0], MWpotential, internal_dynamics, "monte-carlo-009", MASS_INDEX, RADIUS_INDEX, mytype='index')
-    print("fname",fname)
-    print("file exists", os.path.exists(fname))
     # Call the main function with the specified parameters
     main(MASS=MASS, RADIUS=RADIUS)
 
