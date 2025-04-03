@@ -6,7 +6,7 @@
 #SBATCH --time=29
 #SBATCH --array=[0-24]
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=10
 
 
 srun python tree_in_time.py $SLURM_ARRAY_TASK_ID
