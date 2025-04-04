@@ -5,7 +5,7 @@ It will color coat the tree according to when pericenter passages
 it will display the 1d profile of the tree beneath it for each each group
 
 """
-
+import datetime
 import stream_analysis as sa
 import gcs 
 import tstrippy
@@ -454,19 +454,19 @@ def main(
     
     # Use multiprocessing to generate frames
     ntimestamps = len(valid_time_stamps)
-    timestampindexes= np.arange(ntimestamps)
+    timestampindexes= np.arange(1,ntimestamps)
     fignamebase = "{:s}-StreamSnapShots-{:s}_mass_{:s}_radius_{:s}".format(GCname, montecarlokey, str(MASS).zfill(3), str(RADIUS).zfill(3))
     # make some directories for this....
     if ONLYUNPROCESSED:
         # Get the present frame numbers
         present_frame_numbers = get_present_frame_numbers(baseout)
         # Remove the present frame numbers from the list of all timestamps
-        absent_frame_numbers = np.delete(timestampindexes, present_frame_numbers)
+        absent_frame_numbers = np.setdiff1d(timestampindexes, present_frame_numbers)
 
         print("Number of missing frames", len(absent_frame_numbers))
         # Remove the present frame numbers from the list of all timestamp
     else:
-        absent_frame_numbers= timestampindexes
+        absent_frame_numbers = timestampindexes
     
     args = [
         (i, valid_time_stamps, fnames, valid_NPs, torbit, xorbit, yorbit, zorbit, vxorbit, vyorbit, vzorbit, 
@@ -476,12 +476,17 @@ def main(
     # for arg  in args:
         # print("arg",arg)
     
+    # Use multiprocessing to generate frames
+    cpus = int(os.getenv("SLURM_CPUS_PER_TASK", 1))  # Default to 1 if not set
+    print("CPUS", cpus) # should be 10
     # # Use multiprocessing to generate frames
-    # cpus = int(os.getenv("SLURM_CPUS_PER_TASK", 1))  # Default to 1 if not set
-    # print("CPUS", cpus) # should be 10
-    # # Use multiprocessing to generate frames
-    # with Pool(processes=cpus) as pool:
-    #     pool.starmap(generate_frame, args)
+    starttime=datetime.datetime.now()
+    with Pool(processes=cpus) as pool:
+        pool.starmap(generate_frame, args)
+    endtime=datetime.datetime.now()
+    print("Time taken to generate frames", endtime-starttime)
+    # # Generate frames in parallel
+    
 
 
 if __name__ == "__main__":
