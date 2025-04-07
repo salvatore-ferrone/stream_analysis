@@ -247,7 +247,7 @@ def main(dataparams,hyperparams):
     tau_centers, counts=initialize_2D_counts(tau_edges,len(time_stamps))
 
     
-    END_FRAMES = 30
+    END_FRAMES = len(time_stamps)
 
     pool = mp.Pool(processes=ncpu)
     # do this in parallel because its slow
@@ -277,6 +277,7 @@ def main(dataparams,hyperparams):
     ATTRS['ndyn'] = ndyn
     ATTRS['internal_dynamics'] = internal_dynamics
     ATTRS["computation_time"] = str(comp_time)
+    ATTRS["ncpu"] = ncpu
 
     # create the output file and save it! 
     with h5py.File(outfname, 'w') as f:
@@ -287,8 +288,8 @@ def main(dataparams,hyperparams):
         f.create_dataset('time_stamps', data=time_stamps)
         f.create_dataset('tau_centers', data=tau_centers)
         f.create_dataset('counts', data=counts)
-        f.create_dataset('fnames', data=fnames)
-        f.create_dataset("NPs", data=NPs)
+        f.create_dataset('inputdata/fnames', data=fnames)
+        f.create_dataset("inputdata/NPs", data=NPs)
 
     print("done with {:s}".format(outfname))
     # clean up
