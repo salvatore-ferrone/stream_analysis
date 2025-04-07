@@ -1,5 +1,5 @@
 """
-This module with make the frames for the Christmas tree animation.
+This module will make the frames for the Christmas tree animation.
 It will color coat the tree according to when pericenter passages
 
 it will display the 1d profile of the tree beneath it for each each group
