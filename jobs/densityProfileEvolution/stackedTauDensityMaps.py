@@ -299,17 +299,6 @@ def main(dataparams,hyperparams):
     del fnames
     del NPs
     del hostorbit   
-    del my_phase_space
-    del tesc
-    del phase_space
-    del snapshottime
-    del TORB
-    del XORB
-    del YORB
-    del ZORB
-    del indexes
-    del tau
-    del tau_hist
     del pool
     del results
     del output
