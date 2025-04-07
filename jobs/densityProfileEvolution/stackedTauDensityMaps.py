@@ -230,7 +230,6 @@ def main(dataparams,hyperparams):
 
     # see if the output is already made:
     outfname=taudensity_fname(GCname, NP, MWpotential, internal_dynamics, montecarlokey, MASS, RADIUS)
-
     if os.path.exists(outfname):
         print(outfname, "already exists. \n Delete if you want to recompute.")
         return
@@ -238,20 +237,22 @@ def main(dataparams,hyperparams):
     # extract the time stamps 
     with h5py.File(fnames[0],"r") as myfile:
         time_stamps=myfile['time_stamps'][:]
+    
+    # extract the host orbit 
+    hostorbit       =   gcs.extractors.GCOrbits.extract_whole_orbit(gcs.path_handler.GC_orbits(MWpotential=MWpotential,GCname=GCname),montecarlokey=montecarlokey)
+    
     # initialize the output arrays
     tdynamical=median_dynamical_time(hostorbit)
     tau_edges=initialize_tau_edges(NP,tdynamical,ndyn)
     tau_centers, counts=initialize_2D_counts(tau_edges,len(time_stamps))
 
-    # extract the host orbit 
-    hostorbit       =   gcs.extractors.GCOrbits.extract_whole_orbit(gcs.path_handler.GC_orbits(MWpotential=MWpotential,GCname=GCname),montecarlokey=montecarlokey)
     
-
+    END_FRAMES = 30
 
     pool = mp.Pool(processes=ncpu)
     # do this in parallel because its slow
     start_time = datetime.datetime.now()
-    results = [pool.apply_async(loop_extract_density_profile, args=(i, time_stamps, fnames, NPs, hostorbit, ndyn, tau_edges))for i in range(start_index,len(time_stamps))]
+    results = [pool.apply_async(loop_extract_density_profile, args=(i, time_stamps, fnames, NPs, hostorbit, ndyn, tau_edges))for i in range(start_index,END_FRAMES)]
     end_time = datetime.datetime.now()
     comp_time = end_time - start_time
 
@@ -289,6 +290,36 @@ def main(dataparams,hyperparams):
         f.create_dataset('fnames', data=fnames)
         f.create_dataset("NPs", data=NPs)
 
+    print("done with {:s}".format(outfname))
+    # clean up
+    del counts
+    del tau_centers
+    del tau_edges
+    del time_stamps
+    del fnames
+    del NPs
+    del hostorbit   
+    del my_phase_space
+    del tesc
+    del phase_space
+    del snapshottime
+    del TORB
+    del XORB
+    del YORB
+    del ZORB
+    del indexes
+    del tau
+    del tau_hist
+    del pool
+    del results
+    del output
+    del start_time
+    del end_time
+    del comp_time
+    del myfile
+
+
+    return None
 
 
 
@@ -305,7 +336,7 @@ if __name__=="__main__":
 
     
     # hyper params
-    ndyn,ncpu,start_index= 10,10,10
+    ndyn,ncpu,start_index= 3,10,10
 
     myinput=int(sys.argv[1])
     nmass = 5
