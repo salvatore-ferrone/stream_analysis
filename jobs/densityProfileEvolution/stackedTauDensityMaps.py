@@ -1,13 +1,9 @@
 """
-
 This script extracts the stream and makes the 1D density maps in time (which is a faster computation)
 It projects it on to the orbit. 
 It follows the evolution of the stream density in time.
 It uses multiprocessing to speed up the computation.
-
 It has to open many different files since I have them spaced apart in different data files.
-
-
 """
 
 import gcs 
