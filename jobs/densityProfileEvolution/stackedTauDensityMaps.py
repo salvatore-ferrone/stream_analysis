@@ -253,12 +253,12 @@ def main(dataparams,hyperparams):
     # do this in parallel because its slow
     start_time = datetime.datetime.now()
     results = [pool.apply_async(loop_extract_density_profile, args=(i, time_stamps, fnames, NPs, hostorbit, ndyn, tau_edges))for i in range(start_index,END_FRAMES)]
-    end_time = datetime.datetime.now()
-    comp_time = end_time - start_time
 
     output = [p.get() for p in results]
     pool.close()
     pool.join()
+    end_time = datetime.datetime.now()
+    comp_time = end_time - start_time
     # stack the results
     for i in range(len(output)):
         counts[i+start_index] = output[i]
