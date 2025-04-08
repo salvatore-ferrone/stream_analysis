@@ -119,16 +119,16 @@ def doplot(FIGSTUFF,DATASTUFF,PROPERTIESSTUFF,x_text_shift=-0.1,y_text_shift=0.0
     print("len(tau_foob)",tau_foob.shape)
     print("len(suspects)",len(suspects))
     for i in range(len(suspect_x)):
-        axis1.scatter(suspect_x[i], suspect_x[i], marker="o", s=75,edgecolor="red",facecolors='none')
-        axis1.text(x=suspect_x[i]+x_text_shift,y=suspect_x[i]+y_text_shift,s=str(i)+" "+suspects[i],**TEXT)
+        axis1.scatter(suspect_x[i], suspect_y[i], marker="o", s=75,edgecolor="red",facecolors='none')
+        axis1.text(x=suspect_x[i]+x_text_shift,y=suspect_y[i]+y_text_shift,s=str(i)+" "+suspects[i],**TEXT)
     
     im2=axis2.pcolorfast(time_stamps,tau_centers,tau_counts[1:,1:].T,**taupcolor)
     cbartau=fig.colorbar(im2,cax=caxisTau,label="Counts")
     axis2.plot(time_stamps,tau_left,'k--')
     axis2.plot(time_stamps,tau_right,'k--')
     for i in range(len(suspect_x)):
-            axis2.scatter(suspect_x[i],suspect_y[i], marker="o", s=75,edgecolor="red",facecolors='none')
-            axis2.text(x=suspect_x[i]+x_text_shift,y=suspect_y[i]+y_text_shift,s=str(i),**TEXT)
+        axis2.scatter(suspect_x[i],suspect_y[i], marker="o", s=75,edgecolor="red",facecolors='none')
+        axis2.text(x=suspect_x[i]+x_text_shift,y=suspect_y[i]+y_text_shift,s=str(i),**TEXT)
     
     axis1.set(**AXIS1)
     axis2.set(**AXIS2)
@@ -277,7 +277,8 @@ if __name__=="__main__":
     threshold=10
     NKEEPS = 8
 
-    plotdir="/home/sferrone/plots/stream_analysis/identify_suspects/"
+    plotdir="/scratch2/sferrone/plots/stream_analysis/identify_suspects/"
+    os.makedirs(plotdir,exist_ok=True)
     fname = plotdir+GCname+"_"+MWpotential+"_"+montecarlokey+"_suspects.png"
     dataparams = (internal_dynamics,montecarlokey,NP,MWpotential,GCname,fnameTau)
     hyperparams = (threshold,NKEEPS,fname)
