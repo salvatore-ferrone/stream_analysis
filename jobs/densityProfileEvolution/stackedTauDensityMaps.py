@@ -15,6 +15,8 @@ import multiprocessing as mp
 import datetime
 import sys
 
+GLOBAL_START_TIME = datetime.datetime.now()
+PROGRESS_BAR = 50 # every iterations
 # MASS GRID AND RADIUS GRID
 SIZE_GRID = 5
 N_MASS_SAMPLING = SIZE_GRID
@@ -193,6 +195,11 @@ def initialize_2D_counts(tau_edges,n_time_stamps):
 
 
 def loop_extract_density_profile(ii, time_stamps, fnames, NPs, hostorbit, ndyn, tau_edges):
+        if ii % PROGRESS_BAR == 0:
+            currenttime=datetime.datetime.now()
+            dt=currenttime - GLOBAL_START_TIME
+            dt=dt.total_seconds()
+            print(dt, "iteration", ii)
         # unpack the host orbit
         tHost,xHost,yHost,zHost,vxHost,vyHost,vzHost = hostorbit
         # grab the current time 
@@ -217,14 +224,27 @@ def loop_extract_density_profile(ii, time_stamps, fnames, NPs, hostorbit, ndyn, 
 
 
 def main(dataparams,hyperparams):
-    GCname,MWpotential,NPs,internal_dynamics,montecarloindex,MASS,RADIUS,fnametype = dataparams
+    """
+    Computes the 1D density maps of the stream projected onto the orbit for each snapshot
+    saves the output in a hdf5 file
 
+    Parameters
+    ----------
+    dataparams : tuple
+        (GCname, MWpotential, NPs, internal_dynamics, montecarlokey, MASS, RADIUS)
+    hyperparams : tuple
+        (ndyn, ncpu, start_index)
+    """
+
+    # unpack the data parameters
+    GCname,MWpotential,NPs,internal_dynamics,montecarloindex,MASS,RADIUS,fnametype = dataparams
+    # unpack the hyperparameters
     ndyn,ncpu,start_index=hyperparams
     montecarlokey   =   "monte-carlo-{:s}".format(str(montecarloindex).zfill(3))
-
     
     # extract the valid fnames 
-    fnames,NPs=grab_valid_fnames(GCname, NPs, MWpotential, internal_dynamics, montecarlokey, MASS, RADIUS, mytype=fnametype)
+    fnames,NPs      =   grab_valid_fnames(GCname, NPs, MWpotential, internal_dynamics, montecarlokey, MASS, RADIUS, mytype=fnametype)
+    
     # get the total particle number 
     NP=NPs.sum()
 
@@ -245,20 +265,23 @@ def main(dataparams,hyperparams):
     tdynamical          =   median_dynamical_time(hostorbit)
     tau_edges           =   initialize_tau_edges(NP,tdynamical,ndyn)
     tau_centers, counts =   initialize_2D_counts(tau_edges,len(time_stamps))
-
-    
+    currenttime=datetime.datetime.now()
+    dt=currenttime - GLOBAL_START_TIME
+    dt=dt.total_seconds()
+    print(dt, "extraction and initialization of the arrays done")
     END_FRAMES = len(time_stamps)
-
-    pool = mp.Pool(processes=ncpu)
-    # do this in parallel because its slow
+    END_FRAMES = 40
     start_time = datetime.datetime.now()
+    pool = mp.Pool(processes=ncpu)
     results = [pool.apply_async(loop_extract_density_profile, args=(i, time_stamps, fnames, NPs, hostorbit, ndyn, tau_edges))for i in range(start_index,END_FRAMES)]
-
     output = [p.get() for p in results]
     pool.close()
     pool.join()
     end_time = datetime.datetime.now()
     comp_time = end_time - start_time
+    currenttime=datetime.datetime.now()
+    dt=currenttime - GLOBAL_START_TIME
+    print(dt, "computation done")
     # stack the results
     for i in range(len(output)):
         counts[i+start_index] = output[i]
@@ -291,7 +314,11 @@ def main(dataparams,hyperparams):
         f.create_dataset('inputdata/fnames', data=fnames)
         f.create_dataset("inputdata/NPs", data=NPs)
 
-    print("done with {:s}".format(outfname))
+    currenttime=datetime.datetime.now()
+    dt=currenttime - GLOBAL_START_TIME
+    dt=dt.total_seconds()
+    print(dt, "saving done")
+    print("{:s}".format(outfname))
     # clean up
     del counts
     del tau_centers
@@ -308,6 +335,10 @@ def main(dataparams,hyperparams):
     del comp_time
     del myfile
 
+    currenttime=datetime.datetime.now()
+    dt=currenttime - GLOBAL_START_TIME
+    dt=dt.total_seconds()
+    print(dt, "clean up done")
 
     return None
 
