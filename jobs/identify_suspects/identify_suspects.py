@@ -281,7 +281,14 @@ if __name__=="__main__":
     os.makedirs(plotdir,exist_ok=True)
     fname = plotdir+GCname+"_"+MWpotential+"_"+montecarlokey+"_suspects.png"
     dataparams = (internal_dynamics,montecarlokey,NP,MWpotential,GCname,fnameTau)
-    hyperparams = (threshold,NKEEPS,fname)
-    main(dataparams,hyperparams)
+
+    pathTau     =   ph._tauDensityMaps(GCname=GCname,MWpotential=MWpotential,NP=NP,internal_dynamics=internal_dynamics)
+    # list the files in the directory
+    files = os.listdir(pathTau)
+    for fname in files:
+        outfname = plotdir+"suspects-"+fname.split(".hdf5")[0]+".png"
+        dataparams = (internal_dynamics,montecarlokey,NP,MWpotential,GCname,fname)
+        hyperparams = (threshold,NKEEPS,outfname)
+        main(dataparams,hyperparams)
 
 
