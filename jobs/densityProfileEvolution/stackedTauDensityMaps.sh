@@ -12,4 +12,4 @@
 ### I'm trying to dynamically allocate the number of CPUs to the number of tasks based on the node 
 
 
-srun python stackedTauDensityMaps.py 1
+srun python stackedTauDensityMaps.py 3
