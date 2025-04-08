@@ -265,12 +265,13 @@ def main(dataparams,hyperparams):
     tdynamical          =   median_dynamical_time(hostorbit)
     tau_edges           =   initialize_tau_edges(NP,tdynamical,ndyn)
     tau_centers, counts =   initialize_2D_counts(tau_edges,len(time_stamps))
+    
+    # start multiprocessing
     currenttime=datetime.datetime.now()
     dt=currenttime - GLOBAL_START_TIME
     dt=dt.total_seconds()
     print(dt, "extraction and initialization of the arrays done")
     END_FRAMES = len(time_stamps)
-    END_FRAMES = 40
     start_time = datetime.datetime.now()
     pool = mp.Pool(processes=ncpu)
     results = [pool.apply_async(loop_extract_density_profile, args=(i, time_stamps, fnames, NPs, hostorbit, ndyn, tau_edges))for i in range(start_index,END_FRAMES)]
