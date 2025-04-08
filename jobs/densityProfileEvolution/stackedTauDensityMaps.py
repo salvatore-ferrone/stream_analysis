@@ -239,12 +239,12 @@ def main(dataparams,hyperparams):
         time_stamps=myfile['time_stamps'][:]
     
     # extract the host orbit 
-    hostorbit       =   gcs.extractors.GCOrbits.extract_whole_orbit(gcs.path_handler.GC_orbits(MWpotential=MWpotential,GCname=GCname),montecarlokey=montecarlokey)
+    hostorbit           =   gcs.extractors.GCOrbits.extract_whole_orbit(gcs.path_handler.GC_orbits(MWpotential=MWpotential,GCname=GCname),montecarlokey=montecarlokey)
     
     # initialize the output arrays
-    tdynamical=median_dynamical_time(hostorbit)
-    tau_edges=initialize_tau_edges(NP,tdynamical,ndyn)
-    tau_centers, counts=initialize_2D_counts(tau_edges,len(time_stamps))
+    tdynamical          =   median_dynamical_time(hostorbit)
+    tau_edges           =   initialize_tau_edges(NP,tdynamical,ndyn)
+    tau_centers, counts =   initialize_2D_counts(tau_edges,len(time_stamps))
 
     
     END_FRAMES = len(time_stamps)
@@ -319,7 +319,8 @@ if __name__=="__main__":
     # dataparams
     GCname              =   "Pal5"
     MWpotential         =   "pouliasis2017pii-GCNBody"
-    NPs                 =   np.arange(3317,3347+1,1)
+    # NPs                 =   np.arange(3317,3347+1,1)
+    NPs                 =   [103292]
     internal_dynamics   =   "isotropic-plummer_mass_radius_grid"
     montecarloindex     =   9
     fnametype           =   'physical'
