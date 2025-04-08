@@ -20,27 +20,30 @@ import matplotlib as mpl
 import pandas as pd
 from scipy.ndimage import maximum_filter, label, find_objects
 from scipy import ndimage
+import os 
 
 
 
 
 def main(dataparams,hyperparams):
-    internal_dynamics,montecarlokey,NP,MWpotential,GCname = dataparams
+    internal_dynamics,montecarlokey,NP,MWpotential,GCname,fnameTau = dataparams
     threshold,NKEEPS,fname = hyperparams
 
     fileFOOB = ph.ForceOnOrbit(GCname,MWpotential,montecarlokey)
-    fileTau  = ph.tauDensityMaps(GCname=GCname,MWpotential=MWpotential,montecarlokey=montecarlokey,NP=NP,internal_dynamics=internal_dynamics)
+    pathTau     =   ph._tauDensityMaps(GCname=GCname,MWpotential=MWpotential,NP=NP,internal_dynamics=internal_dynamics)
+    fileTau     =   os.path.join(pathTau,fnameTau)
 
 
-    time_foob,tau_foob,mag_total,Perturbers,GCmags = sa.identify_suspects.extract_FOOB(fileFOOB)
-    tau_centers,time_stamps,tau_counts = sa.identify_suspects.extract_tau_stream_density(fileTau)
+
+    time_foob,tau_foob,mag_total,Perturbers,GCmags = extract_FOOB(fileFOOB)
+    tau_centers,time_stamps,tau_counts = extract_tau_stream_density(fileTau)
 
     # get the envlopes
-    leftindexes,rightindexes=sa.streamLength.get_envelop_indexes(tau_counts,threshold)
-    tau_left,tau_right=sa.streamLength.tau_envelopes(tau_centers,leftindexes,rightindexes)
+    leftindexes,rightindexes=get_envelop_indexes(tau_counts,threshold)
+    tau_left,tau_right=tau_envelopes(tau_centers,leftindexes,rightindexes)
 
 
-    mask=sa.identify_suspects.build_mask_on_FOOB_from_density((time_stamps,tau_left,tau_right),(time_foob,tau_foob,mag_total))
+    mask=build_mask_on_FOOB_from_density((time_stamps,tau_left,tau_right),(time_foob,tau_foob,mag_total))
     masked_data = mag_total[mask]
 
     kernel = np.ones(4) / 4  # 5-point moving average
@@ -48,21 +51,22 @@ def main(dataparams,hyperparams):
     convolved_mask = np.ma.masked_where(~mask,convolved_data)
 
 
-    coordinates = sa.identify_suspects.get_peaks(convolved_mask)
+    coordinates = get_peaks(convolved_mask)
 
-    time,tau,mag,convolved,suspects=sa.identify_suspects.build_output_data(coordinates,tau_foob,time_foob,mag_total,convolved_data,GCmags,Perturbers,NKEEPS)
+    time,tau,mag,convolved,suspects=build_output_data(coordinates,tau_foob,time_foob,mag_total,convolved_data,GCmags,Perturbers,NKEEPS)
+    suspect_x,suspect_y= time,tau
     outfilename=ph.PerturberSuspects(GCname,MWpotential,montecarlokey)
     dframe =pd.DataFrame({'time':time,'tau':tau,'mag':mag,'convolved':convolved,'suspects':suspects})
     dframe.to_csv(outfilename,index=False)
     print("Saved to ",outfilename)
 
 
-    fig,axis1,axis2,caxisFOOB,caxisTau = sa.identify_suspects.getfigure()
-    foobNORM,tauNORM,AXIS1,AXIS2,TEXT = sa.identify_suspects.properties(time_foob,tau_left,tau_right,NP,montecarlokey)
+    fig,axis1,axis2,caxisFOOB,caxisTau = getfigure()
+    foobNORM,tauNORM,AXIS1,AXIS2,TEXT = properties(time_foob,tau_left,tau_right,NP,montecarlokey)
     FIGSTUFF=[fig,axis1,axis2,caxisFOOB,caxisTau]
-    DATASTUFF=time_foob,tau_foob,convolved_mask,suspects,coordinates,tau_counts,tau_centers,time_stamps,tau_left,tau_right
+    DATASTUFF=time_foob,tau_foob,convolved_mask,suspect_x,suspect_y,suspects,tau_counts,tau_centers,time_stamps,tau_left,tau_right
     PROPERTIESSTUFF=foobNORM,tauNORM,AXIS1,AXIS2,TEXT
-    sa.identify_suspects.doplot(FIGSTUFF,DATASTUFF,PROPERTIESSTUFF)
+    doplot(FIGSTUFF,DATASTUFF,PROPERTIESSTUFF)
     fig.savefig(fname,dpi=300) 
     print("Saved to ",fname)
     plt.close(fig)
@@ -93,36 +97,38 @@ def getfigure():
     return fig,axis1,axis2,caxisFOOB,caxisTau
 
 def properties(time_foob,tau_left,tau_right,NP,montecarlokey):
-    foobpcolor    =   {"cmap":"gray","norm":mpl.colors.Normalize(vmin=0,vmax=50)}
+    foobpcolor    =   {"cmap":"gray","norm":mpl.colors.Normalize(vmin=0,vmax=.05)}
     taupcolor     =   {"cmap":"inferno","norm":mpl.colors.LogNorm(vmin=1,vmax=NP)}
     ylimits     =   np.max([np.abs(tau_left),np.abs(tau_right)])
     AXIS1       =   {"xlim":[time_foob[0],0],"ylim":[-ylimits,ylimits],"ylabel":"$\\tau$ [s kpc / km]","xlabel":"","title":montecarlokey}
     AXIS2       =   {"xlim":[time_foob[0],0],"ylim":[-ylimits,ylimits],"ylabel":"$\\tau$ [s kpc / km]","xlabel":"$t$ [s kpc / km]",}
-    TEXT        =   {"color":'red',"ha":'left',"va":'top'}
+    TEXT        =   {"color":'red',"ha":'left',"va":'center'}
     
     return foobpcolor,taupcolor,AXIS1,AXIS2,TEXT
 
 def doplot(FIGSTUFF,DATASTUFF,PROPERTIESSTUFF,x_text_shift=-0.1,y_text_shift=0.005):
     fig,axis1,axis2,caxisFOOB,caxisTau=FIGSTUFF
     foobpcolor,taupcolor,AXIS1,AXIS2,TEXT=PROPERTIESSTUFF
-    time_foob,tau_foob,convolved_mask,suspects,coordinates,tau_counts,tau_centers,time_stamps,tau_left,tau_right=DATASTUFF
+    time_foob,tau_foob,convolved_mask,suspect_x,suspect_y,suspects,tau_counts,tau_centers,time_stamps,tau_left,tau_right=DATASTUFF
     
     
-    im=axis1.pcolorfast(time_foob,tau_foob,convolved_mask.T,**foobpcolor)
+    im=axis1.pcolorfast(time_foob,tau_foob,convolved_mask[1:,1:].T,**foobpcolor)
     cbarfoob=fig.colorbar(im,cax=caxisFOOB,label="Force on Orbit")
-    print("LEN",len(coordinates))
+
     print("len(time_foob)",time_foob.shape)
     print("len(tau_foob)",tau_foob.shape)
     print("len(suspects)",len(suspects))
-    for i in range(len(coordinates)):
-        x,y=coordinates[i]
-        axis1.scatter(time_foob[x], tau_foob[y], marker="o", s=75,edgecolor="red",facecolors='none')
-        axis1.text(x=time_foob[x]+x_text_shift,y=tau_foob[y]+y_text_shift,s=str(i)+" "+suspects[i],**TEXT)
+    for i in range(len(suspect_x)):
+        axis1.scatter(suspect_x[i], suspect_x[i], marker="o", s=75,edgecolor="red",facecolors='none')
+        axis1.text(x=suspect_x[i]+x_text_shift,y=suspect_x[i]+y_text_shift,s=str(i)+" "+suspects[i],**TEXT)
     
-    im2=axis2.pcolorfast(time_stamps,tau_centers,tau_counts.T,**taupcolor)
+    im2=axis2.pcolorfast(time_stamps,tau_centers,tau_counts[1:,1:].T,**taupcolor)
     cbartau=fig.colorbar(im2,cax=caxisTau,label="Counts")
-    axis2.plot(time_stamps,tau_left,'r--')
-    axis2.plot(time_stamps,tau_right,'r--')
+    axis2.plot(time_stamps,tau_left,'k--')
+    axis2.plot(time_stamps,tau_right,'k--')
+    for i in range(len(suspect_x)):
+            axis2.scatter(suspect_x[i],suspect_y[i], marker="o", s=75,edgecolor="red",facecolors='none')
+            axis2.text(x=suspect_x[i]+x_text_shift,y=suspect_y+y_text_shift,s=str(i),**TEXT)
     
     axis1.set(**AXIS1)
     axis2.set(**AXIS2)
@@ -170,7 +176,6 @@ def get_peaks(grid):
 
 
 # EXTACT DATA
-
 def extract_FOOB(fileFOOB):
     with h5py.File(fileFOOB,'r') as FOOB:
         time_foob       =       np.array(FOOB['time'][:],dtype=float)
@@ -185,24 +190,97 @@ def extract_tau_stream_density(fileTau):
     with h5py.File(fileTau,'r') as TauDensity:
         time_stamps=TauDensity['time_stamps'][:]
         tau_centers=TauDensity['tau_centers'][:]
-        tau_counts=TauDensity['tau_counts'][:]
+        tau_counts=TauDensity['counts'][:]
     return tau_centers,time_stamps,tau_counts
 
 
+def get_envelop_indexes(density_array, density_min):
+    """
+    Finds the limits of a stream based on a density array and a minimum density threshold.
+
+    The first axis of the density array is the simulation time
+    The second axis the array is the 1D profile of the stream on the orbit 
+
+    Parameters:
+    - density_array (ndarray): A 2D array representing the density values.
+    - density_min (float): The minimum density threshold.
+
+    Returns:
+    - index_from_left (ndarray): An array containing the indices of the first elements that surpass the density threshold when scanning from the left for each row of the density array.
+    - index_from_right (ndarray): An array containing the indices of the first elements that surpass the density threshold when scanning from the right for each row of the density array.
+    """
+    
+    Nstamps, _ =density_array.shape
+    
+    index_from_left, index_from_right = np.zeros(Nstamps), np.zeros(Nstamps)
+    for i in range(Nstamps):
+        array = density_array[i]
+        # Find the first element that surpasses THRESHOLD when scanning from the left
+        index_from_left[i] = np.argmax(array > density_min)
+        # Find the first element that surpasses THRESHOLD when scanning from the right
+        index_from_right[i] = len(array) - np.argmax(array[::-1] > density_min) - 1
+
+    index_from_left = index_from_left.astype(int)
+    index_from_right = index_from_right.astype(int)
+    return index_from_left, index_from_right
+
+
+def tau_envelopes(tau, index_from_left, index_from_right):
+    """
+    we want \tau(t), tau as a function of time...
+    """
+    tau_left = [tau[xx] for xx in index_from_left]
+    tau_right = [tau[xx] for xx in index_from_right]
+    return np.array(tau_left), np.array(tau_right)
+
+
+
+def sig_clip(quantity, Nstdflag, Nstdclip, sides = 100, trial_max = 10000):
+
+    # some signal processing in case there are problems with the end points
+    std,mean    = np.std(quantity),np.mean(quantity)
+    flag,clip   = mean+Nstdflag*std,mean+Nstdclip*std
+    abs_diff = np.abs(quantity-mean)
+    bad_dexes = np.where(abs_diff>flag)[0]
+    sig_clipped=quantity.copy()
+    cc = 0 
+    conditions = cc < trial_max and len(bad_dexes)>0
+    while conditions:
+        # replace the bad dexes with the average of the two neighbors
+        for bd in bad_dexes:
+            uplim,lowlim=bd+sides,bd-sides
+            # make sure the limits are within the array
+            if uplim>len(sig_clipped):
+                uplim=len(sig_clipped)
+            if lowlim<0:
+                lowlim=0
+            sig_clipped[bd] = np.mean(sig_clipped[bd-sides:bd+sides-1])
+            if sig_clipped[bd]<clip:
+                bad_dexes = np.delete(bad_dexes,np.where(bad_dexes==bd))
+        cc+=1
+        
+        if cc == trial_max:
+            print('Max number of iterations reached')
+        conditions = cc < trial_max and len(bad_dexes)>0
+    return sig_clipped
+
 
 if __name__=="__main__":
-    internal_dynamics   =   "isotropic-plummer"
-    montecarlokey       =   "monte-carlo-003"
-    NP                  =   int(1e5)
-    MWpotential         =   "pouliasis2017pii-GCNBody"
-    GCname              =   "Pal5"    
+    GCname="Pal5"
+    MWpotential="pouliasis2017pii-GCNBody"
+    montecarlokey="monte-carlo-009"
+    NP=int(103292)
+    internal_dynamics = "isotropic-plummer_mass_radius_grid"
+    fnameTau       =   "Pal5-tauDensity-monte-carlo-009_mass_10000_radius_029.hdf5"
     
     # hyper params
-    threshold=50
-    NKEEPS = 5
+    threshold=10
+    NKEEPS = 8
+
     plotdir="/home/sferrone/plots/stream_analysis/identify_suspects/"
     fname = plotdir+GCname+"_"+MWpotential+"_"+montecarlokey+"_suspects.png"
-
-    dataparams = (internal_dynamics,montecarlokey,NP,MWpotential,GCname)
+    dataparams = (internal_dynamics,montecarlokey,NP,MWpotential,GCname,fnameTau)
     hyperparams = (threshold,NKEEPS,fname)
     main(dataparams,hyperparams)
+
+
