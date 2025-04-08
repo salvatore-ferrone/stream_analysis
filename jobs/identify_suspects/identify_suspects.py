@@ -128,7 +128,7 @@ def doplot(FIGSTUFF,DATASTUFF,PROPERTIESSTUFF,x_text_shift=-0.1,y_text_shift=0.0
     axis2.plot(time_stamps,tau_right,'k--')
     for i in range(len(suspect_x)):
             axis2.scatter(suspect_x[i],suspect_y[i], marker="o", s=75,edgecolor="red",facecolors='none')
-            axis2.text(x=suspect_x[i]+x_text_shift,y=suspect_y+y_text_shift,s=str(i),**TEXT)
+            axis2.text(x=suspect_x[i]+x_text_shift,y=suspect_y[i]+y_text_shift,s=str(i),**TEXT)
     
     axis1.set(**AXIS1)
     axis2.set(**AXIS2)
