@@ -5,3 +5,4 @@ from . import forceOnOrbit
 # from . import streamLength
 # from . import identify_suspects
 from . import parametric_stream_fitting
+from . import velocity_dispersion
