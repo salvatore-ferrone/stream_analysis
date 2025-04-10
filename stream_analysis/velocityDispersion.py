@@ -2,7 +2,7 @@
 A module for measure the velocity dispersion along the stream. Here is the typical usage:
 
 
-    ```python
+
     import stream_analysis as sa
 
     # put the stream in tail coordinates 
@@ -29,7 +29,7 @@ A module for measure the velocity dispersion along the stream. Here is the typic
     eigenvalues_uncertainty = np.power(boot_strap_eigenvalues.std(axis=1),1/2)    
 
 
-    ```
+
 """
 import numpy as np 
 

@@ -4,7 +4,8 @@ A module for comparing the density profiles of the control group to the group wi
 
 
 """
-import stream_analysis as sa 
+from . import plotters
+
 import numpy as np 
 from scipy.optimize import fsolve
 ####### COMPUTATIONS
@@ -12,20 +13,20 @@ def log_difference_detection(profiles,signal_to_noise_ratio,sigma):
     """Return the noise filtered profiles, noise level and the detection candidates.
     """
     CENTERS,CONTROL,COMPARE         =   profiles
-    # noiselevel                      =   sa.density_profile_gap_detections.noise_log_counts(CONTROL)
+    # noiselevel                      =   density_profile_gap_detections.noise_log_counts(CONTROL)
     
-    N_threshold     =   int(np.ceil(fsolve(sa.density_profile_gap_detections.counts_threshold_given_signal_to_noise_ratio,10,args=(signal_to_noise_ratio))))
+    N_threshold     =   int(np.ceil(fsolve(counts_threshold_given_signal_to_noise_ratio,10,args=(signal_to_noise_ratio))))
     print(f"Threshold for counts is {N_threshold}")
     noiselevel      =    N_threshold*np.ones_like(CONTROL)
     
     # lets do a new noise threshold
     LOGDIFF                         =   np.log10(COMPARE/CONTROL)
     noise_filt                      =   CONTROL > noiselevel
-    centers,control,compare,logdiff =   sa.density_profile_gap_detections.apply_filter(noise_filt,[CENTERS,CONTROL,COMPARE,LOGDIFF])
+    centers,control,compare,logdiff =   apply_filter(noise_filt,[CENTERS,CONTROL,COMPARE,LOGDIFF])
     noise_filtered_profiles         =   centers,control,compare
     ############################
     # zscore filter
-    myz                             =   sa.density_profile_gap_detections.zscores(logdiff)
+    myz                             =   zscores(logdiff)
     candidates                      =   myz < -sigma
     return noise_filtered_profiles,noiselevel,candidates
 
@@ -33,7 +34,7 @@ def apply_box_car_multiple_times(signal,box_length,N_apply):
     outsignal = signal.copy()
     i=0
     while i < N_apply:
-        outsignal = sa.density_profile_gap_detections.median_box_car(outsignal,box_length)
+        outsignal = median_box_car(outsignal,box_length)
         i+=1
     return outsignal
 
@@ -70,8 +71,8 @@ def clean_up_stream_profiles(x,c0,c1,box_length,N_APPlY,do_cross_correlation):
 
 def get_profile(xT,yT,NP,xlims,ylims):
     # prepare the profiles
-    xedges,yedges       =   sa.plotters.binned_density.get_edges(NP,xlims,ylims)
-    XX_2D,_,H_2D        =   sa.plotters.binned_density.get_2D_density(xT,yT,xedges,yedges)   
+    xedges,yedges       =   plotters.binned_density.get_edges(NP,xlims,ylims)
+    XX_2D,_,H_2D        =   plotters.binned_density.get_2D_density(xT,yT,xedges,yedges)   
     counts = H_2D.sum(axis=0)
     centers = XX_2D[0]
     return centers,counts
