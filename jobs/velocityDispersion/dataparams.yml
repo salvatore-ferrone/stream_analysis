@@ -1,6 +1,6 @@
 GCname: "Pal5"
-MWpotential: "pouliasis2017pii-GCNBody"
-internal_dynamics: "isotropic-plummer"
+MWpotential: "pouliasis2017pii-NGC7078"
+internal_dynamics: "isotropic-plummer_mass_radius_grid"
 GCOrbitPotential: "pouliasis2017pii-GCNBody"
-NP: 100000
+NP: 16663
 montecarlovalue: 9
