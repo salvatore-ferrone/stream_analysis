@@ -4,3 +4,4 @@ internal_dynamics: "isotropic-plummer_mass_radius_grid"
 GCOrbitPotential: "pouliasis2017pii-GCNBody"
 NP: 16663
 montecarlovalue: 9
+PerturberName: "NGC7078"
