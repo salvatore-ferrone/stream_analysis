@@ -34,6 +34,10 @@ A module for measure the velocity dispersion along the stream. Here is the typic
 import numpy as np 
 
 def discretize_data(xT,xrange,num_bins):
+    """
+    which particles belong to which bin?
+    bin_centers,bin_indices=discretize_data(xT,xrange,num_bins)
+    """
     bin_edges = np.linspace(xrange[0], xrange[1], num_bins+1)  # Equal-width bins
     bin_indices = np.digitize(xT, bin_edges) - 1  # Assign stars to bins
     bin_centers = 0.5 * (bin_edges[1:] + bin_edges[:-1])
