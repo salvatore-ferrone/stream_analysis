@@ -1,0 +1,28 @@
+sample_data:
+  default_parameters:
+    mass: 1e5
+    radius: 0.01
+    internal_dynamics: "default"
+    GCname: "Pal5"
+    stream_potential: "NFW"
+  parameter_options:
+    mass_options:
+      - 1e4
+      - 1e5
+      - 1e6
+    radius_options:
+      - 0.001
+      - 0.01
+      - 0.1
+    internal_dynamics_options:
+      - "default"
+      - "dynamic1"
+      - "dynamic2"
+    GCname_options:
+      - "Pal5"
+      - "NGC104"
+      - "NGC5139"
+    stream_potential_options:
+      - "NFW"
+      - "Einasto"
+      - "Isothermal"
