@@ -1,0 +1,6 @@
+stream_potential: "pouliasis2017pii-NGC7078"
+GC_potential: "pouliasis2017pii-GCNBody"
+internal_dynamics: "isotropic-plummer_mass_radius_grid"
+NP: 83325
+montecarloindex: 9
+GCname: "Pal5"
