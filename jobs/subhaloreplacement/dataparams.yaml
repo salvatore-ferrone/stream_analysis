@@ -4,3 +4,4 @@ internal_dynamics: "isotropic-plummer_mass_radius_grid"
 NP: 83325
 montecarloindex: 9
 GCname: "Pal5"
+PerturberName: "NGC7078"
