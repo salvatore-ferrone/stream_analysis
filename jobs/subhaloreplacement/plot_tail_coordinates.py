@@ -318,7 +318,7 @@ def main(perturberIndex, hostIndex):
         r"$M_{{Perturber}}={:,d}~M_\odot$".format(PerturberMass),
         r"$R_{{Perturber}}={:.0f}~pc$".format(PerturberRadius),
         r"$M_{{Host}}={:,d}~M_\odot$".format(HostMass),
-        r"$R_{{Host}}={:.0f}~pc$".format(HostRadius)]
+        r"$R_{{Host}}={:.0f}~pc$".format(1000*HostRadius)]
     for i in range(1,len(text)):
         xpos.append(xpos[i-1])
         ypos.append(ypos[i-1]-deltay)
