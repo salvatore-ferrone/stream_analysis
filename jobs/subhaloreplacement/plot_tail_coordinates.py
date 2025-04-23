@@ -18,6 +18,7 @@ import h5py
 import matplotlib as mpl
 from scipy import signal
 import tstrippy
+import sys
 
 # plotting params
 # set the plotting params
@@ -407,7 +408,9 @@ def main(perturberIndex, hostIndex):
 
 
 if __name__ == "__main__":
-    main(0,0)
+    perturber_index = int(sys.argv[1])
+    host_index = int(sys.argv[2])
+    main(perturber_index,host_index)
     
 
 
