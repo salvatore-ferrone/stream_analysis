@@ -39,11 +39,11 @@ paper/*.pdf
 *.swp
 *.swo
 *~
-*.png
 *.mp4
 *.err
 *.out
 
+*/frames/*
 # other versions of the paper
 *main_paola_raw.tex
 *main_salvatore_PDM.tex
