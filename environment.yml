@@ -20,6 +20,7 @@ dependencies:
   - pip 
   - pandas 
   - snakeviz
+  - scienceplots
   - pip:
     - ../gcs/
     - ./
