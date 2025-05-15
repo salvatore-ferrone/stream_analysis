@@ -1,4 +1,4 @@
-\documentclass{aa}
+\documentclass[draft]{aa}
 
 
 % \usepackage[draft]{graphicx}
@@ -63,7 +63,7 @@
     Department of Physics and Astronomy, University of Exeter, Stocker Rd, Exeter EX4 4QL, United Kingdom
   }
       
-  \date{SUBMITTED TO A\&A 27 JAN 2025; Accepted XXX}
+  \date{SUBMITTED TO A\&A XXX; Accepted XXX}
 
 \definecolor{darkgreen}{rgb}{0.0, 0.5, 0.0}
 
@@ -201,7 +201,7 @@
 
     To quantify the impact of globular cluster passages on the density of the Palomar~5 stream, we performed a second set of simulations, which we refer to as the \texttt{reference} simulations in this paper.  These \texttt{reference} simulations use the same 50 sets of initial conditions as the \texttt{full} simulations, the same Galactic potential, but exclude mutual interactions between globular clusters. The approach adopted for this second set of simulations is thus equivalent to that adopted already in \citet{2023A&A...673A..44F}. In Eq.~\ref{eq:GCNBody}, only the gradient of the Galactic potential is considered. In Eq.~\ref{eq:equation_of_motion_particle}, of the second term on the right side of the equation, only the influence of Palomar~5's Plummer sphere on Palomar~5's particles is considered. In other words, the sum iterates over only one globular cluster, the host. We omit all interactions with the other clusters.
 
-\subsection{Mass loss}
+\subsection{Mass loss}\label{sec:mass_loss}
 
 Each of the 100,000 particles that initially populate the cluster undergoes, over time, acceleration due to the Pal~5 potential, whose mass and half-mass radius we assume to be fixed over time, and to the Galactic potential. At each time step, a certain number of particles will therefore acquire sufficient energy to no longer be gravitationally bound to the cluster itself and thus go on to populate the streams, whose mass and spatial extent grow over time. It is important to note that in the approach used:
 
@@ -232,7 +232,7 @@ The characteristics of the streams modeled in this paper may be considered more 
     \begin{figure*}
       \centering
       \includegraphics[width=\linewidth]{decomposition-monte-carlo-009-with-3-gaps-domidpoint-shift.png}
-      \caption{Density maps of Palomar~5's stream in the tail coordinate system. The color scale represents normalized particle counts (total: 100,000). The top panel shows the \texttt{full} simulation with three gaps on the stream's right-hand side. The next three panels depict simulations with identical initial conditions but exclude the gravitational influence of all clusters except those forming a given gap. The \texttt{Reference} simulation omits the influence from other globular clusters. The bottom panel compares Palomar~5's observed stream length to the \texttt{Reference} simulation, using the same Monte Carlo realization as Fig.~\ref{fig:stream_on_sky} and \texttt{Sampling~009} of Fig.~\ref{fig:gallery2}.}
+      \caption{Density maps of Palomar~5's stream in the tail coordinate system, where $x\prime$ is the integrate arclength along the cluster's orbit and $y\prime$ is the distance within the orbital plane. The color scale represents normalized particle counts (total: 100,000). The top panel shows the \texttt{full} simulation with three gaps on the stream's right-hand side. The next three panels depict simulations with identical initial conditions but exclude the gravitational influence of all clusters except those forming a given gap. The \texttt{Reference} simulation omits the influence from other globular clusters. The bottom panel compares Palomar~5's observed stream length to the \texttt{Reference} simulation, using the same Monte Carlo realization as Fig.~\ref{fig:stream_on_sky} and \texttt{Sampling~009} of Fig.~\ref{fig:gallery2}.}
       \label{fig:decomposition}
     \end{figure*} 
     
@@ -412,7 +412,7 @@ The characteristics of the streams modeled in this paper may be considered more 
   \textbf{ \salvatore{\citet{2017MNRAS.470...60E} is another work that discusses the impact of globular clusters in producing gaps on the Pal~5 stream. In section~6.3 of their article, \citet{2017MNRAS.470...60E} discuss the fact that globular clusters with masses greater than $10^6~\textrm{M}_\odot$ are rare in the Galaxy, especially at distances compatible with the orbit of Pal~5, while -- based on previous works -- they estimate that sub-halos of dark matter of similar mass are at least three times greater in number. This difference leads them to conclude that the gaps they report in the Pal~5 streams are more likely to be induced by dark matter sub-halos than by globular clusters. 
   However, as we show in this paper, even clusters with masses below $10^6~\textrm{M}\odot$ can produce gaps. The clusters perturbing the Pal~5 stream are clusters with masses up to 10 times lower than those considered by \citet{2017MNRAS.470...60E}. It is thus possible that \citet{2017MNRAS.470...60E} have underestimated the impact of globular clusters' close passages on a stream such as Pal~5. We can derive from \citet{2016MNRAS.457.3817S}'s third figure that a more concentrated system delivers a higher velocity kick but over a shorter distance, while a more spread out system will affect more stars yet perturb them less. It is more difficult, however, to make a comparative analysis between the role of clusters and sub-halos at equal stellar mass. Being less dense than globular clusters, sub-halos should produce less intense perturbations on streams (for fixed impact parameters and relative velocities). A systematic comparative analysis to quantify the role of clusters and sub-halos in producing gaps and perturbations in stellar streams still needs to be done.}}
 
-  The impact of globular clusters' close interactions with stellar streams has also been the object of another recent paper by \citet{2022ApJ...941..129D}, who concluded that the chance for GD-1 gaps, which have been reported in several works \citep[see, for example, ][]{2019ApJ...880...38B,2018MNRAS.477.1893D,2020AAS...23533607D} to be produced by globular clusters is very low. This result is not necessarily in contradiction with ours since GD-1 has a pericenter which is almost twice that of Palomar~5 \citep[see, for example][]{2019MNRAS.486.2995M}. As discussed in Sect.~\ref{sect:geometry}, the number, $N$, of close encounters that lead to gap creation is anti-correlated with the distance $r$ to the Galactic center. If we naively use the same radial dependence of gaps from Palomar~5 for GD-1 by swapping a pericenter from 6~kpc to 16~kpc, we would reduce the number of gap-favorable impacts by more than a factor of 2. Moreover, we note that \citet{2022ApJ...941..129D} pre-selects the globular clusters that could have experienced a close encounter with the GD-1 stream by selecting only clusters that pass at a distance less than 0.5 kpc from the stream, having a relative velocity smaller than  300 km/s. As shown in our Fig.~\ref{fig:impact_geometry_statistics}, bottom-left panel, in the case of Palomar~5, this choice would lead to excluding most of the encounters favorable to gap creation, which turn out to have relative velocities above 300 km/s. It would be interesting to repeat a similar study as the one made by \citet{2022ApJ...941..129D} for GD-1, imposing no selection on possible candidate clusters.\\
+  The impact of globular clusters' close interactions with stellar streams has also been the object of another recent paper by \citet{2022ApJ...941..129D}, who concluded that the chance for GD-1 gaps, which have been reported in several works \citep[see, for example, ][]{2019ApJ...880...38B,2018MNRAS.477.1893D,2020AAS...23533607D} to be produced by globular clusters is very low. This result is not necessarily in contradiction with ours since GD-1 has a pericenter which is almost twice that of Palomar~5 \citep[see, for example][]{2019MNRAS.486.2995M}. As discussed in Sect.~\ref{sect:geometry}, the number, $N$, of close encounters that lead to gap creation is anti-correlated with the distance $r$ to the Galactic center. If we naively use the same radial dependence of gaps from Palomar~5 for GD-1 by swapping a pericenter from 6~kpc to 16~kpc, we would reduce the number of gap-favorable impacts by more than a factor of 2. Moreover, we note that \citet{2022ApJ...941..129D} pre-selects the globular clusters that could have experienced a close encounter with the GD-1 stream by selecting only clusters that pass at a distance less than 0.5 kpc from the stream, having a relative velocity smaller than  300 km/s. As shown in our Fig.~\ref{fig:impact_geometry_statistics}, bottom-left panel, in the case of Palomar~5, this choice would lead to excluding most of the encounters favorable to gap creation, which turn out to have relative velocities above 300 km/s, \textbf{reducing the total to just 19 gaps}. It would be interesting to repeat a similar study as the one made by \citet{2022ApJ...941..129D} for GD-1, imposing no selection on possible candidate clusters.\\
   
   As already suggested in previous works which have studied the impact of baryonic structures on Palomar~5 tails \citep{2017NatAs...1..633P, 2019MNRAS.484.2009B}, this cluster may lie in a region of the phase-space which is not favorable to distinguish gaps created by dark matter sub-halos from gaps created by baryonic structures, such as the Galactic bar and giant molecular clouds. Our study shows that close encounters with globular clusters constitute a further element that confuses a simple interpretation of the observed Palomar~5 stream gaps (if any). Other clusters and streams in the orbital energy range of Palomar~5 may suffer from the same difficulty. Going to lower orbital energies worsens the situation because the effect of the Galactic bar, giant molecular clouds, and interactions with globular clusters becomes even more efficient. In the innermost regions of the Galaxy, where the density of dark matter sub-halos is maximal, globular cluster streams are intrinsically more difficult to find, in addition to the fact that the dynamical times in these regions become so small that the stars lost from globular clusters do not redistribute themselves for the most part into thin structures \citep[see][]{2023A&A...673A..44F}. It is thus probably only at larger distances from the Galactic center than those spanned by Palomar~5's orbit that the impact of dark matter sub-halos may become dominant, but bear in mind that at these distances, the number density of sub-halos also decreases. In the future, it will be interesting to apply the type of study conducted here to the whole set of streams to quantify the regime in which they are favorable to the creation of gaps from baryonic structures.
   
@@ -605,10 +605,10 @@ The characteristics of the streams modeled in this paper may be considered more 
     \begin{figure*}
       \centering
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-000.png}
-      % \includegraphics[width=\linewidth]{tau-profile-monte-carlo-000.png}
-      % \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-001.png}
-      % \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-002.png}
-      % \includegraphics[width=\linewidth]{tau-profile-monte-carlo-002.png}
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-000.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-001.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-002.png}
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-002.png}
       \caption{First gap gallery. See the text in Appendix~\ref{sec:gallery_of_gaps} for a description.}
       \label{fig:gallery0}
       \end{figure*}    
@@ -617,127 +617,127 @@ The characteristics of the streams modeled in this paper may be considered more 
     \begin{figure*}
       \centering
       \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-003.png}      
-      % \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-004.png}
-      % \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-005.png}
-      % \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-006.png}
-      % \includegraphics[width=\linewidth]{tau-profile-monte-carlo-006.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-004.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-005.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-006.png}
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-006.png}
       \caption{Second gap gallery}
       \label{fig:gallery1}
       \end{figure*}        
 
 
-    % \begin{figure*}
-    %   \centering
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-007.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-008.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-009.png}      
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-010.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-011.png}
-    %   \caption{Third gap gallery}
-    %   \label{fig:gallery2}
-    %   \end{figure*}        
+    \begin{figure*}
+      \centering
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-007.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-008.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-009.png}      
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-010.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-011.png}
+      \caption{Third gap gallery}
+      \label{fig:gallery2}
+      \end{figure*}        
 
 
-    % \begin{figure*}
-    %   \centering
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-012.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-013.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-014.png}      
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-015.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-016.png}
-    %   \caption{Fourth gap gallery}
-    %   \label{fig:gallery3}
-    %   \end{figure*}        
+    \begin{figure*}
+      \centering
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-012.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-013.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-014.png}      
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-015.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-016.png}
+      \caption{Fourth gap gallery}
+      \label{fig:gallery3}
+      \end{figure*}        
 
-    % \begin{figure*}
-    %   \centering
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-017.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-018.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-019.png}      
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-020.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-021.png}
-    %   \caption{Fifth gap gallery}
-    %   \label{fig:gallery4}
-    %   \end{figure*}        
+    \begin{figure*}
+      \centering
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-017.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-018.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-019.png}      
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-020.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-021.png}
+      \caption{Fifth gap gallery}
+      \label{fig:gallery4}
+      \end{figure*}        
 
-    % \begin{figure*}
-    %   \centering
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-022.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-023.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-024.png}   
-    %   \includegraphics[width=\linewidth]{tau-profile-monte-carlo-024.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-025.png}
-    %   \caption{Sixth gap gallery}
-    %   \label{fig:gallery5}
-    %   \end{figure*}        
+    \begin{figure*}
+      \centering
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-022.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-023.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-024.png}   
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-024.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-025.png}
+      \caption{Sixth gap gallery}
+      \label{fig:gallery5}
+      \end{figure*}        
 
-    % \begin{figure*}
-    %   \centering
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-026.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-027.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-028.png}
-    %   \includegraphics[width=\linewidth]{tau-profile-monte-carlo-028.png}
-    %   \caption{Seventh gap gallery}
-    %   \label{fig:gallery6}
-    %   \end{figure*}        
+    \begin{figure*}
+      \centering
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-026.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-027.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-028.png}
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-028.png}
+      \caption{Seventh gap gallery}
+      \label{fig:gallery6}
+      \end{figure*}        
 
-    % \begin{figure*}
-    %   \centering      
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-029.png}    
-    %   \includegraphics[width=\linewidth]{tau-profile-monte-carlo-029.png}  
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-030.png}
-    %   \includegraphics[width=\linewidth]{tau-profile-monte-carlo-030.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-031.png}
-    %   \caption{Eighth gap gallery}
-    %   \label{fig:gallery7}
-    %   \end{figure*}        
-
-
-    % \begin{figure*}
-    %   \centering
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-032.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-033.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-034.png}      
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-035.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-036.png}      
-    %   \caption{Ninth gap gallery}
-    %   \label{fig:gallery8}
-    %   \end{figure*}    
+    \begin{figure*}
+      \centering      
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-029.png}    
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-029.png}  
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-030.png}
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-030.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-031.png}
+      \caption{Eighth gap gallery}
+      \label{fig:gallery7}
+      \end{figure*}        
 
 
+    \begin{figure*}
+      \centering
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-032.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-033.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-034.png}      
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-035.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-036.png}      
+      \caption{Ninth gap gallery}
+      \label{fig:gallery8}
+      \end{figure*}    
 
-    % \begin{figure*}
-    %   \centering
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-037.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-038.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-039.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-040.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-041.png}      
-    %   \caption{Tenth gap gallery}
-    %   \label{fig:gallery9}
-    % \end{figure*}        
+
+
+    \begin{figure*}
+      \centering
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-037.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-038.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-039.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-040.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-041.png}      
+      \caption{Tenth gap gallery}
+      \label{fig:gallery9}
+    \end{figure*}        
     
-    % \begin{figure*}
-    %   \centering
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-042.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-043.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-044.png}
-    %   \includegraphics[width=\linewidth]{tau-profile-monte-carlo-044.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-045.png}
-    %   \caption{Eleventh gap gallery}
-    %   \label{fig:gallery010}
-    % \end{figure*}   
+    \begin{figure*}
+      \centering
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-042.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-043.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-044.png}
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-044.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-045.png}
+      \caption{Eleventh gap gallery}
+      \label{fig:gallery010}
+    \end{figure*}   
 
-    % \begin{figure*}
-    %   \centering
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-046.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-047.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-048.png}
-    %   \includegraphics[width=\linewidth]{tau-profile-monte-carlo-048.png}
-    %   \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-049.png}
-    %   \caption{Twelfth gap gallery}
-    %   \label{fig:gallery11}
-    % \end{figure*} 
+    \begin{figure*}
+      \centering
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-046.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-047.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-048.png}
+      \includegraphics[width=\linewidth]{tau-profile-monte-carlo-048.png}
+      \includegraphics[width=\linewidth]{gallery_of_gaps_monte-carlo-049.png}
+      \caption{Twelfth gap gallery}
+      \label{fig:gallery11}
+    \end{figure*} 
 
 
 \end{appendix}
