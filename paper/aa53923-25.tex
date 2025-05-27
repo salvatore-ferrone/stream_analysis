@@ -1,4 +1,4 @@
-\documentclass{aa}
+\documentclass[draft]{aa}
 \usepackage{amsmath}
 \usepackage{hyperref}
 \usepackage{xcolor}
@@ -167,6 +167,8 @@
 
     \begin{table}[h]
       \centering
+      \caption{The parameters determining the data volume}
+      \label{tab:data_volume}
       \begin{tabular}{|c|c|c|c|}
           \hline
           $N_p$ & $N_{\textrm{ts}}$ & $N_{\textrm{phase}}$ & $N_{\textrm{sampling}}$ \\
@@ -174,8 +176,7 @@
           $100000$ & $5000$ & $6$ & $50$ \\
           \hline
       \end{tabular}
-      \caption{The parameters determining the data volume of this experiment. where $N_p$  is the number of particles, $N_{\textrm{ts}}$ is the number of time-steps saved, $N_{\textrm{phase}}$ is the number of phase space coordinates, and $N_{\textrm{sampling}}$ is the number of Monte-Carlo samplings of the initial conditions.}
-      \label{tab:data_volume}
+      \tablefoot{$N_p$  is the number of particles, $N_{\textrm{ts}}$ is the number of time-steps saved, $N_{\textrm{phase}}$ is the number of phase space coordinates, and $N_{\textrm{sampling}}$ is the number of Monte-Carlo samplings of the initial conditions.}
     \end{table}
 
   \subsubsection{ \texttt{Reference} simulations}
@@ -259,7 +260,7 @@ The characteristics of the streams modeled in this paper may be considered more 
 
     \begin{table}[h]
       \centering
-      \caption{The number of gaps created by each perturber across all 50 simulations of Palomar~5's tidal tail. These data are color-coded and illustrated in Fig.~\ref{fig:histogram_impact_time}.}
+      \caption{The number of gaps created by each perturber across all 50 simulations.}
       \label{tab:gaps_per_perturber}
       \begin{tabular}{|ll|ll|ll|}
       \hline
@@ -271,12 +272,14 @@ The characteristics of the streams modeled in this paper may be considered more 
       FSR1758 & 1 & NGC7078 & 1 & Pal10 & 1 \\
       \hline
       \end{tabular}
+      \tablefoot{These data are color-coded and illustrated in Fig.~\ref{fig:histogram_impact_time}.}
     \end{table} 
     
     In total, we report the finding of 73 gaps in our 50 simulations, which is, on average, 1.5 gaps/simulation. Eighteen different perturbers provoke the gaps. Table~\ref{table:gap_distribution} presents the distribution of the number of gaps appearing per simulation. If we consider NGC~2808 an outlier and exclude it from the experiment, we observe an average of 0.6 gaps per simulation.  
     
     \begin{table}[h]
       \centering
+      \caption{Occurrence of gaps in Palomar~5 streams, in our simulations.}\label{table:gap_distribution}
         \begin{tabular}{|l|c|c|c|c|c|}
           \hline
           Number of Gaps & 0 & 1 & 2 & 3 & 4 \\
@@ -285,7 +288,7 @@ The characteristics of the streams modeled in this paper may be considered more 
           \hline
         \end{tabular}
         \vspace{0.5cm}
-      \caption{Occurrence of gaps in Palomar~5 streams,  in our simulations. More specifically, the table reports the number of simulations (second row) for a given number of gaps (first row). }\label{table:gap_distribution}
+        \tablefoot{More specifically, the table reports the number of simulations (second row) for a given number of gaps (first row).}
     \end{table}
 
     We need a more sophisticated statistic to compare our results to other simulations, so we turn to the gap creation rate developed by \citet{2012ApJ...748...20C}. The gap creation rate is the number of gaps that appear per unit time and is normalized by the stream's length. For our simulations, this rate is given by: \begin{equation} \label{eq:gap_creation_rate} \mathcal{R}_{\textrm{Pal 5}} =  \frac{1}{T}\int_{0}^T l^{-1}(t) \sum_i \delta(t-t_i) dt,\end{equation}where $T$ is the total integration time, $l(t)$ is the length of the stream, and $\sum_i \delta(t-t_i)$ sums over the gap occurrences, with $i$ indexing over the number of gaps in a given simulation. Here, $\delta$ represents the Dirac delta function. This expression can be simplified to:\begin{equation}\mathcal{R}_{\textrm{Pal 5}} =  \frac{1}{T} \sum_i \frac{1}{l (t_i)}. \end{equation}
