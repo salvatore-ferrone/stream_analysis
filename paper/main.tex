@@ -158,7 +158,7 @@
     Lastly, we select an integration time of 5~Gyr as a compromise between maximizing interaction statistics and modeling the galaxy as a time-independent, constant mass distribution. \citet{2023A&A...673A.152I} analyzed the orbits of the Galactic cluster population using the same initial conditions as in this work within five live Milky Way-like potentials from IllustrisTNG \citep{2018MNRAS.473.4077P}. They found that in all sampled potentials, orbital changes remain minimal over 5~Gyr, becoming significant only at earlier look-back times when the host galaxy had significantly less mass or was undergoing a merger event.
 
 
-    \subsubsection*{ \texttt{Full} simulations}
+    \subsubsection{ \texttt{Full} simulations}
     There is a primary methodological departure from \citet{2023A&A...673A..44F}.  In that work, globular clusters evolved under the gravitational effect of the Galaxy only, while now we also include the effect of all the other Galactic globular clusters by considering the direct $N$-body interactions between them. First, all clusters are represented by Plummer spheres, each with its own mass and half-mass radius as reported in the Baumgardt catalog \citep{2021MNRAS.505.5957B}. For the remainder of this paper, the \texttt{full} simulations consider the gravitational forces from the globular cluster interactions. \\
     For these simulations, we proceed in two steps:
       \begin{enumerate}
@@ -199,7 +199,7 @@
       \label{tab:data_volume}
     \end{table}
 
-  \subsubsection*{ \texttt{Reference} simulations}
+  \subsubsection{ \texttt{Reference} simulations}
 
     To quantify the impact of globular cluster passages on the density of the Palomar~5 stream, we performed a second set of simulations, which we refer to as the \texttt{reference} simulations in this paper.  These \texttt{reference} simulations use the same 50 sets of initial conditions as the \texttt{full} simulations, the same Galactic potential, but exclude mutual interactions between globular clusters. The approach adopted for this second set of simulations is thus equivalent to that adopted already in \citet{2023A&A...673A..44F}. In Eq.~\ref{eq:GCNBody}, only the gradient of the Galactic potential is considered. In Eq.~\ref{eq:equation_of_motion_particle}, of the second term on the right side of the equation, only the influence of Palomar~5's Plummer sphere on Palomar~5's particles is considered. In other words, the sum iterates over only one globular cluster, the host. We omit all interactions with the other clusters.
 
