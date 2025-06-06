@@ -546,22 +546,7 @@ The characteristics of the streams modeled in this paper may be considered more 
       where $\vec{v}_p$ and $\vec{v}_s$ are the velocities of the perturber and the stream, respectively. We compute the strongest five flybys for each of the 50 simulations. Thus, we created a sample of 250 impacts and flagged those that give rise to gaps. We refer the reader to Sect.~\ref{sect:geometry} for the presentation and discussion of the results.
 
 
-
 \section{Survival of gaps in streams emerging from more massive globular clusters}\label{sec:gaps_vs_gcmass}
-
-    In Section~\ref{sec:mass_loss}, we emphasized that the conditions chosen to simulate the formation and evolution of streams around Pal~5 are probably unrealistic. By choosing, as we did, the same values for the mass and size of the cluster 5 billion years ago as the cluster has today, we did not take into account the loss of mass and internal evolution of the cluster over time. In particular, the velocity dispersion of the stars in a cluster and the velocity dispersion of the stars leaving the cluster and entering the stream depend on the cluster's mass. It is therefore legitimate to ask whether, using a progenitor with a different mass and/or size, the gaps survive and whether, in particular, gaps formed several billion years ago can still be visible today. 
-
-    \begin{figure*}
-        \centering
-        \includegraphics[width=1\linewidth]{gap_no_more.png}
-        \caption{Both simulations use identical orbital conditions for the globular clusters, with a half-mass radius of 27~pc. In the lower panel, Pal~5's mass is increased relative to the upper one. Although both streams are perturbed by NGC~7078 approximately 2.5~Gyr ago, the resulting gap is attenuated in the more massive model.}
-        \label{fig:gap_no_more}
-    \end{figure*}
-
-    While we anticipate that a specific study on this aspect is in preparation (Ferrone et al, in prep), we would like to preview a few results here. Fig.~\ref{fig:gap_no_more} shows two streams with the same orbital parameters that were impacted by NGC~7078. The top panel shows a stream that comes from a host mass of $10,000$~$M_\odot$, while in the second panel we increased the mass to $\sim40,000$~$M_\odot$. For simplicity, both clusters have the same half-mass radius of 27~pc. The encounter occurred about two and a half billion years ago by NGC~7078, which has a mass of $5.16\times10^{5}~M_\odot$. The gap persists for the lighter host, yet is barely visible in the case of the more massive host. 
-
-    Fig.~\ref{fig:decoherence_shocked_outflow} dissects the more massive stream of Fig.~\ref{fig:gap_no_more} and instructs us why the gap does not persist. The bottom panel shows the total density distribution and dissects it into two profiles: stars that are either leaked or shocked out of the cluster. By shocked, we mean the stars that are lost during pericenter passages. Tidal forces generally scale with $r^{-3}$, thus significantly strengthening through their pericenter passages (See Fig.~3 of \citet{2004AJ....127.2753D} for an illustration of the magnitude of the tidal forces along an orbit). A consequence of the pericenter passages is that many more stars escape, fleeing with a higher mean velocity and velocity dispersion, which can be visualized in the Christmas tree illustration in Fig.~A.3 of \citet{2012A&A...546L...7M}. We consider the continuous outflow of stars between pericenter passages to be leaked stars. We identify pericenter passages by computing each local minimum of the cluster's Galactocentric 3D radius with \texttt{scipy.signal.find\_peaks}. The duration of each shock is: $t_{\textrm{shock}}$ = 2$\sqrt{r/|\nabla\Phi|}$, where $r$ is the Galactocentric radius and $|\nabla\Phi|$ is the magnitude of the acceleration from the Galactic potential. Stars within this range about a given pericenter passage are all given the same color and shown as individual groups in the first, second, third, and fourth panels of Fig.~\ref{fig:decoherence_shocked_outflow}.
-
 
     \begin{figure}
         \includegraphics[width=\linewidth]{decoherence_shocked_outflow.png}
@@ -569,6 +554,21 @@ The characteristics of the streams modeled in this paper may be considered more 
         \label{fig:decoherence_shocked_outflow}
     \end{figure}
 
+    \begin{figure*}
+        \centering
+        \includegraphics[width=\linewidth]{gap_no_more.png}
+        \caption{Both simulations use identical orbital conditions for the globular clusters, with a half-mass radius of 27~pc. In the lower panel, Pal~5's mass is increased relative to the upper one. Although both streams are perturbed by NGC~7078 approximately 2.5~Gyr ago, the resulting gap is attenuated in the more massive model.}
+        \label{fig:gap_no_more}
+    \end{figure*}
+
+
+    In Section~\ref{sec:mass_loss}, we emphasized that the conditions chosen to simulate the formation and evolution of streams around Pal~5 are probably unrealistic. By choosing, as we did, the same values for the mass and size of the cluster 5 billion years ago as the cluster has today, we did not take into account the loss of mass and internal evolution of the cluster over time. In particular, the velocity dispersion of the stars in a cluster and the velocity dispersion of the stars leaving the cluster and entering the stream depend on the cluster's mass. It is therefore legitimate to ask whether, using a progenitor with a different mass and/or size, the gaps survive and whether, in particular, gaps formed several billion years ago can still be visible today. 
+
+
+
+    While we anticipate that a specific study on this aspect is in preparation (Ferrone et al., in prep), we would like to preview a few results here, particularly regarding the gap decoherence phenomenon presented in Fig.~\ref{fig:decoherence_shocked_outflow}. First, Fig.~\ref{fig:gap_no_more} shows two streams with the same orbital parameters that were impacted by NGC~7078. The top panel shows a stream originating from a host mass of $10,000$~$M_\odot$, while in the second panel we increased the mass to $\sim40,000$~$M_\odot$. For simplicity, both clusters have the same half-mass radius of 27~pc. The encounter occurred about two and a half billion years ago with NGC~7078, which has a mass of $5.16\times10^{5}~M_\odot$. The gap persists for the lighter host, yet is barely visible in the case of the more massive host.
+
+    Fig.~\ref{fig:decoherence_shocked_outflow} dissects the more massive stream of Fig.~\ref{fig:gap_no_more} and explains why the gap does not persist. The bottom panel shows the total density distribution, decomposed into two profiles: stars that are either leaked or shocked out of the cluster. By shocked, we mean stars that are lost during pericenter passages. Tidal forces generally scale with $r^{-3}$, and thus significantly intensify during pericenter passages (see Fig.~3 of \citet{2004AJ....127.2753D} for an illustration of the magnitude of tidal forces along an orbit). A consequence of these passages is that many more stars escape, fleeing with higher mean velocity and velocity dispersion—this can be visualized in the ``Christmas tree'' illustration in Fig.~A.3 of \citet{2012A&A...546L...7M}. We consider the continuous outflow of stars between pericenter passages to be leaked stars. We identify pericenter passages by computing each local minimum of the cluster's Galactocentric 3D radius using \texttt{scipy.signal.find\_peaks}. The duration of each shock is given by $t_{\textrm{shock}} = 2\sqrt{r/|\nabla\Phi|}$, where $r$ is the Galactocentric radius and $|\nabla\Phi|$ is the magnitude of the acceleration from the Galactic potential. Stars within this time range around a given pericenter passage are all given the same color and shown as individual groups in the first through fourth panels of Fig.~\ref{fig:decoherence_shocked_outflow}.
 
 
 \end{appendix}
